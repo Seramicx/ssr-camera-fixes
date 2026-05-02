@@ -39,7 +39,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinDisableEpicFightSsrLockOnTick {
 
     @Inject(method = "lockOnTick", at = @At("HEAD"), cancellable = true, require = 0, remap = false)
-    private static void ssrcamerafixes$cancelEpicFightSsrLockOnTick(Object event, CallbackInfo ci) {
+    private static void ssrcamerafixes$cancelEpicFightSsrLockOnTick(yesman.epicfight.api.client.event.types.LockOnEvent.Tick event, CallbackInfo ci) {
         ci.cancel();
     }
 }
