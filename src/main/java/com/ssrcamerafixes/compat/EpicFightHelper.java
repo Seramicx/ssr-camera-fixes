@@ -10,7 +10,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import yesman.epicfight.api.client.camera.EpicFightCameraAPI;
+import net.minecraftforge.fml.ModList;
 
 /**
  * Epic Fight helper + Iron's Spells cast latch.
@@ -26,10 +26,13 @@ public final class EpicFightHelper {
 
     private EpicFightHelper() {}
 
+    private static boolean isLoaded = ModList.get().isLoaded("epicfight");
+
     public static boolean isLockOnTargeting() {
+        if (!isLoaded) return false;
         try {
-            EpicFightCameraAPI api = EpicFightCameraAPI.getInstance();
-            return api != null && api.isLockingOnTarget();
+            return yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance() != null && 
+                   yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance().isLockingOnTarget();
         } catch (Throwable t) {
             return false;
         }
