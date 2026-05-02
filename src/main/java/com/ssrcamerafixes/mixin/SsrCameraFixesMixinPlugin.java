@@ -13,12 +13,7 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
-        try {
-            Class.forName("yesman.epicfight.api.client.camera.EpicFightCameraAPI", false, this.getClass().getClassLoader());
-            hasEpicFight = true;
-        } catch (ClassNotFoundException e) {
-            hasEpicFight = false;
-        }
+        hasEpicFight = this.getClass().getClassLoader().getResource("yesman/epicfight/api/client/camera/EpicFightCameraAPI.class") != null;
     }
 
     @Override
