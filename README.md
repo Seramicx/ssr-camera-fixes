@@ -1,5 +1,7 @@
 # Shoulder Surfing Reloaded: Camera Fixes & Additions
 
+![Showcase](assets/showcase.gif)
+
 A handful of camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforge.com/minecraft/mc-mods/shoulder-surfing-reloaded) when used alongside Epic Fight, Better Lockon, and Iron's Spells. Forge 1.20.1.
 
 ## Features
