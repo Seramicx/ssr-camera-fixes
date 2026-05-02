@@ -4,6 +4,7 @@ import com.github.exopandora.shouldersurfing.client.ShoulderSurfingCamera;
 import com.github.exopandora.shouldersurfing.config.Config;
 import com.ssrcamerafixes.SsrCameraFixesConfig;
 import com.ssrcamerafixes.handler.ShoulderCycleHandler;
+import com.ssrcamerafixes.compat.EpicFightHelper;
 import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
@@ -13,7 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import yesman.epicfight.api.client.camera.EpicFightCameraAPI;
+
 
 /**
  * Forces SSR's {@code targetOffset} field to the user's configured shoulder
@@ -75,13 +76,7 @@ public abstract class MixinForceSsrOffsetDuringLockOn {
         Entity cameraEntity,
         CallbackInfoReturnable<Vec3> cir
     ) {
-        EpicFightCameraAPI api;
-        try {
-            api = EpicFightCameraAPI.getInstance();
-        } catch (Throwable t) {
-            return;
-        }
-        if (api == null || !api.isLockingOnTarget()) return;
+        if (!EpicFightHelper.isLockOnTargeting()) return;
 
         double offX = Config.CLIENT.getOffsetX();
         double offY = Config.CLIENT.getOffsetY();

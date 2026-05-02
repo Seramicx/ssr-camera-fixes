@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import yesman.epicfight.api.client.event.types.LockOnEvent;
+
 
 /**
  * Disables EpicFight 20.14+'s built-in {@code ShoulderSurfingCompat.lockOnTick}
@@ -39,7 +39,7 @@ import yesman.epicfight.api.client.event.types.LockOnEvent;
 public abstract class MixinDisableEpicFightSsrLockOnTick {
 
     @Inject(method = "lockOnTick", at = @At("HEAD"), cancellable = true, require = 0, remap = false)
-    private static void ssrcamerafixes$cancelEpicFightSsrLockOnTick(LockOnEvent.Tick event, CallbackInfo ci) {
+    private static void ssrcamerafixes$cancelEpicFightSsrLockOnTick(Object event, CallbackInfo ci) {
         ci.cancel();
     }
 }
