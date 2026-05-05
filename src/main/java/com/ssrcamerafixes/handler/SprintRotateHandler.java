@@ -50,6 +50,13 @@ public final class SprintRotateHandler {
         // Lock-on path takes priority - Mod 1's LockOnMovementHandler owns input there.
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (MC.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return;
+        // SSR-only: in vanilla 3rd person back, player.yRot IS the camera, so
+        // toggling it mid-tick (and restoring at PlayerTickEvent.END from a
+        // one-frame-stale mainCamera.getYRot) makes the camera oscillate and
+        // lag the mouse by a tick. Vanilla MC already snaps body to movement
+        // direction natively, so this whole handler is only needed when SSR
+        // has decoupled the body from the camera.
+        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (!player.isSprinting()) return;
 
         // Aiming/casting/using-item/blocking: body must lock to camera direction
