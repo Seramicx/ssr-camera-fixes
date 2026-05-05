@@ -40,6 +40,11 @@ public final class AimingFaceCameraHandler {
 
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (MC.options.getCameraType() == CameraType.FIRST_PERSON) return;
+        // SSR-only: without SSR, EpicFight (and vanilla aiming) already aligns
+        // yRot to the crosshair. Forcing yRot to mainCamera.getYRot() here in
+        // vanilla 3rd person would clobber that and stall the camera one
+        // render frame behind the mouse.
+        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (!EpicFightHelper.isAiming(player)) return;
 
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
