@@ -31,8 +31,33 @@ public final class EpicFightHelper {
     public static boolean isLockOnTargeting() {
         if (!isLoaded) return false;
         try {
-            return yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance() != null && 
+            return yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance() != null &&
                    yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance().isLockingOnTarget();
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
+     * True when an EpicFight animation has explicitly disabled the normal
+     * LivingMotion update loop ({@code EntityState.UPDATE_LIVING_MOTION = false}).
+     *
+     * <p>That flag is the cleanest "an animation owns the body, don't touch
+     * {@code player.yRot}" signal we have:
+     * <ul>
+     *   <li>Default is {@code true} — vanilla sprint, walk, idle, jump are all unaffected.</li>
+     *   <li>EpicFight's own {@code BIPED_SPRINT_JUMP} keeps it {@code true}, so sprint-rotate over a sprint-jump still works.</li>
+     *   <li>WOM's spider techniques wall-run animations (WALL_RUNNING, WALL_GLIDE, WALL_RUN_LEFT_SIDE, WALL_RUN_RIGHT_SIDE) set it to {@code false}. These read {@code yBodyRot} to compute the wall-detection ray; if {@code SprintRotateHandler} rewrites {@code yRot} toward the camera, {@code tickHeadTurn} lerps {@code yBodyRot} off-wall and the climb breaks.</li>
+     * </ul>
+     */
+    public static boolean animationOwnsLivingMotion(LocalPlayer player) {
+        if (!isLoaded || player == null) return false;
+        try {
+            yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch patch
+                    = yesman.epicfight.world.capabilities.EpicFightCapabilities.getLocalPlayerPatch(player);
+            if (patch == null) return false;
+            return !patch.getEntityState().getState(
+                    yesman.epicfight.api.animation.types.EntityState.UPDATE_LIVING_MOTION);
         } catch (Throwable t) {
             return false;
         }

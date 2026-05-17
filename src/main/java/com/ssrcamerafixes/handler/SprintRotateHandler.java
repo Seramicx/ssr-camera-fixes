@@ -64,6 +64,12 @@ public final class SprintRotateHandler {
         // separately and handles those cases.
         if (EpicFightHelper.isAiming(player) || player.isUsingItem() || player.isBlocking()) return;
 
+        // EpicFight animation owns the body (e.g. WOM spider techniques wall-run,
+        // which reads yBodyRot to ray-test for the wall in front of the player).
+        // Rewriting yRot here would lerp yBodyRot off-wall via vanilla
+        // tickHeadTurn and break the climb / animation facing.
+        if (EpicFightHelper.animationOwnsLivingMotion(player)) return;
+
         Input input = event.getInput();
 
         float rawForward = 0F;
