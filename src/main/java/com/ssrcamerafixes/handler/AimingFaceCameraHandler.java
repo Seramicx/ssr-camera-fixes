@@ -13,10 +13,18 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * Continuously drive {@code player.yRot} toward the camera direction while
- * the player is aiming a ranged weapon, holding/using an Iron's Spells item,
- * or actively casting - so the body faces where the crosshair is pointing
- * for the entire cast time and duration.
+ * Continuously drive {@code player.yRot}, {@code yBodyRot}, and
+ * {@code yHeadRot} to the camera direction while the player is aiming a
+ * ranged weapon, holding/using an Iron's Spells item, actively casting, or
+ * blocking with a shield - so the body and head both face the crosshair for
+ * the entire interaction with no visible lag between camera and character.
+ *
+ * <p>Writing all three (not just yRot) is required because vanilla never
+ * updates {@code yHeadRot} per-tick client-side for the LocalPlayer
+ * ({@code Player.serverAiStep} only fires when {@code isEffectiveAi()},
+ * i.e. server-side). Without writing yHeadRot ourselves the head would
+ * freeze at its last value while yBodyRot drifts, producing visible
+ * head-vs-body twist during the action.
  *
  * <p>This only matters when SSR is loaded with a decoupled camera. Without
  * SSR, EpicFight already aligns yRot to the camera's hit-point each tick.
@@ -45,7 +53,7 @@ public final class AimingFaceCameraHandler {
         // vanilla 3rd person would clobber that and stall the camera one
         // render frame behind the mouse.
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
-        if (!EpicFightHelper.isAiming(player)) return;
+        if (!EpicFightHelper.isAiming(player) && !player.isBlocking()) return;
 
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
         player.setYRot(camYaw);

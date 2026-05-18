@@ -1,7 +1,6 @@
 package com.ssrcamerafixes.compat;
 
 import com.github.exopandora.shouldersurfing.api.callback.IPlayerInputCallback;
-import com.github.exopandora.shouldersurfing.api.callback.IPlayerStateCallback;
 import com.github.exopandora.shouldersurfing.api.callback.ITargetCameraOffsetCallback;
 import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
 import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingPlugin;
@@ -13,12 +12,11 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * SSR plugin entry point. Discovered by SSR via {@code shouldersurfing_plugin.json}.
  *
- * <p>Registers three callbacks:
+ * <p>Registers two callbacks:
  * <ul>
  *   <li>{@link OverheadOffsetCallback} - overrides target offset to
  *       {@code (0, overheadY, original.z)} when the shoulder cycle is in
@@ -27,17 +25,13 @@ import org.jetbrains.annotations.NotNull;
  *       input (skip its own input rewriting) whenever this mod's handlers
  *       are the input authority. Without this, SSR's input handling fights
  *       sprint-rotate / lock-on rotations.
- *   <li>{@link BcAttackStateCallback} - reports {@code isAttacking = TRUE}
- *       for the entire Better Combat swing duration (not just the click
- *       frame). Keeps SSR's {@code shouldEntityAimAtTarget = true} so its
- *       {@code lookAtCrosshair} fires every tick of the BC attack — that
- *       continuously sets {@code player.yRot} to the parallax-corrected
- *       direction from player to crosshair-target, which is what BC's
- *       {@code TargetFinder} reads to build the attack hitbox. Combined
- *       with {@code AttackFaceCameraHandler}'s body/head match-to-yRot,
- *       this makes the body face the target and the hitbox land on it
- *       throughout the entire BC attack regardless of weapon speed.
  * </ul>
+ *
+ * <p>Better Combat swing handling is now done directly in
+ * {@code AttackFaceCameraHandler}: yRot is written to camera direction
+ * each tick during the BC swing so the body follows the camera (vanilla
+ * 3rd person feel) and BC's hitbox lands where the camera points. No
+ * SSR-side state callback needed.
  */
 public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
 
@@ -45,7 +39,6 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
     public void register(IShoulderSurfingRegistrar registrar) {
         registrar.registerTargetCameraOffsetCallback(new OverheadOffsetCallback());
         registrar.registerPlayerInputCallback(new ForceVanillaInputCallback());
-        registrar.registerPlayerStateCallback(new BcAttackStateCallback());
     }
 
     private static final class OverheadOffsetCallback implements ITargetCameraOffsetCallback {
@@ -77,13 +70,6 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
                 overheadY = 1.2;
             }
             return new Vec3(0.0, overheadY, targetOffset.z);
-        }
-    }
-
-    private static final class BcAttackStateCallback implements IPlayerStateCallback {
-        @Override
-        public @NotNull Result isAttacking(@NotNull IsAttackingContext context) {
-            return BetterCombatHelper.isAttackInProgress() ? Result.TRUE : Result.PASS;
         }
     }
 
