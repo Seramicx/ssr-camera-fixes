@@ -63,6 +63,48 @@ public final class EpicFightHelper {
         }
     }
 
+    /**
+     * True when the player is in a WOM spider-techniques wall-climb animation
+     * (WALL_RUNNING, WALL_GLIDE, WALL_RUN_LEFT_SIDE, WALL_RUN_RIGHT_SIDE).
+     *
+     * <p>Detection is purely structural — we read EpicFight's {@code EntityState}
+     * flags rather than touching WOM's classes. The four wall-run animations
+     * are the unique combination of:
+     * <ol>
+     *   <li>{@code UPDATE_LIVING_MOTION = false} (animation owns motion)</li>
+     *   <li>{@code TURNING_LOCKED = false} (left at default, excludes WOM's
+     *       WALL_BACKFLIP exit move which sets it true)</li>
+     *   <li>{@code CAN_SKILL_EXECUTION = false} (the wall-run anims explicitly
+     *       disable skill execution; most other animations that set
+     *       UPDATE_LIVING_MOTION=false do not disable this)</li>
+     *   <li>{@code !player.onGround()} (the spider techniques skill itself
+     *       refuses to enter wall-running while on ground)</li>
+     * </ol>
+     *
+     * <p>The four-flag combo is unique enough that we can confidently lock
+     * {@code yBodyRot} without false-triggering on unrelated EF or WOM moves.
+     * If a future animation adds the same combo we'd need to add a fifth
+     * signal, but as of WOM 2.0.15 / EpicFight 20.14.17 this is wall-run only.
+     */
+    public static boolean isWallClimbing(LocalPlayer player) {
+        if (!isLoaded || player == null) return false;
+        if (player.onGround()) return false;
+        try {
+            yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch patch
+                    = yesman.epicfight.world.capabilities.EpicFightCapabilities.getLocalPlayerPatch(player);
+            if (patch == null) return false;
+            yesman.epicfight.api.animation.types.EntityState state = patch.getEntityState();
+            boolean updateLivingMotion = state.getState(
+                    yesman.epicfight.api.animation.types.EntityState.UPDATE_LIVING_MOTION);
+            if (updateLivingMotion) return false;
+            if (state.turningLocked()) return false;
+            if (state.canUseSkill()) return false;
+            return true;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
