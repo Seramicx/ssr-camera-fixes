@@ -13,13 +13,18 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 // Two attack-time facing modes: Better Combat path writes yRot/yBodyRot/yHeadRot
-// to camYaw each tick so BC's TargetFinder reads the camera direction.
+// to camYaw each tick so BC's TargetFinder reads the camera direction. On END
+// tick the BC path also writes yBodyRotO/yHeadRotO with the previous tick's
+// snapped yaw so render interpolation reads prev→current instead of stale.
 // Vanilla/Epic Fight swing path force-aligns body+head to yRot (and zeroes *O)
 // to defeat the 50° tickHeadTurn clamp when SSR has decoupled yRot from yBodyRot.
 @Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class AttackFaceCameraHandler {
 
     private static final Minecraft MC = Minecraft.getInstance();
+
+    private static float prevTickCamYaw = Float.NaN;
+    private static boolean hadAttackLastTick = false;
 
     private AttackFaceCameraHandler() {}
 
@@ -29,7 +34,7 @@ public final class AttackFaceCameraHandler {
         LocalPlayer player = MC.player;
         if (player == null) return;
         if (!shouldSnap(player)) return;
-        snapToCamera(player);
+        snapToCamera(player, false);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -38,8 +43,12 @@ public final class AttackFaceCameraHandler {
         if (!event.side.isClient()) return;
         LocalPlayer player = MC.player;
         if (player == null || event.player != player) return;
-        if (!shouldSnap(player)) return;
-        snapToCamera(player);
+        if (!shouldSnap(player)) {
+            hadAttackLastTick = false;
+            prevTickCamYaw = Float.NaN;
+            return;
+        }
+        snapToCamera(player, true);
     }
 
     private static boolean shouldSnap(LocalPlayer player) {
@@ -47,12 +56,22 @@ public final class AttackFaceCameraHandler {
         return player.swinging || BetterCombatHelper.isAttackInProgress();
     }
 
-    private static void snapToCamera(LocalPlayer player) {
+    private static void snapToCamera(LocalPlayer player, boolean isPostTick) {
         if (BetterCombatHelper.isAttackInProgress()) {
             float camYaw = ShoulderSurfingHelper.getCameraYaw();
             player.setYRot(camYaw);
-            player.yBodyRot = camYaw;
-            player.yHeadRot = camYaw;
+            if (isPostTick) {
+                float prev = hadAttackLastTick && !Float.isNaN(prevTickCamYaw) ? prevTickCamYaw : camYaw;
+                player.yBodyRotO = prev;
+                player.yHeadRotO = prev;
+                player.yBodyRot = camYaw;
+                player.yHeadRot = camYaw;
+                prevTickCamYaw = camYaw;
+                hadAttackLastTick = true;
+            } else {
+                player.yBodyRot = camYaw;
+                player.yHeadRot = camYaw;
+            }
             return;
         }
         float yRot = player.getYRot();
