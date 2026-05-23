@@ -10,16 +10,22 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+// RIGHT → LEFT → OVERHEAD cycle. RIGHT/LEFT derive from SSR's stored offsetX
+// so we stay synced when SSR swaps via its own input path; OVERHEAD is layered
+// on top via SsrCameraFixesPlugin's offset callback.
 @Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class ShoulderCycleHandler {
 
     public enum Mode { RIGHT, LEFT, OVERHEAD }
 
-    private static volatile Mode current = Mode.RIGHT;
+    private static volatile boolean isOverhead = false;
 
     private ShoulderCycleHandler() {}
 
-    public static Mode getMode() { return current; }
+    public static Mode getMode() {
+        if (isOverhead) return Mode.OVERHEAD;
+        return ShoulderSurfingHelper.getStoredShoulderX() >= 0.0 ? Mode.RIGHT : Mode.LEFT;
+    }
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -36,22 +42,19 @@ public final class ShoulderCycleHandler {
     }
 
     private static void advance() {
-        switch (current) {
-            case RIGHT -> {
-                ShoulderSurfingHelper.swapShoulder();
-                current = Mode.LEFT;
-            }
-            case LEFT -> current = Mode.OVERHEAD;
+        switch (getMode()) {
+            case RIGHT -> ShoulderSurfingHelper.swapShoulder();
+            case LEFT -> isOverhead = true;
             case OVERHEAD -> {
+                isOverhead = false;
                 ShoulderSurfingHelper.swapShoulder();
-                current = Mode.RIGHT;
             }
         }
     }
 
     private static void showToast(Minecraft mc) {
         if (mc.player == null) return;
-        String label = switch (current) {
+        String label = switch (getMode()) {
             case LEFT -> "left";
             case OVERHEAD -> "overhead";
             default -> "right";

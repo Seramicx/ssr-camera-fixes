@@ -57,6 +57,12 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
             Minecraft mc = ctx.minecraft();
             LocalPlayer player = mc != null ? mc.player : null;
             if (player != null
+                    && (com.ssrcamerafixes.compat.EpicFightHelper.isAiming(player)
+                            || player.isUsingItem()
+                            || player.isBlocking())) {
+                return true;
+            }
+            if (player != null
                     && player.isSprinting()
                     && mc.options.getCameraType() == CameraType.THIRD_PERSON_BACK) {
                 return true;
