@@ -1,0 +1,88 @@
+plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.78'
+}
+
+version = neoforge_mod_version
+group = mod_group_id
+
+base {
+    archivesName = "${mod_id}-neoforge"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+neoForge {
+    version = project.neoforge_version
+
+    parchment {
+        mappingsVersion = project.neoforge_parchment_version
+        minecraftVersion = project.neoforge_parchment_mc
+    }
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+repositories {
+    maven { url "https://cursemaven.com" }
+    maven { url "https://maven.parchmentmc.org" }
+}
+
+dependencies {
+    // Shoulder Surfing Reloaded 4.22.10 (1.21.1) - hard runtime dep, compileOnly here.
+    compileOnly "curse.maven:shoulder-surfing-reloaded-243190:8043996"
+
+    // Epic Fight 21.17.2-mc1.21.1-neoforge (Antikythera-Studios fork) - optional runtime dep, compileOnly here.
+    compileOnly "curse.maven:epic-fight-mod-405076:8080214"
+
+    // Iron's Spells, Better Combat, Better Lockon: reflection-only at runtime.
+    // No compile-time dep needed (BetterCombatHelper/IronSpellsHelper use Class.forName).
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: neoforge_mc_version,
+            minecraft_version_range: neoforge_mc_version_range,
+            neoforge_version: neoforge_version,
+            neoforge_version_range: neoforge_version_range,
+            loader_version_range: neoforge_loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license,
+            mod_version: neoforge_mod_version,
+            mod_authors: mod_authors, mod_description: neoforge_mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+        ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }

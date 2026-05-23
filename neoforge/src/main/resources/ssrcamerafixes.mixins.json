@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.ssrcamerafixes.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "AccessorKeyMapping",
+    "MixinDisableEpicFightSsrLockOnTick",
+    "MixinForceSsrOffsetDuringLockOn",
+    "MixinSuppressSsrSwapShoulderKeybind",
+    "MixinDisableFollowPlayerRotations"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "plugin": "com.ssrcamerafixes.mixin.SsrCameraFixesMixinPlugin"
+}
