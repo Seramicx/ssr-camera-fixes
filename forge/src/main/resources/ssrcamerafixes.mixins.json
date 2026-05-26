@@ -9,7 +9,8 @@
     "MixinDisableEpicFightSsrLockOnTick",
     "MixinForceSsrOffsetDuringLockOn",
     "MixinSuppressSsrSwapShoulderKeybind",
-    "MixinDisableFollowPlayerRotations"
+    "MixinDisableFollowPlayerRotations",
+    "MixinSyncLockOnCamera"
   ],
   "injectors": {
     "defaultRequire": 1

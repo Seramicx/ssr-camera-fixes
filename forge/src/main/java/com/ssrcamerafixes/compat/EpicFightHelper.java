@@ -32,9 +32,6 @@ public final class EpicFightHelper {
         }
     }
 
-    // True when an EF animation has disabled the LivingMotion update loop
-    // (EntityState.UPDATE_LIVING_MOTION = false). Used to skip body-rewrite
-    // handlers while an animation owns the body yaw.
     public static boolean animationOwnsLivingMotion(LocalPlayer player) {
         if (!isLoaded || player == null) return false;
         try {
@@ -48,8 +45,6 @@ public final class EpicFightHelper {
         }
     }
 
-    // Detects WoM spider-techniques wall-climb via 4-flag EF EntityState combo:
-    // UPDATE_LIVING_MOTION=false, !turningLocked, !canUseSkill, !onGround.
     public static boolean isWallClimbing(LocalPlayer player) {
         if (!isLoaded || player == null) return false;
         if (player.onGround()) return false;

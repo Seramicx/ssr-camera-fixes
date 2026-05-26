@@ -9,8 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// Injects after Input.tick inside LocalPlayer.aiStep so impulses are populated
-// but movement hasn't been applied yet.
 @Mixin(LocalPlayer.class)
 public abstract class MixinSprintRotateInput {
 

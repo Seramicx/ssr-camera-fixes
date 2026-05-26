@@ -6,9 +6,6 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 
-// Snap player yaw to camera yaw while a Better Combat attack is in progress.
-// On END tick we also overwrite yBodyRotO/yHeadRotO with the previous tick's
-// snapped yaw so render interpolation doesn't jitter from a stale capture.
 public final class AttackFaceCameraHandler {
 
     private static float prevTickCamYaw = Float.NaN;

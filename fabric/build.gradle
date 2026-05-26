@@ -45,13 +45,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
-    // Forge Config API Port (Fabric) - provides net.minecraftforge.common.ForgeConfigSpec
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
-
-    // Shoulder Surfing Reloaded (Fabric) - compileOnly, hard runtime dep
     modCompileOnly "curse.maven:shoulder-surfing-reloaded-243190:7974110"
-
-    // Better Combat (Fabric) - compileOnly, hard runtime dep
     modCompileOnly "curse.maven:better-combat-by-daedelus-639842:7287333"
 }
 

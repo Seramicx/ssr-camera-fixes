@@ -9,8 +9,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-// Cancels the vanilla crosshair while EF lock-on is active so it doesn't draw
-// alongside SSR's adaptive lock-on crosshair.
 @Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class LockOnCrosshairHandler {
 

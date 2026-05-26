@@ -7,8 +7,6 @@ import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 
-// Sprint-rotate in third-person on foot: rewrite movement input so the body
-// faces the camera direction while sprinting, then restore camera yaw on END.
 public final class SprintRotateHandler {
 
     private static volatile boolean active = false;

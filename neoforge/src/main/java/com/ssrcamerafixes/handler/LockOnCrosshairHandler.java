@@ -9,8 +9,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 
-// Cancels the vanilla crosshair while EF lock-on is active so it doesn't draw
-// alongside SSR's adaptive lock-on crosshair.
 @EventBusSubscriber(modid = SsrCameraFixesMod.MODID, value = Dist.CLIENT)
 public final class LockOnCrosshairHandler {
 

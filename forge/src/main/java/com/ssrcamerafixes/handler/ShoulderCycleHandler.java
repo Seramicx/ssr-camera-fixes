@@ -10,9 +10,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-// RIGHT → LEFT → OVERHEAD cycle. RIGHT/LEFT derive from SSR's stored offsetX
-// so we stay synced when SSR swaps via its own input path; OVERHEAD is layered
-// on top via SsrCameraFixesPlugin's offset callback.
 @Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class ShoulderCycleHandler {
 

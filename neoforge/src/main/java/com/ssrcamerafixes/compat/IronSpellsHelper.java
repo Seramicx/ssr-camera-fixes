@@ -9,7 +9,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
-// Iron's Spellbooks reflection probe. No-ops when the mod isn't loaded.
 public final class IronSpellsHelper {
 
     private static final Logger LOGGER = LogUtils.getLogger();
