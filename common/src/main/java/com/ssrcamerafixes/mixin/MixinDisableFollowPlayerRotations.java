@@ -8,8 +8,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// Cancels SSR's ShoulderSurfingCamera.renderTick when the config flag is on,
-// disabling the idle camera-follow lerp toward the player's body yaw.
 @Mixin(value = ShoulderSurfingCamera.class, remap = false)
 public abstract class MixinDisableFollowPlayerRotations {
 

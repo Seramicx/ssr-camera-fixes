@@ -10,15 +10,10 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
-// RIGHT → LEFT → OVERHEAD cycle. When our keybind shares a key with SSR's
-// SWAP_SHOULDER, vanilla's single-entry KeyMapping.MAP gives the clicks to SSR,
-// so we trigger off the SSR binding's isDown rising edge instead.
 public final class ShoulderCycleHandler {
 
     public enum Mode { RIGHT, LEFT, OVERHEAD }
 
-    // RIGHT/LEFT derive from SSR's stored offsetX so we stay synced when SSR
-    // swaps via its own input path. OVERHEAD has no offset representation.
     private static volatile boolean isOverhead = false;
 
     private static boolean prevSharedKeyDown = false;

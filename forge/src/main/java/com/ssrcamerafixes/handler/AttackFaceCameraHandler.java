@@ -12,12 +12,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-// Two attack-time facing modes: Better Combat path writes yRot/yBodyRot/yHeadRot
-// to camYaw each tick so BC's TargetFinder reads the camera direction. On END
-// tick the BC path also writes yBodyRotO/yHeadRotO with the previous tick's
-// snapped yaw so render interpolation reads prev→current instead of stale.
-// Vanilla/Epic Fight swing path force-aligns body+head to yRot (and zeroes *O)
-// to defeat the 50° tickHeadTurn clamp when SSR has decoupled yRot from yBodyRot.
 @Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class AttackFaceCameraHandler {
 

@@ -16,9 +16,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
-// Pins SSR's targetOffset to the configured shoulder offset during EpicFight
-// lock-on (or OVERHEAD-mode overrides) so the X shift doesn't get zeroed and
-// the post-lock-off lerp starts from the right place.
 @Mixin(value = ShoulderSurfingCamera.class, remap = false)
 public abstract class MixinForceSsrOffsetDuringLockOn {
 

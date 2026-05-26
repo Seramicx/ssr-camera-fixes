@@ -15,8 +15,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-// Sprint-rotate in third-person on foot: rewrite player.yRot to the body
-// direction during the tick, restore camera yaw on PlayerTickEvent.END.
 @Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class SprintRotateHandler {
 

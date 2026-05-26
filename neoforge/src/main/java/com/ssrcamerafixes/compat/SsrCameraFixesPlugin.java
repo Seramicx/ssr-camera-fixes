@@ -53,13 +53,6 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
             }
             Minecraft mc = ctx.minecraft();
             LocalPlayer player = mc != null ? mc.player : null;
-            // AimingFaceCameraHandler body-locks player yRot to camera yRot during
-            // aim/cast/block. SSR's camera-relative input remap runs during
-            // input.tick() (before MovementInputUpdateEvent) using the still-stale
-            // body yaw, then travel() applies the remapped input at the new
-            // (camera-aligned) body yaw → strafe direction skewed. Force vanilla
-            // input here so SSR skips the remap; vanilla input is correct because
-            // body == camera after the lock.
             if (player != null
                     && (com.ssrcamerafixes.compat.EpicFightHelper.isAiming(player)
                             || player.isUsingItem()

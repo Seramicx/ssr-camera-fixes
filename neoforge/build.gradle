@@ -43,14 +43,8 @@ repositories {
 }
 
 dependencies {
-    // Shoulder Surfing Reloaded 4.22.10 (1.21.1) - hard runtime dep, compileOnly here.
     compileOnly "curse.maven:shoulder-surfing-reloaded-243190:8043996"
-
-    // Epic Fight 21.17.2-mc1.21.1-neoforge (Antikythera-Studios fork) - optional runtime dep, compileOnly here.
     compileOnly "curse.maven:epic-fight-mod-405076:8080214"
-
-    // Iron's Spells, Better Combat, Better Lockon: reflection-only at runtime.
-    // No compile-time dep needed (BetterCombatHelper/IronSpellsHelper use Class.forName).
 }
 
 tasks.named('processResources', ProcessResources).configure {

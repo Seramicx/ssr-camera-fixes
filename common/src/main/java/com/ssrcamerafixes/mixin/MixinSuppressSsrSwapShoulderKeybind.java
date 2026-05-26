@@ -9,8 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// Drains SSR's SWAP_SHOULDER click queue at HEAD of InputHandler.tick when
-// our SHOULDER_CYCLE shares a key, so SSR's swap doesn't fire alongside ours.
 @Mixin(value = InputHandler.class, remap = false)
 public abstract class MixinSuppressSsrSwapShoulderKeybind {
 

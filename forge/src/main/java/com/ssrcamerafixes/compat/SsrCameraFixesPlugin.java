@@ -28,9 +28,6 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
                 return targetOffset;
             }
 
-            // Pass through if SSR has collapsed the offset to (0, 0, z): its
-            // "center camera when looking down" feature is active and we want
-            // pillar-up / bow aim to keep working.
             if (Math.abs(targetOffset.x) < 1.0E-4 && Math.abs(targetOffset.y) < 1.0E-4) {
                 return targetOffset;
             }

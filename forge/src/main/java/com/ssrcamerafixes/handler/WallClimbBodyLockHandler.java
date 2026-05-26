@@ -10,8 +10,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-// Pins yBodyRot/yHeadRot during WoM spider-techniques wall-climb so the
-// player model stays facing the wall regardless of mouse rotation.
 @Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class WallClimbBodyLockHandler {
 

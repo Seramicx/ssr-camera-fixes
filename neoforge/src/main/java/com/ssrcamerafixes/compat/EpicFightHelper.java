@@ -13,8 +13,6 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
-// WoM spider-techniques wall-climb integration is not in this NF 1.21.1 build:
-// Weapons of Miracle has no 1.21.1 release.
 @EventBusSubscriber(modid = SsrCameraFixesMod.MODID, value = Dist.CLIENT)
 public final class EpicFightHelper {
 
@@ -74,7 +72,6 @@ public final class EpicFightHelper {
             if (IronSpellsHelper.isIronsItem(stack.getItem())) return true;
         }
 
-        // IS 1.21.1 CastingItem doesn't set isUsingItem on RMB+staff; probe keyUse directly.
         if (Minecraft.getInstance().options.keyUse.isDown()) {
             if (IronSpellsHelper.isIronsItem(player.getMainHandItem().getItem())
                     || IronSpellsHelper.isIronsItem(player.getOffhandItem().getItem())) {

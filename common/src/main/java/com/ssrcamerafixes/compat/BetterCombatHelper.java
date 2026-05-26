@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 
 import java.lang.reflect.Method;
 
-// Reflective probe of Better Combat's MinecraftClient_BetterCombat.isWeaponSwingInProgress().
-// Returns false when BC is absent.
 public final class BetterCombatHelper {
 
     private static final Logger LOGGER = LogUtils.getLogger();

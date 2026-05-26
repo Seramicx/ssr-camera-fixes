@@ -12,9 +12,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-// Drives yRot/yBodyRot/yHeadRot to camera yaw while aiming a bow/crossbow/trident,
-// using an Iron's Spells item, casting, or blocking. SSR-only: vanilla aiming
-// already aligns yRot to the crosshair.
 @Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class AimingFaceCameraHandler {
 
