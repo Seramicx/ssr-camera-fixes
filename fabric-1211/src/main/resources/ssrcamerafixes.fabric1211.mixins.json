@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.ssrcamerafixes.fabric1211.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "MixinSprintRotateInput"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
