@@ -14,34 +14,32 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class LockOnCameraSyncHandler {
 
-    private static float cachedYaw = Float.NaN;
-    private static float cachedPitch = Float.NaN;
+    private static boolean wasLockedOn = false;
 
     private LockOnCameraSyncHandler() {}
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onComputeCameraAngles(ViewportEvent.ComputeCameraAngles event) {
-        if (!EpicFightHelper.isLockOnTargeting()) {
-            cachedYaw = Float.NaN;
-            cachedPitch = Float.NaN;
+        boolean lockedOn = EpicFightHelper.isLockOnTargeting();
+
+        if (!lockedOn) {
+            if (wasLockedOn && ShoulderSurfingHelper.isShoulderSurfingActive()) {
+                IShoulderSurfingCamera cam = ShoulderSurfing.getInstance().getCamera();
+                if (cam != null) {
+                    cam.setYRot((float) event.getYaw());
+                    cam.setXRot((float) event.getPitch());
+                }
+            }
+            wasLockedOn = false;
             return;
         }
-        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
 
-        cachedYaw = (float) event.getYaw();
-        cachedPitch = (float) event.getPitch();
+        wasLockedOn = true;
+        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
 
         IShoulderSurfingCamera cam = ShoulderSurfing.getInstance().getCamera();
         if (cam == null) return;
-        cam.setYRot(cachedYaw);
-        cam.setXRot(cachedPitch);
-    }
-
-    public static float getCachedYaw() {
-        return cachedYaw;
-    }
-
-    public static float getCachedPitch() {
-        return cachedPitch;
+        cam.setYRot((float) event.getYaw());
+        cam.setXRot((float) event.getPitch());
     }
 }

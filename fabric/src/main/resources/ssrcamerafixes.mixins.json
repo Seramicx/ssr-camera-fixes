@@ -6,7 +6,8 @@
   "client": [
     "AccessorKeyMapping",
     "MixinSuppressSsrSwapShoulderKeybind",
-    "MixinDisableFollowPlayerRotations"
+    "MixinDisableFollowPlayerRotations",
+    "MixinCombatRollDirection"
   ],
   "injectors": {
     "defaultRequire": 1
