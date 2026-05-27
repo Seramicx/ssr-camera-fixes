@@ -1,0 +1,63 @@
+plugins {
+    id 'fabric-loom' version '1.7.+'
+    id 'java'
+}
+
+version = fabric1211_mod_version
+group = mod_group_id
+
+base {
+    archivesName = "${mod_id}-fabric-1.21.1"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+loom {
+    runs {
+        client {
+            client()
+            ideConfigGenerated true
+            runDir "run"
+        }
+    }
+}
+
+repositories {
+    maven { url "https://cursemaven.com" }
+    maven { url "https://maven.parchmentmc.org" }
+    maven {
+        name = 'Fuzs Mod Resources'
+        url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven'
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${fabric1211_mc_version}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.21.1:${fabric1211_parchment_version}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${fabric1211_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric1211_api_version}"
+
+    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.6"
+    modCompileOnly "curse.maven:shoulder-surfing-reloaded-243190:8151289"
+    modCompileOnly "curse.maven:better-combat-by-daedelus-639842:7349478"
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: fabric1211_mc_version,
+            fabric_loader_version: fabric1211_loader_version,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license,
+            mod_version: fabric1211_mod_version,
+            mod_authors: mod_authors, mod_description: fabric1211_mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching('fabric.mod.json') {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }

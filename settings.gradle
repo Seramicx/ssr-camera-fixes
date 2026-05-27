@@ -1,4 +1,8 @@
 pluginManagement {
+    buildscript {
+        repositories { mavenCentral() }
+        dependencies { classpath 'com.google.code.gson:gson:2.10.1' }
+    }
     repositories {
         gradlePluginPortal()
         maven {
@@ -29,4 +33,5 @@ rootProject.name = 'ssrcamerafixes'
 include 'forge'
 include 'fabric'
 include 'neoforge'
+include 'fabric-1211'
 
