@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinSyncLockOnCamera {
 
     @Shadow private float xRot;
+    @Shadow private float yRot;
 
     @Unique private static boolean wasLockedOn;
     @Unique private static float lastPitch;
@@ -24,6 +25,9 @@ public class MixinSyncLockOnCamera {
         boolean lockedOn = EpicFightHelper.isLockOnTargeting();
 
         if (lockedOn) {
+            // bypass ComputeCameraAngles circular dependency on NeoForge
+            this.xRot = EpicFightHelper.getLockOnXRot(partialTick);
+            this.yRot = EpicFightHelper.getLockOnYRot(partialTick);
             lastPitch = this.xRot;
             wasLockedOn = true;
             blendFrames = 0;

@@ -3,6 +3,7 @@ package com.ssrcamerafixes.compat;
 import com.ssrcamerafixes.SsrCameraFixesMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
@@ -30,6 +31,26 @@ public final class EpicFightHelper {
                    yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance().isLockingOnTarget();
         } catch (Throwable t) {
             return false;
+        }
+    }
+
+    public static float getLockOnXRot(float partialTick) {
+        if (!isLoaded) return 0;
+        try {
+            var api = yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance();
+            return Mth.rotLerp(partialTick, api.getCameraXRotO(), api.getCameraXRot());
+        } catch (Throwable t) {
+            return 0;
+        }
+    }
+
+    public static float getLockOnYRot(float partialTick) {
+        if (!isLoaded) return 0;
+        try {
+            var api = yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance();
+            return Mth.rotLerp(partialTick, api.getCameraYRotO(), api.getCameraYRot());
+        } catch (Throwable t) {
+            return 0;
         }
     }
 
