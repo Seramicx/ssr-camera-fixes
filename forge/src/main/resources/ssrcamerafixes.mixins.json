@@ -10,6 +10,7 @@
     "MixinForceSsrOffsetDuringLockOn",
     "MixinSuppressSsrSwapShoulderKeybind",
     "MixinDisableFollowPlayerRotations",
+    "MixinCombatRollDirection",
     "MixinSyncLockOnCamera"
   ],
   "injectors": {

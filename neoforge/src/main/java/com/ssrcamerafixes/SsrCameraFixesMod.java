@@ -24,7 +24,7 @@ public class SsrCameraFixesMod {
 
         modBus.addListener(this::onRegisterKeyMappings);
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.0 loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.2 loaded.");
     }
 
     private void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {

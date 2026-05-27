@@ -43,6 +43,6 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
             SprintRotateHandler.onClientTickEnd(client);
         });
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.0 (Fabric) loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.1 (Fabric) loaded.");
     }
 }
