@@ -6,6 +6,7 @@ import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
 import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingPlugin;
 import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingRegistrar;
 import com.ssrcamerafixes.SsrCameraFixesConfig;
+import com.ssrcamerafixes.compat.WizardsHelper;
 import com.ssrcamerafixes.fabric1211.handler.ShoulderCycleHandler;
 import com.ssrcamerafixes.fabric1211.handler.SprintRotateHandler;
 import net.minecraft.client.CameraType;
@@ -49,6 +50,9 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
             Minecraft mc = ctx.minecraft();
             LocalPlayer player = mc != null ? mc.player : null;
             if (player != null && (player.isUsingItem() || player.isBlocking())) {
+                return true;
+            }
+            if (WizardsHelper.isCasting()) {
                 return true;
             }
             if (player != null

@@ -27,7 +27,7 @@ public final class AimingFaceCameraHandler {
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (MC.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
-        if (!EpicFightHelper.isAiming(player) && !player.isBlocking()) return;
+        if (!player.isBlocking()) return;
 
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
         player.setYRot(camYaw);

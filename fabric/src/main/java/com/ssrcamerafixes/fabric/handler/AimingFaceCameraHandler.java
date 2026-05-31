@@ -1,7 +1,7 @@
-package com.ssrcamerafixes.fabric1211.handler;
+package com.ssrcamerafixes.fabric.handler;
 
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
-import com.ssrcamerafixes.compat.WizardsHelper;
+import com.ssrcamerafixes.fabric.compat.WizardsHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;

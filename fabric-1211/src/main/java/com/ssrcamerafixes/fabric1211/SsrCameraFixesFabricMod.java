@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
 import com.ssrcamerafixes.Keybinds;
 import com.ssrcamerafixes.SsrCameraFixesConfig;
+import com.ssrcamerafixes.compat.WizardsHelper;
 import com.ssrcamerafixes.fabric1211.handler.AimingFaceCameraHandler;
 import com.ssrcamerafixes.fabric1211.handler.AttackFaceCameraHandler;
 import com.ssrcamerafixes.fabric1211.handler.ShoulderCycleHandler;
@@ -45,8 +46,9 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
             ShoulderCycleHandler.onClientTickEnd(client);
             AttackFaceCameraHandler.onClientTickEnd(client);
             SprintRotateHandler.onClientTickEnd(client);
+            WizardsHelper.tickLatch();
         });
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.0 (Fabric 1.21.1) loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.1 (Fabric 1.21.1) loaded.");
     }
 }

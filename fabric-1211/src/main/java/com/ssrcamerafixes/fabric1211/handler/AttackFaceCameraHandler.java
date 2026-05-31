@@ -37,31 +37,19 @@ public final class AttackFaceCameraHandler {
     }
 
     private static void snapToCamera(LocalPlayer player, boolean isPostTick) {
-        if (BetterCombatHelper.isAttackInProgress()) {
-            float camYaw = ShoulderSurfingHelper.getCameraYaw();
-            player.setYRot(camYaw);
-            if (isPostTick) {
-                float prev = hadAttackLastTick && !Float.isNaN(prevTickCamYaw) ? prevTickCamYaw : camYaw;
-                player.yBodyRotO = prev;
-                player.yHeadRotO = prev;
-                player.yBodyRot = camYaw;
-                player.yHeadRot = camYaw;
-                prevTickCamYaw = camYaw;
-                hadAttackLastTick = true;
-            } else {
-                player.yBodyRot = camYaw;
-                player.yHeadRot = camYaw;
-            }
-            return;
-        }
-        float yRot = player.getYRot();
-        player.yBodyRot = yRot;
-        player.yBodyRotO = yRot;
-        player.yHeadRot = yRot;
-        player.yHeadRotO = yRot;
+        float camYaw = ShoulderSurfingHelper.getCameraYaw();
+        player.setYRot(camYaw);
         if (isPostTick) {
-            hadAttackLastTick = false;
-            prevTickCamYaw = Float.NaN;
+            float prev = hadAttackLastTick && !Float.isNaN(prevTickCamYaw) ? prevTickCamYaw : camYaw;
+            player.yBodyRotO = prev;
+            player.yHeadRotO = prev;
+            player.yBodyRot = camYaw;
+            player.yHeadRot = camYaw;
+            prevTickCamYaw = camYaw;
+            hadAttackLastTick = true;
+        } else {
+            player.yBodyRot = camYaw;
+            player.yHeadRot = camYaw;
         }
     }
 }

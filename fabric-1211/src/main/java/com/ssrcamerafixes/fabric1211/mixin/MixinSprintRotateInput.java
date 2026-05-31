@@ -1,5 +1,6 @@
 package com.ssrcamerafixes.fabric1211.mixin;
 
+import com.ssrcamerafixes.fabric1211.handler.AimingFaceCameraHandler;
 import com.ssrcamerafixes.fabric1211.handler.SprintRotateHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
@@ -25,5 +26,6 @@ public abstract class MixinSprintRotateInput {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != self) return;
         SprintRotateHandler.applyAfterInputTick(mc, self.input);
+        AimingFaceCameraHandler.applyAfterInputTick(mc);
     }
 }

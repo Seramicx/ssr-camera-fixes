@@ -1,6 +1,7 @@
 package com.ssrcamerafixes.fabric1211.handler;
 
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
+import com.ssrcamerafixes.compat.WizardsHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
@@ -25,6 +26,7 @@ public final class SprintRotateHandler {
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (!player.isSprinting()) return;
         if (player.isUsingItem() || player.isBlocking()) return;
+        if (WizardsHelper.isCasting()) return;
 
         float rawForward = 0F;
         if (mc.options.keyUp.isDown()) rawForward += 1F;
