@@ -3,6 +3,7 @@ package com.ssrcamerafixes.handler;
 import com.ssrcamerafixes.SsrCameraFixesMod;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
+import com.ssrcamerafixes.compat.TaczHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -27,7 +28,7 @@ public final class AimingFaceCameraHandler {
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (MC.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
-        if (!EpicFightHelper.isAiming(player) && !player.isBlocking()) return;
+        if (!player.isBlocking() && !TaczHelper.isAimingOrFiring()) return;
 
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
         player.setYRot(camYaw);

@@ -26,7 +26,7 @@ public class SsrCameraFixesMod {
 
         MinecraftForge.EVENT_BUS.register(this);
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.2.4 loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.2.5 loaded.");
     }
 
     private void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {

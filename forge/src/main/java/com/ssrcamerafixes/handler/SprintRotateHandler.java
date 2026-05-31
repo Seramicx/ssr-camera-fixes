@@ -3,6 +3,7 @@ package com.ssrcamerafixes.handler;
 import com.ssrcamerafixes.SsrCameraFixesMod;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
+import com.ssrcamerafixes.compat.TaczHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
@@ -40,6 +41,7 @@ public final class SprintRotateHandler {
         if (!player.isSprinting()) return;
 
         if (EpicFightHelper.isAiming(player) || player.isUsingItem() || player.isBlocking()) return;
+        if (TaczHelper.isAimingOrFiring()) return;
 
         if (EpicFightHelper.animationOwnsLivingMotion(player)) return;
 
