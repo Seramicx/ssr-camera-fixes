@@ -63,10 +63,12 @@ public final class TaczHelper {
     public static boolean isAimingOrFiring() {
         if (!isLoaded()) return false;
         resolve();
-        if (gunOperatorFrom == null) return false;
-        LocalPlayer player = Minecraft.getInstance().player;
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
         if (player == null) return false;
         if (!isHoldingGun(player)) return false;
+        if (mc.options.keyAttack.isDown()) return true;
+        if (gunOperatorFrom == null) return false;
         try {
             Object op = gunOperatorFrom.invoke(null, player);
             if (op == null) return false;

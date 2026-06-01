@@ -6,9 +6,12 @@ import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.compat.TaczHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -17,6 +20,8 @@ import net.minecraftforge.fml.common.Mod;
 public final class AimingFaceCameraHandler {
 
     private static final Minecraft MC = Minecraft.getInstance();
+
+    private static boolean wasTaczAimingOrFiring = false;
 
     private AimingFaceCameraHandler() {}
 
@@ -28,11 +33,44 @@ public final class AimingFaceCameraHandler {
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (MC.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
-        if (!player.isBlocking() && !TaczHelper.isAimingOrFiring()) return;
+
+        boolean shield = player.isBlocking();
+        boolean tacz = TaczHelper.isAimingOrFiring();
+        if (!shield && !tacz) return;
 
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
-        player.setYRot(camYaw);
+        if (shield) {
+            player.setYRot(camYaw);
+        }
         player.yBodyRot = camYaw;
         player.yHeadRot = camYaw;
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onClientTickStart(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.START) return;
+        LocalPlayer player = MC.player;
+        if (player == null) {
+            wasTaczAimingOrFiring = false;
+            return;
+        }
+        if (MC.options.getCameraType() == CameraType.FIRST_PERSON) {
+            wasTaczAimingOrFiring = false;
+            return;
+        }
+        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) {
+            wasTaczAimingOrFiring = false;
+            return;
+        }
+
+        boolean tacz = TaczHelper.isAimingOrFiring();
+        if (tacz && !wasTaczAimingOrFiring) {
+            ShoulderSurfingHelper.lookAtCrosshairTarget();
+            ClientPacketListener conn = MC.getConnection();
+            if (conn != null) {
+                conn.send(new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.onGround()));
+            }
+        }
+        wasTaczAimingOrFiring = tacz;
     }
 }
