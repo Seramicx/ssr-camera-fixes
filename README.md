@@ -2,118 +2,81 @@
 
 ![Showcase](assets/showcase.gif)
 
-Camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforge.com/minecraft/mc-mods/shoulder-surfing-reloaded). Available for Forge 1.20.1, Fabric 1.20.1, and NeoForge 1.21.1. Standalone. Integrations with Epic Fight, Better Combat, Better Lockon, and Iron's Spells are auto-detected when those mods are present.
+Camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforge.com/minecraft/mc-mods/shoulder-surfing-reloaded). Works on its own. Picks up Epic Fight, Better Combat, Better Lockon, Iron's Spells, Wizards, and TaCZ when those mods are installed.
 
 ## Loaders
 
 | Loader | Minecraft | Mod version | Integrations |
 |---|---|---|---|
-| Forge | 1.20.1 | 1.2.2 | Epic Fight, Better Combat, Better Lockon, Iron's Spells |
-| NeoForge | 1.21.1 | 1.0.0 | Epic Fight, Better Combat, Better Lockon, Iron's Spells |
-| Fabric | 1.20.1 | 1.0.0 | Better Combat |
+| Forge | 1.20.1 | 1.2.6 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, Wizards, TaCZ |
+| NeoForge | 1.21.1 | 1.0.3 | Epic Fight, Better Combat, Better Lockon, Iron's Spells |
+| Fabric | 1.20.1 | 1.0.2 | Better Combat, Wizards |
+| Fabric | 1.21.1 | 1.0.1 | Better Combat, Wizards |
 
 ## Forge 1.20.1
 
-### Features
+Overhead preset in SSR's cycle, similar to Leawind's Third Person. One keybind: right shoulder, left shoulder, overhead. SSR's presets are per-axis and can't do a centered high overhead on their own, so this adds one.
 
-- Configurable overhead preset added to the SSR preset cycle to mimic Leawind's Third Person. Single keybind cycles right shoulder, left shoulder, overhead. SSR's own preset system is per-axis and can't represent a coupled "centered + high" overhead, so this layers one on top via SSR's plugin API.
-- Auto face camera on attack. While you're swinging, the body and head match `player.yRot` so the body fully turns with the swing instead of getting stuck partway, the swing animation reads as forward, and the hitbox lands where the crosshair points. Works for any weapon, vanilla, modded, or Better Combat, for the full swing duration with no hardcoded timing.
-- Smoothly transitions between shoulder presets when you cycle them while locked on, instead of snapping. (Lock-on integration: Epic Fight + Better Lockon.)
-- Keeps the SSR shoulder offset stable during lock-on, so the EF + BLO + SSR stack doesn't zero the lateral shoulder shift mid-lock and recenter the camera on the player.
-- Hides the vanilla crosshair while you're locked on with Epic Fight, so you only see SSR's adaptive crosshair instead of two crosshairs at once.
-- No camera-recenter wobble after releasing lock-on. The camera stays exactly where the shoulder offset put it.
-- Sprinting backwards while locked on no longer makes the camera chase your movement direction. The camera stays on the enemy as it should.
-- Body actually follows the crosshair while casting Iron's Spells, aiming a bow, eating, or blocking in SSR decoupled mode, so projectiles and actions land where you're aiming instead of where your body happens to be facing.
-- Wall-climbing (WOM spider techniques): your character no longer twists with the camera while running up a wall, and can no longer clip into the wall when you look around.
-- Idle camera follow option: the camera no longer auto-rotates to face your direction when you haven't moved the mouse for a few seconds. Toggle in the config if you want SSR's stock behavior back.
-- Shoulder cycle / SSR keybind dedup. If you've bound shoulder cycle to the same key SSR uses for its own swap-shoulder (both default to O), only one swap fires per press.
+On attack, your body and head turn with the camera so swings look forward and hits line up with the crosshair. Vanilla, modded, and Better Combat weapons.
+
+- Smooth shoulder preset changes during lock-on
+- Shoulder offset doesn't reset mid lock-on (EF + BLO + SSR stack)
+- Lock-on camera follows Epic Fight's locked target
+- Hides the vanilla crosshair during Epic Fight lock-on (SSR adaptive crosshair only)
+- No camera wobble after you drop lock-on
+- No pitch jump on lock-off
+- No SSR camera flicker on lock-off while mounted
+- Sprinting backward while locked on doesn't spin the camera behind you
+- Body follows the crosshair while casting Iron's Spells or Wizards spells, aiming a bow, eating, or blocking in SSR decoupled mode
+- TaCZ: shots hit the crosshair when you ADS, hip-fire, or full-auto
+- Wall climb (WoM spider techniques): body doesn't twist with the camera or clip into the wall
+- Toggle to stop SSR's idle camera follow when you're not moving the mouse
+- Shoulder cycle won't double-fire if it shares a key with SSR's swap-shoulder bind
 
 ### Requires
 
-- Minecraft 1.20.1
-- Forge 47+
-- Shoulder Surfing Reloaded 4.22.0+
-
-Optional, auto-detected when present:
-
-- Epic Fight 20.14.1+ (lock-on integrations: crosshair hide, offset preservation, smooth preset transitions, sprint-backwards lock, attack-on-target body align).
-- Better Combat (auto face camera on attack covers BC's upswing + downswing for any weapon).
-- Better Lockon (lock-on integration with EF).
-- Iron's Spells 'n Spellbooks (continuous facing during casts).
-- WOM spider techniques (wall-climb body lock).
+- Minecraft 1.20.1, Forge 47+, Shoulder Surfing Reloaded 4.22.0+
+- Optional: Epic Fight 20.14.1+, Better Combat, Better Lockon, Iron's Spells, Wizards, TaCZ, Weapons of Miracle
 
 ### Install
 
-1. Install Forge 47+ for Minecraft 1.20.1.
-2. Install Shoulder Surfing Reloaded.
-3. Download the Forge jar from the [latest release](https://github.com/Seramicx/ssr-camera-fixes/releases/latest).
-4. Drop it into your `.minecraft/mods/` folder.
+1. Forge 47+ on 1.20.1, plus Shoulder Surfing Reloaded.
+2. Jar from [releases](https://github.com/Seramicx/ssr-camera-fixes/releases/latest) into `mods/`.
 
 ## NeoForge 1.21.1
 
-### Features
-
-Same set as the Forge build, on Minecraft 1.21.1 / NeoForge 21.
-
-### Requires
-
-- Minecraft 1.21.1
-- NeoForge 21.1+
-- Shoulder Surfing Reloaded 4.22.10+
-
-Optional, auto-detected when present:
-
-- Epic Fight 21.17.2+ (Antikythera-Studios fork)
-- Better Combat
-- Better Lockon
-- Iron's Spells 'n Spellbooks
+Same as Forge on 1.21.1 / NeoForge 21, without Wizards or TaCZ yet. NeoForge 21.1+, SSR 4.22.10+. Optional: Antikythera-Studios Epic Fight 21.17.2+, Better Combat, Better Lockon, Iron's Spells.
 
 ### Install
 
-1. Install NeoForge 21.1+ for Minecraft 1.21.1.
-2. Install Shoulder Surfing Reloaded.
-3. Download the NeoForge jar from the [latest release](https://github.com/Seramicx/ssr-camera-fixes/releases).
-4. Drop it into your `.minecraft/mods/` folder.
+1. NeoForge 21.1+ on 1.21.1, plus Shoulder Surfing Reloaded.
+2. Matching jar from [releases](https://github.com/Seramicx/ssr-camera-fixes/releases) into `mods/`.
 
-## Fabric 1.20.1
+## Fabric 1.20.1 and 1.21.1
 
-### Features
-
-- Configurable overhead preset added to the SSR preset cycle. Single keybind cycles right shoulder, left shoulder, overhead.
-- Auto face camera on attack covering Better Combat's full swing window.
-- Sprint-backwards body lock so the camera stops chasing your movement direction while sprinting in third person.
-
-### Requires
-
-- Minecraft 1.20.1
-- Fabric Loader 0.14.21+
-- Fabric API
-- Shoulder Surfing Reloaded (Fabric)
-- Forge Config API Port (Fabric)
-
-Optional, auto-detected when present:
-
-- Better Combat
+Overhead cycle, face-camera on Better Combat attacks, sprint-backward body lock, Wizards cast body-follow. Fabric Loader 0.15+ (1.20.1) or 0.16+ (1.21.1), Fabric API, SSR (Fabric), Forge Config API Port (Fabric). Optional: Better Combat, Wizards.
 
 ### Install
 
-1. Install Fabric Loader for Minecraft 1.20.1.
-2. Install Fabric API, Forge Config API Port, and Shoulder Surfing Reloaded.
-3. Download the Fabric jar from the [latest release](https://github.com/Seramicx/ssr-camera-fixes/releases).
-4. Drop it into your `.minecraft/mods/` folder.
+1. Fabric Loader, Fabric API, Forge Config API Port, SSR (Fabric).
+2. Matching Fabric jar from [releases](https://github.com/Seramicx/ssr-camera-fixes/releases) into `mods/`.
+
+## Bows and thrown items
+
+Crosshair aim for bows, crossbows, tridents, and use-items is in [Epic Fight x Better Lock On: Movement Fixes](https://github.com/Seramicx/epic-fight-better-lockon-movement-camera-fix). Install both mods if you want camera fixes and that aim behavior.
 
 ## Config
 
 `config/ssrcamerafixes-client.toml`:
 
-- `cameraOverheadOffsetY` - vertical Y offset for the overhead preset (default `1.2`). The only value SSR's preset system can't represent on its own. X is forced to 0 in overhead, Z is inherited from SSR's `offset_z` setting.
-- `disableFollowPlayerRotations` - when true, SSR's idle camera follow is suppressed so the camera no longer auto-rotates toward your facing after a few seconds.
+- `cameraOverheadOffsetY` - overhead height (default `1.2`). X locked to 0 in overhead; Z comes from SSR's `offset_z`.
+- `disableFollowPlayerRotations` - turns off SSR idle camera follow.
 
-Right / left X offsets, vertical Y, and back distance Z come from SSR's own `config/shouldersurfing-client.toml`.
+Other offsets live in `config/shouldersurfing-client.toml`.
 
 ## Keybinds
 
-- Shoulder Cycle - default `O`. Cycles right shoulder -> left shoulder -> overhead -> right.
+- Shoulder Cycle - default `O`. Right shoulder -> left shoulder -> overhead -> right.
 
 ## License
 
