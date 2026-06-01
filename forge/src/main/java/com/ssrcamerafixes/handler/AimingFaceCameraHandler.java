@@ -2,6 +2,7 @@ package com.ssrcamerafixes.handler;
 
 import com.ssrcamerafixes.SsrCameraFixesMod;
 import com.ssrcamerafixes.compat.EpicFightHelper;
+import com.ssrcamerafixes.compat.IronSpellsHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.compat.TaczHelper;
 import net.minecraft.client.CameraType;
@@ -22,6 +23,7 @@ public final class AimingFaceCameraHandler {
     private static final Minecraft MC = Minecraft.getInstance();
 
     private static boolean wasTaczAimingOrFiring = false;
+    private static boolean wasSpellCastDown = false;
 
     private AimingFaceCameraHandler() {}
 
@@ -36,14 +38,38 @@ public final class AimingFaceCameraHandler {
 
         boolean shield = player.isBlocking();
         boolean tacz = TaczHelper.isAimingOrFiring();
-        if (!shield && !tacz) return;
+        boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown();
+        if (!shield && !tacz && !spell) return;
 
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
         if (shield) {
             player.setYRot(camYaw);
         }
-        player.yBodyRot = camYaw;
-        player.yHeadRot = camYaw;
+        float bodyYaw = spell ? player.getYRot() : camYaw;
+        player.yBodyRot = bodyYaw;
+        player.yHeadRot = bodyYaw;
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onSpellCastTickStart(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.START) return;
+        LocalPlayer player = MC.player;
+        if (player == null) { wasSpellCastDown = false; return; }
+        if (MC.options.getCameraType() == CameraType.FIRST_PERSON) { wasSpellCastDown = false; return; }
+        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) { wasSpellCastDown = false; return; }
+        if (EpicFightHelper.isLockOnTargeting()) { wasSpellCastDown = false; return; }
+
+        boolean nowDown = IronSpellsHelper.anyCastKeymapDown();
+        boolean pressEdge = nowDown && !wasSpellCastDown;
+        wasSpellCastDown = nowDown;
+        boolean ongoing = IronSpellsHelper.isCasting();
+        if (!pressEdge && !ongoing) return;
+
+        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        ClientPacketListener conn = MC.getConnection();
+        if (conn != null) {
+            conn.send(new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.onGround()));
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

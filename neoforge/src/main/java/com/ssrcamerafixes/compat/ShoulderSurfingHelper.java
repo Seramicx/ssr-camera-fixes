@@ -7,9 +7,14 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Method;
+
 public final class ShoulderSurfingHelper {
 
     private static final Logger LOGGER = LogUtils.getLogger();
+
+    private static volatile Method lookAtCrosshairMethod;
+    private static volatile boolean lookAtCrosshairResolved;
 
     private ShoulderSurfingHelper() {}
 
@@ -48,6 +53,27 @@ public final class ShoulderSurfingHelper {
         } catch (Throwable t) {
             LOGGER.warn("ShoulderSurfingHelper.swapShoulder failed: {}", t.toString());
         }
+    }
+
+    public static void lookAtCrosshairTarget() {
+        try {
+            IShoulderSurfing ssr = ShoulderSurfing.getInstance();
+            if (ssr == null) return;
+            if (!lookAtCrosshairResolved) {
+                synchronized (ShoulderSurfingHelper.class) {
+                    if (!lookAtCrosshairResolved) {
+                        try {
+                            lookAtCrosshairMethod = ssr.getClass().getMethod("lookAtCrosshairTarget");
+                        } catch (NoSuchMethodException e) {
+                            LOGGER.debug("SSR lookAtCrosshairTarget not found on {}", ssr.getClass().getName());
+                        }
+                        lookAtCrosshairResolved = true;
+                    }
+                }
+            }
+            Method m = lookAtCrosshairMethod;
+            if (m != null) m.invoke(ssr);
+        } catch (Throwable ignored) {}
     }
 
     public static double getStoredShoulderX() {
