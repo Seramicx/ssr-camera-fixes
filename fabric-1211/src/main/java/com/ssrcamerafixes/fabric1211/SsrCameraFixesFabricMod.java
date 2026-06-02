@@ -9,6 +9,7 @@ import com.ssrcamerafixes.fabric1211.handler.AimingFaceCameraHandler;
 import com.ssrcamerafixes.fabric1211.handler.AttackFaceCameraHandler;
 import com.ssrcamerafixes.fabric1211.handler.ShoulderCycleHandler;
 import com.ssrcamerafixes.fabric1211.handler.SprintRotateHandler;
+import com.ssrcamerafixes.fabric1211.handler.WalkStopFaceCameraHandler;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -46,9 +47,10 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
             ShoulderCycleHandler.onClientTickEnd(client);
             AttackFaceCameraHandler.onClientTickEnd(client);
             SprintRotateHandler.onClientTickEnd(client);
+            WalkStopFaceCameraHandler.onClientTickEnd(client);
             WizardsHelper.tickLatch();
         });
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.1 (Fabric 1.21.1) loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.2 (Fabric 1.21.1) loaded.");
     }
 }

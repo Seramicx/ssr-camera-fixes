@@ -1,6 +1,5 @@
 package com.ssrcamerafixes;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -26,7 +25,7 @@ public class SsrCameraFixesMod {
 
         MinecraftForge.EVENT_BUS.register(this);
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.2.6 loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.2.8 loaded.");
     }
 
     private void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {

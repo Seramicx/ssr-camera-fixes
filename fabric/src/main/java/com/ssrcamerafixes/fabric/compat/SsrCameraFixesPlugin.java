@@ -6,8 +6,10 @@ import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
 import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingPlugin;
 import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingRegistrar;
 import com.ssrcamerafixes.SsrCameraFixesConfig;
+import com.ssrcamerafixes.SsrCameraFixesConfig.IdleBehavior;
 import com.ssrcamerafixes.fabric.handler.ShoulderCycleHandler;
 import com.ssrcamerafixes.fabric.handler.SprintRotateHandler;
+import com.ssrcamerafixes.fabric.handler.WalkStopFaceCameraHandler;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -46,6 +48,9 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
             if (SprintRotateHandler.isActive()) {
                 return true;
             }
+            if (WalkStopFaceCameraHandler.isActive()) {
+                return true;
+            }
             Minecraft mc = ctx.minecraft();
             LocalPlayer player = mc != null ? mc.player : null;
             if (player != null && (player.isUsingItem() || player.isBlocking())) {
@@ -56,10 +61,19 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
             }
             if (player != null
                     && player.isSprinting()
-                    && mc.options.getCameraType() == CameraType.THIRD_PERSON_BACK) {
+                    && mc.options.getCameraType() == CameraType.THIRD_PERSON_BACK
+                    && idleMode() != IdleBehavior.DECOUPLED) {
                 return true;
             }
             return false;
+        }
+
+        private static IdleBehavior idleMode() {
+            try {
+                return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
+            } catch (Throwable t) {
+                return IdleBehavior.DECOUPLED;
+            }
         }
     }
 }

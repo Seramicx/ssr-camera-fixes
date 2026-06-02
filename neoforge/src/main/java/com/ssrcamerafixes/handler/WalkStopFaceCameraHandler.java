@@ -18,14 +18,14 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = SsrCameraFixesMod.MODID, value = Dist.CLIENT)
-public final class SprintRotateHandler {
+public final class WalkStopFaceCameraHandler {
 
     private static final Minecraft MC = Minecraft.getInstance();
 
     private static boolean active = false;
     private static float savedYaw = 0F;
 
-    private SprintRotateHandler() {}
+    private WalkStopFaceCameraHandler() {}
 
     public static boolean isActive() { return active; }
 
@@ -37,13 +37,12 @@ public final class SprintRotateHandler {
         active = false;
 
         if (mode() == IdleBehavior.DECOUPLED) return;
-        if (EpicFightHelper.isLockOnTargeting()) return;
         if (MC.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
-        if (!player.isSprinting()) return;
-
+        if (player.isSprinting()) return;
+        if (SprintRotateHandler.isActive()) return;
+        if (EpicFightHelper.isLockOnTargeting()) return;
         if (EpicFightHelper.isAiming(player) || player.isUsingItem() || player.isBlocking()) return;
-
         if (EpicFightHelper.animationOwnsLivingMotion(player)) return;
 
         Input input = event.getInput();
@@ -75,14 +74,6 @@ public final class SprintRotateHandler {
         active = true;
     }
 
-    private static IdleBehavior mode() {
-        try {
-            return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
-        } catch (Throwable t) {
-            return IdleBehavior.DECOUPLED;
-        }
-    }
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof LocalPlayer player)) return;
@@ -94,6 +85,14 @@ public final class SprintRotateHandler {
             player.yHeadRot = player.yBodyRot;
             player.yHeadRotO = player.yBodyRotO;
             active = false;
+        }
+    }
+
+    private static IdleBehavior mode() {
+        try {
+            return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
+        } catch (Throwable t) {
+            return IdleBehavior.DECOUPLED;
         }
     }
 }

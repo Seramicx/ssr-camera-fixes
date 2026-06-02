@@ -1,5 +1,7 @@
 package com.ssrcamerafixes.handler;
 
+import com.ssrcamerafixes.SsrCameraFixesConfig;
+import com.ssrcamerafixes.SsrCameraFixesConfig.IdleBehavior;
 import com.ssrcamerafixes.SsrCameraFixesMod;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
@@ -35,6 +37,7 @@ public final class SprintRotateHandler {
 
         active = false;
 
+        if (mode() == IdleBehavior.DECOUPLED) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (MC.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
@@ -72,6 +75,14 @@ public final class SprintRotateHandler {
         input.leftImpulse = 0F;
 
         active = true;
+    }
+
+    private static IdleBehavior mode() {
+        try {
+            return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
+        } catch (Throwable t) {
+            return IdleBehavior.DECOUPLED;
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

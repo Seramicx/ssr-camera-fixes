@@ -10,12 +10,12 @@ import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 
-public final class SprintRotateHandler {
+public final class WalkStopFaceCameraHandler {
 
     private static volatile boolean active = false;
     private static volatile float savedYaw = 0F;
 
-    private SprintRotateHandler() {}
+    private WalkStopFaceCameraHandler() {}
 
     public static boolean isActive() { return active; }
 
@@ -27,7 +27,8 @@ public final class SprintRotateHandler {
         if (mode() == IdleBehavior.DECOUPLED) return;
         if (mc.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
-        if (!player.isSprinting()) return;
+        if (player.isSprinting()) return;
+        if (SprintRotateHandler.isActive()) return;
         if (player.isUsingItem() || player.isBlocking()) return;
         if (WizardsHelper.isCasting()) return;
 
@@ -58,14 +59,6 @@ public final class SprintRotateHandler {
         active = true;
     }
 
-    private static IdleBehavior mode() {
-        try {
-            return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
-        } catch (Throwable t) {
-            return IdleBehavior.DECOUPLED;
-        }
-    }
-
     public static void onClientTickEnd(Minecraft mc) {
         if (!active) return;
         LocalPlayer player = mc.player;
@@ -78,5 +71,13 @@ public final class SprintRotateHandler {
         player.yHeadRot = player.yBodyRot;
         player.yHeadRotO = player.yBodyRotO;
         active = false;
+    }
+
+    private static IdleBehavior mode() {
+        try {
+            return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
+        } catch (Throwable t) {
+            return IdleBehavior.DECOUPLED;
+        }
     }
 }

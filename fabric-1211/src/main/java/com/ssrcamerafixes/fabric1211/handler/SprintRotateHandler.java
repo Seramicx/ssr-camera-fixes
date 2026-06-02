@@ -1,5 +1,7 @@
 package com.ssrcamerafixes.fabric1211.handler;
 
+import com.ssrcamerafixes.SsrCameraFixesConfig;
+import com.ssrcamerafixes.SsrCameraFixesConfig.IdleBehavior;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.compat.WizardsHelper;
 import net.minecraft.client.CameraType;
@@ -22,6 +24,7 @@ public final class SprintRotateHandler {
 
         LocalPlayer player = mc.player;
         if (player == null) return;
+        if (mode() == IdleBehavior.DECOUPLED) return;
         if (mc.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (!player.isSprinting()) return;
@@ -53,6 +56,14 @@ public final class SprintRotateHandler {
         input.leftImpulse = 0F;
 
         active = true;
+    }
+
+    private static IdleBehavior mode() {
+        try {
+            return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
+        } catch (Throwable t) {
+            return IdleBehavior.DECOUPLED;
+        }
     }
 
     public static void onClientTickEnd(Minecraft mc) {
