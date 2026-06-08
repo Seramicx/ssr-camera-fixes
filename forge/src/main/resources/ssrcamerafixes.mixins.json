@@ -12,6 +12,7 @@
     "MixinDisableFollowPlayerRotations",
     "MixinSuppressIdleYawFollow",
     "MixinCombatRollDirection",
+    "MixinSsrDodgeDirection",
     "MixinSyncLockOnCamera"
   ],
   "injectors": {

@@ -23,7 +23,7 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (mixinClassName.contains("MixinDisableEpicFightSsrLockOnTick") || mixinClassName.contains("MixinForceSsrOffsetDuringLockOn") || mixinClassName.contains("MixinSyncLockOnCamera")) {
+        if (mixinClassName.contains("MixinDisableEpicFightSsrLockOnTick") || mixinClassName.contains("MixinForceSsrOffsetDuringLockOn") || mixinClassName.contains("MixinSyncLockOnCamera") || mixinClassName.contains("MixinSsrDodgeDirection") || mixinClassName.contains("MixinSsrAttackDirection") || mixinClassName.contains("MixinSuppressMovingInputYawFollow")) {
             return hasEpicFight;
         }
         return true;
