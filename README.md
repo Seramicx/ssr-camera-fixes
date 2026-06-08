@@ -9,6 +9,7 @@ Camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforg
 | Loader | Minecraft | Mod version | Integrations |
 |---|---|---|---|
 | Forge | 1.20.1 | 1.2.6 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, Wizards, TaCZ |
+| Forge | 1.19.2 | 1.0.0 | Epic Fight, Better Combat, Iron's Spells, TaCZ |
 | NeoForge | 1.21.1 | 1.0.3 | Epic Fight, Better Combat, Better Lockon, Iron's Spells |
 | Fabric | 1.20.1 | 1.0.2 | Better Combat, Wizards |
 | Fabric | 1.21.1 | 1.0.1 | Better Combat, Wizards |
@@ -41,6 +42,20 @@ On attack, your body and head turn with the camera so swings look forward and hi
 ### Install
 
 1. Forge 47+ on 1.20.1, plus Shoulder Surfing Reloaded.
+2. Jar from [releases](https://github.com/Seramicx/ssr-camera-fixes/releases/latest) into `mods/`.
+
+## Forge 1.19.2
+
+Same set of fixes as Forge 1.20.1, minus Better Lockon and Wizards (not available on 1.19.2). EpicFight lock-on is detected through `LocalPlayerPatch.isTargetLockedOn()` since the 1.20.1 `EpicFightCameraAPI` doesn't exist on 1.19. Iron's Spells and TaCZ behave the same as on 1.20.1.
+
+### Requires
+
+- Minecraft 1.19.2, Forge 43+, Shoulder Surfing Reloaded 1.19.2-4.17.0+
+- Optional: Epic Fight 19+, Better Combat, Iron's Spells, TaCZ, Weapons of Miracle
+
+### Install
+
+1. Forge 43+ on 1.19.2, plus Shoulder Surfing Reloaded.
 2. Jar from [releases](https://github.com/Seramicx/ssr-camera-fixes/releases/latest) into `mods/`.
 
 ## NeoForge 1.21.1

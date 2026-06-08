@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinCombatRollDirection {
 
     private static float ssrcamerafixes$savedYRot = Float.NaN;
+    private static float ssrcamerafixes$swappedYRot = Float.NaN;
 
     @Inject(
         method = "tick",
@@ -29,6 +30,7 @@ public abstract class MixinCombatRollDirection {
         if (player == null) return;
 
         ssrcamerafixes$savedYRot = player.getYRot();
+        ssrcamerafixes$swappedYRot = player.yBodyRot;
         player.setYRot(player.yBodyRot);
     }
 
@@ -42,12 +44,16 @@ public abstract class MixinCombatRollDirection {
     )
     private void ssrcamerafixes$afterHandleKeybinds(CallbackInfo ci) {
         float saved = ssrcamerafixes$savedYRot;
-        if (Float.isNaN(saved)) return;
+        float swapped = ssrcamerafixes$swappedYRot;
         ssrcamerafixes$savedYRot = Float.NaN;
+        ssrcamerafixes$swappedYRot = Float.NaN;
+        if (Float.isNaN(saved)) return;
 
         LocalPlayer player = ((Minecraft) (Object) this).player;
-        if (player != null) {
-            player.setYRot(saved);
-        }
+        if (player == null) return;
+
+        if (player.getYRot() != swapped) return;
+
+        player.setYRot(saved);
     }
 }
