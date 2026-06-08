@@ -46,7 +46,7 @@ public final class AttackFaceCameraHandler {
     }
 
     private static boolean shouldSnap(LocalPlayer player) {
-        if (MC.options.getCameraType() == CameraType.FIRST_PERSON) return false;
+        if (MC.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
         return player.swinging || BetterCombatHelper.isAttackInProgress();
     }
 

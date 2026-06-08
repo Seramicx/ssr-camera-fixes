@@ -32,7 +32,7 @@ public final class AttackFaceCameraHandler {
     }
 
     private static boolean shouldSnap(Minecraft mc) {
-        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return false;
+        if (mc.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
         LocalPlayer player = mc.player;
         if (player == null) return false;
         return player.swinging || BetterCombatHelper.isAttackInProgress();
