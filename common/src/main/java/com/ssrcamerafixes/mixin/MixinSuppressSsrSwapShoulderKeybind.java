@@ -5,10 +5,12 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.ssrcamerafixes.Keybinds;
 import net.minecraft.client.KeyMapping;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@Pseudo
 @Mixin(value = InputHandler.class, remap = false)
 public abstract class MixinSuppressSsrSwapShoulderKeybind {
 

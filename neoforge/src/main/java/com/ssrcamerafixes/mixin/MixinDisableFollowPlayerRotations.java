@@ -4,10 +4,12 @@ import com.github.exopandora.shouldersurfing.client.ShoulderSurfingCamera;
 import com.ssrcamerafixes.SsrCameraFixesConfig;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@Pseudo
 @Mixin(value = ShoulderSurfingCamera.class, remap = false)
 public abstract class MixinDisableFollowPlayerRotations {
 

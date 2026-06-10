@@ -3,9 +3,11 @@ package com.ssrcamerafixes.mixin;
 import com.github.exopandora.shouldersurfing.client.InputHandler;
 import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+@Pseudo
 @Mixin(value = InputHandler.class, remap = false)
 public abstract class MixinSuppressMovingInputYawFollow {
 

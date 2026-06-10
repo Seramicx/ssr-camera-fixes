@@ -5,13 +5,12 @@ import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class ShoulderCycleHandler {
+
+    public static final ShoulderCycleHandler INSTANCE = new ShoulderCycleHandler();
 
     public enum Mode { RIGHT, LEFT, OVERHEAD }
 
@@ -25,7 +24,7 @@ public final class ShoulderCycleHandler {
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
+    public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         if (SsrCameraFixesMod.SHOULDER_CYCLE == null) return;
 

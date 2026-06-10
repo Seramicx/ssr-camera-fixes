@@ -2,7 +2,6 @@ package com.ssrcamerafixes.handler;
 
 import com.ssrcamerafixes.SsrCameraFixesConfig;
 import com.ssrcamerafixes.SsrCameraFixesConfig.IdleBehavior;
-import com.ssrcamerafixes.SsrCameraFixesMod;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.compat.TaczHelper;
@@ -11,17 +10,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class WalkStopFaceCameraHandler {
 
-    private static final Minecraft MC = Minecraft.getInstance();
+    public static final WalkStopFaceCameraHandler INSTANCE = new WalkStopFaceCameraHandler();
 
     private static boolean active = false;
     private static float savedYaw = 0F;
@@ -30,15 +26,17 @@ public final class WalkStopFaceCameraHandler {
 
     public static boolean isActive() { return active; }
 
+    // LOWEST so face-camera-on-stop override wins over movement input handlers
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onMovementInput(MovementInputUpdateEvent event) {
-        LocalPlayer player = MC.player;
+    public void onMovementInput(MovementInputUpdateEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
         if (player == null) return;
 
         active = false;
 
         if (mode() == IdleBehavior.DECOUPLED) return;
-        if (MC.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return;
+        if (mc.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (player.isSprinting()) return;
         if (SprintRotateHandler.isActive()) return;
@@ -50,12 +48,12 @@ public final class WalkStopFaceCameraHandler {
         Input input = event.getInput();
 
         float rawForward = 0F;
-        if (MC.options.keyUp.isDown()) rawForward += 1F;
-        if (MC.options.keyDown.isDown()) rawForward -= 1F;
+        if (mc.options.keyUp.isDown()) rawForward += 1F;
+        if (mc.options.keyDown.isDown()) rawForward -= 1F;
 
         float rawStrafe = 0F;
-        if (MC.options.keyLeft.isDown()) rawStrafe += 1F;
-        if (MC.options.keyRight.isDown()) rawStrafe -= 1F;
+        if (mc.options.keyLeft.isDown()) rawStrafe += 1F;
+        if (mc.options.keyRight.isDown()) rawStrafe -= 1F;
 
         float rawMagnitude = Mth.sqrt(rawForward * rawForward + rawStrafe * rawStrafe);
         if (rawMagnitude < 0.01F) return;
@@ -76,12 +74,13 @@ public final class WalkStopFaceCameraHandler {
         active = true;
     }
 
+    // LOWEST so face-camera-on-stop override wins over movement input handlers
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         if (!event.side.isClient()) return;
 
-        LocalPlayer player = MC.player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null || event.player != player) return;
 
         if (active) {

@@ -8,24 +8,26 @@ import net.minecraft.client.player.LocalPlayer;
 
 public final class AttackFaceCameraHandler {
 
-    private static float prevTickCamYaw = Float.NaN;
-    private static boolean hadAttackLastTick = false;
+    public static final AttackFaceCameraHandler INSTANCE = new AttackFaceCameraHandler();
+
+    private static float camYawO = Float.NaN;
+    private static boolean hadAttackO = false;
 
     private AttackFaceCameraHandler() {}
 
-    public static void onClientTickStart(Minecraft mc) {
+    public void onClientTickStart(Minecraft mc) {
         LocalPlayer player = mc.player;
         if (player == null) return;
         if (!shouldSnap(mc, player)) return;
         snapToCamera(player, false);
     }
 
-    public static void onClientTickEnd(Minecraft mc) {
+    public void onClientTickEnd(Minecraft mc) {
         LocalPlayer player = mc.player;
         if (player == null) return;
         if (!shouldSnap(mc, player)) {
-            hadAttackLastTick = false;
-            prevTickCamYaw = Float.NaN;
+            hadAttackO = false;
+            camYawO = Float.NaN;
             return;
         }
         snapToCamera(player, true);
@@ -40,13 +42,13 @@ public final class AttackFaceCameraHandler {
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
         player.setYRot(camYaw);
         if (isPostTick) {
-            float prev = hadAttackLastTick && !Float.isNaN(prevTickCamYaw) ? prevTickCamYaw : camYaw;
+            float prev = hadAttackO && !Float.isNaN(camYawO) ? camYawO : camYaw;
             player.yBodyRotO = prev;
             player.yHeadRotO = prev;
             player.yBodyRot = camYaw;
             player.yHeadRot = camYaw;
-            prevTickCamYaw = camYaw;
-            hadAttackLastTick = true;
+            camYawO = camYaw;
+            hadAttackO = true;
         } else {
             player.yBodyRot = camYaw;
             player.yHeadRot = camYaw;

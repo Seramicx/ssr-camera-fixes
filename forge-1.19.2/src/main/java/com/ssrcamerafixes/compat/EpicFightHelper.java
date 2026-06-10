@@ -1,23 +1,21 @@
 package com.ssrcamerafixes.compat;
 
-import com.ssrcamerafixes.SsrCameraFixesMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TridentItem;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.ModList;
 
-@Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class EpicFightHelper {
 
+    public static final EpicFightHelper INSTANCE = new EpicFightHelper();
+
     private static final long CAST_LATCH_MS = 500L;
-    private static long lastCastSignalMs = 0L;
+    private static long castSignalMsO = 0L;
 
     private EpicFightHelper() {}
 
@@ -73,17 +71,17 @@ public final class EpicFightHelper {
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
+    public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         if (!IronSpellsHelper.isLoaded()) return;
 
         if (IronSpellsHelper.anyCastKeymapDown() || IronSpellsHelper.isCasting()) {
-            lastCastSignalMs = System.currentTimeMillis();
+            castSignalMsO = System.currentTimeMillis();
         }
     }
 
     private static boolean castLatchActive() {
-        return (System.currentTimeMillis() - lastCastSignalMs) < CAST_LATCH_MS;
+        return (System.currentTimeMillis() - castSignalMsO) < CAST_LATCH_MS;
     }
 
     public static boolean isAiming(LocalPlayer player) {

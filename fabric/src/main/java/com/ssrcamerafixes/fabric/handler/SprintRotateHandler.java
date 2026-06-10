@@ -12,6 +12,8 @@ import net.minecraft.util.Mth;
 
 public final class SprintRotateHandler {
 
+    public static final SprintRotateHandler INSTANCE = new SprintRotateHandler();
+
     private static volatile boolean active = false;
     private static volatile float savedYaw = 0F;
 
@@ -66,7 +68,7 @@ public final class SprintRotateHandler {
         }
     }
 
-    public static void onClientTickEnd(Minecraft mc) {
+    public void onClientTickEnd(Minecraft mc) {
         if (!active) return;
         LocalPlayer player = mc.player;
         if (player == null) {

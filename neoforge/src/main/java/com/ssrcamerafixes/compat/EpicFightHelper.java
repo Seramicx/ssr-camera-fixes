@@ -1,6 +1,5 @@
 package com.ssrcamerafixes.compat;
 
-import com.ssrcamerafixes.SsrCameraFixesMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
@@ -8,17 +7,16 @@ import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TridentItem;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
-@EventBusSubscriber(modid = SsrCameraFixesMod.MODID, value = Dist.CLIENT)
 public final class EpicFightHelper {
 
+    public static final EpicFightHelper INSTANCE = new EpicFightHelper();
+
     private static final long CAST_LATCH_MS = 500L;
-    private static long lastCastSignalMs = 0L;
+    private static long castSignalMsO = 0L;
 
     private EpicFightHelper() {}
 
@@ -37,7 +35,7 @@ public final class EpicFightHelper {
     public static float getLockOnXRot(float partialTick) {
         if (!isLoaded) return 0;
         try {
-            var api = yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance();
+            yesman.epicfight.api.client.camera.EpicFightCameraAPI api = yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance();
             return Mth.rotLerp(partialTick, api.getCameraXRotO(), api.getCameraXRot());
         } catch (Throwable t) {
             return 0;
@@ -47,7 +45,7 @@ public final class EpicFightHelper {
     public static float getLockOnYRot(float partialTick) {
         if (!isLoaded) return 0;
         try {
-            var api = yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance();
+            yesman.epicfight.api.client.camera.EpicFightCameraAPI api = yesman.epicfight.api.client.camera.EpicFightCameraAPI.getInstance();
             return Mth.rotLerp(partialTick, api.getCameraYRotO(), api.getCameraYRot());
         } catch (Throwable t) {
             return 0;
@@ -68,16 +66,16 @@ public final class EpicFightHelper {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
+    public void onClientTick(ClientTickEvent.Post event) {
         if (!IronSpellsHelper.isLoaded()) return;
 
         if (IronSpellsHelper.anyCastKeymapDown() || IronSpellsHelper.isCasting()) {
-            lastCastSignalMs = System.currentTimeMillis();
+            castSignalMsO = System.currentTimeMillis();
         }
     }
 
     private static boolean castLatchActive() {
-        return (System.currentTimeMillis() - lastCastSignalMs) < CAST_LATCH_MS;
+        return (System.currentTimeMillis() - castSignalMsO) < CAST_LATCH_MS;
     }
 
     public static boolean isAiming(LocalPlayer player) {

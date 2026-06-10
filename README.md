@@ -2,7 +2,7 @@
 
 ![Showcase](assets/showcase.gif)
 
-Camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforge.com/minecraft/mc-mods/shoulder-surfing-reloaded). Works on its own. Picks up Epic Fight, Better Combat, Better Lockon, Iron's Spells, Wizards, and TaCZ when those mods are installed.
+Camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforge.com/minecraft/mc-mods/shoulder-surfing-reloaded). Works on its own. Detects Epic Fight, Better Combat, Better Lockon, Iron's Spells, Wizards, and TaCZ when those mods are installed.
 
 ## Loaders
 
@@ -20,13 +20,9 @@ Overhead preset in SSR's cycle, similar to Leawind's Third Person. One keybind: 
 
 On attack, your body and head turn with the camera so swings look forward and hits line up with the crosshair. Vanilla, modded, and Better Combat weapons.
 
-- Smooth shoulder preset changes during lock-on
-- Shoulder offset doesn't reset mid lock-on (EF + BLO + SSR stack)
+- Stabilizes shoulder offset transitions, pitch, and SSR camera during and after lock-on
 - Lock-on camera follows Epic Fight's locked target
 - Hides the vanilla crosshair during Epic Fight lock-on (SSR adaptive crosshair only)
-- No camera wobble after you drop lock-on
-- No pitch jump on lock-off
-- No SSR camera flicker on lock-off while mounted
 - Sprinting backward while locked on doesn't spin the camera behind you
 - Body follows the crosshair while casting Iron's Spells or Wizards spells, aiming a bow, eating, or blocking in SSR decoupled mode
 - TaCZ: shots hit the crosshair when you ADS, hip-fire, or full-auto

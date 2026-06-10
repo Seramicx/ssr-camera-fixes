@@ -12,11 +12,13 @@ import net.minecraft.network.chat.Component;
 
 public final class ShoulderCycleHandler {
 
+    public static final ShoulderCycleHandler INSTANCE = new ShoulderCycleHandler();
+
     public enum Mode { RIGHT, LEFT, OVERHEAD }
 
     private static volatile boolean isOverhead = false;
 
-    private static boolean prevSharedKeyDown = false;
+    private static boolean sharedKeyDownO = false;
 
     private ShoulderCycleHandler() {}
 
@@ -25,7 +27,7 @@ public final class ShoulderCycleHandler {
         return ShoulderSurfingHelper.getStoredShoulderX() >= 0.0 ? Mode.RIGHT : Mode.LEFT;
     }
 
-    public static void onClientTickEnd(Minecraft mc) {
+    public void onClientTickEnd(Minecraft mc) {
         if (Keybinds.SHOULDER_CYCLE == null) return;
         if (mc.player == null || mc.screen != null) return;
 
@@ -38,7 +40,7 @@ public final class ShoulderCycleHandler {
                 showToast(mc);
             }
         } else {
-            prevSharedKeyDown = false;
+            sharedKeyDownO = false;
             while (Keybinds.SHOULDER_CYCLE.consumeClick()) {
                 advance();
                 showToast(mc);
@@ -63,8 +65,8 @@ public final class ShoulderCycleHandler {
         } catch (Throwable t) {
             return false;
         }
-        boolean rising = down && !prevSharedKeyDown;
-        prevSharedKeyDown = down;
+        boolean rising = down && !sharedKeyDownO;
+        sharedKeyDownO = down;
         return rising;
     }
 

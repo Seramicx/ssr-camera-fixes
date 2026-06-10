@@ -12,6 +12,8 @@ import net.minecraft.util.Mth;
 
 public final class WalkStopFaceCameraHandler {
 
+    public static final WalkStopFaceCameraHandler INSTANCE = new WalkStopFaceCameraHandler();
+
     private static volatile boolean active = false;
     private static volatile float savedYaw = 0F;
 
@@ -59,7 +61,7 @@ public final class WalkStopFaceCameraHandler {
         active = true;
     }
 
-    public static void onClientTickEnd(Minecraft mc) {
+    public void onClientTickEnd(Minecraft mc) {
         if (!active) return;
         LocalPlayer player = mc.player;
         if (player == null) {

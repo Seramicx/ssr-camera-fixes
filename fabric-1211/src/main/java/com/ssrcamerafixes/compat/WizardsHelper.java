@@ -13,6 +13,8 @@ import java.util.List;
 
 public final class WizardsHelper {
 
+    public static final WizardsHelper INSTANCE = new WizardsHelper();
+
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final long CAST_LATCH_MS = 500L;
 
@@ -25,7 +27,7 @@ public final class WizardsHelper {
     private static Method slotGetKeyBindingMethod;
     private static boolean hotbarResolved;
 
-    private static long lastCastSignalMs;
+    private static long castSignalMsO;
 
     private WizardsHelper() {}
 
@@ -94,10 +96,10 @@ public final class WizardsHelper {
         }
     }
 
-    public static void tickLatch() {
+    public void tickLatch() {
         if (!isLoaded()) return;
         if (isCastingLive() || isCastKeyDown()) {
-            lastCastSignalMs = System.currentTimeMillis();
+            castSignalMsO = System.currentTimeMillis();
         }
     }
 
@@ -105,6 +107,6 @@ public final class WizardsHelper {
         if (!isLoaded()) return false;
         if (isCastingLive()) return true;
         if (isCastKeyDown()) return true;
-        return (System.currentTimeMillis() - lastCastSignalMs) < CAST_LATCH_MS;
+        return (System.currentTimeMillis() - castSignalMsO) < CAST_LATCH_MS;
     }
 }
