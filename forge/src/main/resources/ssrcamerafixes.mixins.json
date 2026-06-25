@@ -7,6 +7,7 @@
   "client": [
     "AccessorKeyMapping",
     "MixinDisableEpicFightSsrLockOnTick",
+    "MixinForceSsrOffsetDuringLockOn",
     "MixinEpicFightForwardRotation",
     "MixinEpicFightModelYRotSnap",
     "MixinPhantomAscentForwardRoll",
@@ -14,10 +15,13 @@
     "MixinSuppressIdleYawFollow",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",
+    "MixinSyncLockOnCamera",
     "MixinTaczGunHoldDecouple",
     "MixinRadialAggroCameraYaw",
     "MixinSyncPlayerToSsrOnVsShip",
+    "MixinSuppressSsrVsIncompatWarning",
     "MixinSsrLevelRendererForVs",
+    "MixinSkipDynamicOffsetOnVsShip",
     "CameraMoveInvoker",
     "MixinFocusKeepCrosshairForSsr",
     "MixinFocusPickOnlyWhenLockedOn"

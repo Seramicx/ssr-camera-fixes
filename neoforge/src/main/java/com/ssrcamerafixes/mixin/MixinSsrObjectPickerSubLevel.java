@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 // sub-level entity getter rejects as abnormally large (log spam, and a crash on older Sable). Clamp the reach
 // to a normal range while seated on a contraption so the AABB stays sane.
 @Pseudo
-@Mixin(targets = "com.github.exopandora.shouldersurfing.client.world.phys.ObjectPicker", remap = false)
+@Mixin(targets = "com.github.exopandora.shouldersurfing.client.ObjectPicker", remap = false)
 public abstract class MixinSsrObjectPickerSubLevel {
 
     @ModifyVariable(method = "pickEntities", at = @At("HEAD"), argsOnly = true, ordinal = 0, require = 0, remap = false)

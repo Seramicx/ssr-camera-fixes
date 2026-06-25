@@ -6,6 +6,7 @@
   "client": [
     "AccessorKeyMapping",
     "MixinDisableEpicFightSsrLockOnTick",
+    "MixinForceSsrOffsetDuringLockOn",
     "MixinEpicFightForwardRotation",
     "MixinEpicFightModelYRotSnap",
     "MixinPhantomAscentForwardRoll",

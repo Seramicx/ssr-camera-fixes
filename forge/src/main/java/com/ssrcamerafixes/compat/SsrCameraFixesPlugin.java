@@ -1,9 +1,10 @@
 package com.ssrcamerafixes.compat;
 
-import com.github.exopandora.shouldersurfing.api.client.event.ComputeTargetCameraOffsetEvent;
-import com.github.exopandora.shouldersurfing.api.client.event.ForceVanillaPlayerInputEvent;
-import com.github.exopandora.shouldersurfing.api.event.IEventBus;
+import com.github.exopandora.shouldersurfing.api.callback.IPlayerInputCallback;
+import com.github.exopandora.shouldersurfing.api.callback.ITargetCameraOffsetCallback;
+import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
 import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingPlugin;
+import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingRegistrar;
 import com.ssrcamerafixes.SsrCameraFixesConfig;
 import com.ssrcamerafixes.SsrCameraFixesConfig.IdleBehavior;
 import com.ssrcamerafixes.handler.ShoulderCycleHandler;
@@ -16,81 +17,72 @@ import net.minecraft.world.phys.Vec3;
 
 public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
 
-    private static Vec3 preDynamicOffset = Vec3.ZERO;
-
     @Override
-    public void register(IEventBus eventBus) {
-        eventBus.register(1999, (ComputeTargetCameraOffsetEvent event) -> preDynamicOffset = event.getResult());
-        eventBus.register(2001, (ComputeTargetCameraOffsetEvent event) -> {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null && ValkyrienSkiesHelper.isMountedOnShip(player)) {
-                event.setResult(preDynamicOffset);
+    public void register(IShoulderSurfingRegistrar registrar) {
+        registrar.registerTargetCameraOffsetCallback(new OverheadOffsetCallback());
+        registrar.registerPlayerInputCallback(new ForceVanillaInputCallback());
+    }
+
+    private static final class OverheadOffsetCallback implements ITargetCameraOffsetCallback {
+        @Override
+        public Vec3 post(IShoulderSurfing instance, Vec3 targetOffset, Vec3 defaultOffset) {
+            if (ShoulderCycleHandler.getMode() != ShoulderCycleHandler.Mode.OVERHEAD) {
+                return targetOffset;
             }
-        });
-        eventBus.register(5000, SsrCameraFixesPlugin::applyLockOnAndOverheadOffset);
-        eventBus.register(SsrCameraFixesPlugin::forceVanillaInput);
-    }
 
-    private static void applyLockOnAndOverheadOffset(ComputeTargetCameraOffsetEvent event) {
-        boolean overhead = ShoulderCycleHandler.getMode() == ShoulderCycleHandler.Mode.OVERHEAD;
-        Vec3 defaultOffset = event.getDefaultOffset();
-        if (EpicFightHelper.isLockOnTargeting()) {
-            if (overhead) {
-                event.setResult(new Vec3(0.0, overheadY(), defaultOffset.z));
-            } else {
-                event.setResult(defaultOffset);
+            if (Math.abs(targetOffset.x) < 1.0E-4 && Math.abs(targetOffset.y) < 1.0E-4) {
+                return targetOffset;
             }
-            return;
-        }
-        if (overhead) {
-            Vec3 result = event.getResult();
-            if (Math.abs(result.x) < 1.0E-4 && Math.abs(result.y) < 1.0E-4) {
-                return;
+
+            double overheadY;
+            try {
+                overheadY = SsrCameraFixesConfig.CAMERA_OVERHEAD_OFFSET_Y.get();
+            } catch (Exception e) {
+                overheadY = 1.2;
             }
-            event.setResult(new Vec3(0.0, overheadY(), result.z));
+            return new Vec3(0.0, overheadY, targetOffset.z);
         }
     }
 
-    private static void forceVanillaInput(ForceVanillaPlayerInputEvent event) {
-        if (event.getResult()) {
-            return;
+    private static final class ForceVanillaInputCallback implements IPlayerInputCallback {
+        @Override
+        public boolean isForcingVanillaMovementInput(IsForcingVanillaMovementInputContext ctx) {
+            if (com.ssrcamerafixes.compat.EpicFightHelper.isLockOnTargeting()) {
+                return true;
+            }
+            if (SprintRotateHandler.isActive()) {
+                return true;
+            }
+            if (WalkStopFaceCameraHandler.isActive()) {
+                return true;
+            }
+            Minecraft mc = ctx.minecraft();
+            LocalPlayer player = mc != null ? mc.player : null;
+            if (player != null
+                    && (com.ssrcamerafixes.compat.EpicFightHelper.isAiming(player)
+                            || player.isUsingItem()
+                            || player.isBlocking())) {
+                return true;
+            }
+            if (TaczHelper.isAimingOrFiring()) {
+                return true;
+            }
+            if (player != null
+                    && player.isSprinting()
+                    && !player.isInWater()
+                    && mc.options.getCameraType() == CameraType.THIRD_PERSON_BACK
+                    && idleMode() != IdleBehavior.DECOUPLED) {
+                return true;
+            }
+            return false;
         }
-        if (EpicFightHelper.isLockOnTargeting() || SprintRotateHandler.isActive() || WalkStopFaceCameraHandler.isActive()) {
-            event.setResult(true);
-            return;
-        }
-        Minecraft mc = Minecraft.getInstance();
-        LocalPlayer player = mc.player;
-        if (player != null && (EpicFightHelper.isAiming(player) || player.isUsingItem() || player.isBlocking())) {
-            event.setResult(true);
-            return;
-        }
-        if (TaczHelper.isAimingOrFiring()) {
-            event.setResult(true);
-            return;
-        }
-        if (player != null
-                && player.isSprinting()
-                && !player.isInWater()
-                && mc.options.getCameraType() == CameraType.THIRD_PERSON_BACK
-                && idleMode() != IdleBehavior.DECOUPLED) {
-            event.setResult(true);
-        }
-    }
 
-    private static double overheadY() {
-        try {
-            return SsrCameraFixesConfig.CAMERA_OVERHEAD_OFFSET_Y.get();
-        } catch (Throwable t) {
-            return 1.2;
-        }
-    }
-
-    private static IdleBehavior idleMode() {
-        try {
-            return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
-        } catch (Throwable t) {
-            return IdleBehavior.DECOUPLED;
+        private static IdleBehavior idleMode() {
+            try {
+                return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
+            } catch (Throwable t) {
+                return IdleBehavior.DECOUPLED;
+            }
         }
     }
 }

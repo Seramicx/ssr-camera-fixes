@@ -46,7 +46,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
-    modCompileOnly "curse.maven:shoulder-surfing-reloaded-243190:8301702"
+    modCompileOnly "curse.maven:shoulder-surfing-reloaded-243190:7974110"
     modCompileOnly "curse.maven:better-combat-by-daedelus-639842:7287333"
 }
 

@@ -1,5 +1,3 @@
 {
-    "entrypoints": [
-        "com.ssrcamerafixes.fabric1211.compat.SsrCameraFixesPlugin"
-    ]
+    "entrypoint": "com.ssrcamerafixes.fabric1211.compat.SsrCameraFixesPlugin"
 }

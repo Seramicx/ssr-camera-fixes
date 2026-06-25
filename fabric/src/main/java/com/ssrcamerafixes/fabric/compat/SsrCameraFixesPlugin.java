@@ -1,9 +1,10 @@
 package com.ssrcamerafixes.fabric.compat;
 
-import com.github.exopandora.shouldersurfing.api.client.event.ComputeTargetCameraOffsetEvent;
-import com.github.exopandora.shouldersurfing.api.client.event.ForceVanillaPlayerInputEvent;
-import com.github.exopandora.shouldersurfing.api.event.IEventBus;
+import com.github.exopandora.shouldersurfing.api.callback.IPlayerInputCallback;
+import com.github.exopandora.shouldersurfing.api.callback.ITargetCameraOffsetCallback;
+import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
 import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingPlugin;
+import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingRegistrar;
 import com.ssrcamerafixes.SsrCameraFixesConfig;
 import com.ssrcamerafixes.SsrCameraFixesConfig.IdleBehavior;
 import com.ssrcamerafixes.fabric.handler.ShoulderCycleHandler;
@@ -17,61 +18,62 @@ import net.minecraft.world.phys.Vec3;
 public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
 
     @Override
-    public void register(IEventBus eventBus) {
-        eventBus.register(5000, SsrCameraFixesPlugin::applyOverheadOffset);
-        eventBus.register(SsrCameraFixesPlugin::forceVanillaInput);
+    public void register(IShoulderSurfingRegistrar registrar) {
+        registrar.registerTargetCameraOffsetCallback(new OverheadOffsetCallback());
+        registrar.registerPlayerInputCallback(new ForceVanillaInputCallback());
     }
 
-    private static void applyOverheadOffset(ComputeTargetCameraOffsetEvent event) {
-        if (ShoulderCycleHandler.getMode() != ShoulderCycleHandler.Mode.OVERHEAD) {
-            return;
-        }
-        Vec3 result = event.getResult();
-        if (Math.abs(result.x) < 1.0E-4 && Math.abs(result.y) < 1.0E-4) {
-            return;
-        }
-        event.setResult(new Vec3(0.0, overheadY(), result.z));
-    }
-
-    private static void forceVanillaInput(ForceVanillaPlayerInputEvent event) {
-        if (event.getResult()) {
-            return;
-        }
-        if (SprintRotateHandler.isActive() || WalkStopFaceCameraHandler.isActive()) {
-            event.setResult(true);
-            return;
-        }
-        Minecraft mc = Minecraft.getInstance();
-        LocalPlayer player = mc.player;
-        if (player != null && (player.isUsingItem() || player.isBlocking())) {
-            event.setResult(true);
-            return;
-        }
-        if (WizardsHelper.isCasting()) {
-            event.setResult(true);
-            return;
-        }
-        if (player != null
-                && player.isSprinting()
-                && mc.options.getCameraType() == CameraType.THIRD_PERSON_BACK
-                && idleMode() != IdleBehavior.DECOUPLED) {
-            event.setResult(true);
+    private static final class OverheadOffsetCallback implements ITargetCameraOffsetCallback {
+        @Override
+        public Vec3 post(IShoulderSurfing instance, Vec3 targetOffset, Vec3 defaultOffset) {
+            if (ShoulderCycleHandler.getMode() != ShoulderCycleHandler.Mode.OVERHEAD) {
+                return targetOffset;
+            }
+            if (Math.abs(targetOffset.x) < 1.0E-4 && Math.abs(targetOffset.y) < 1.0E-4) {
+                return targetOffset;
+            }
+            double overheadY;
+            try {
+                overheadY = SsrCameraFixesConfig.CAMERA_OVERHEAD_OFFSET_Y.get();
+            } catch (Exception e) {
+                overheadY = 1.2;
+            }
+            return new Vec3(0.0, overheadY, targetOffset.z);
         }
     }
 
-    private static double overheadY() {
-        try {
-            return SsrCameraFixesConfig.CAMERA_OVERHEAD_OFFSET_Y.get();
-        } catch (Throwable t) {
-            return 1.2;
+    private static final class ForceVanillaInputCallback implements IPlayerInputCallback {
+        @Override
+        public boolean isForcingVanillaMovementInput(IsForcingVanillaMovementInputContext ctx) {
+            if (SprintRotateHandler.isActive()) {
+                return true;
+            }
+            if (WalkStopFaceCameraHandler.isActive()) {
+                return true;
+            }
+            Minecraft mc = ctx.minecraft();
+            LocalPlayer player = mc != null ? mc.player : null;
+            if (player != null && (player.isUsingItem() || player.isBlocking())) {
+                return true;
+            }
+            if (WizardsHelper.isCasting()) {
+                return true;
+            }
+            if (player != null
+                    && player.isSprinting()
+                    && mc.options.getCameraType() == CameraType.THIRD_PERSON_BACK
+                    && idleMode() != IdleBehavior.DECOUPLED) {
+                return true;
+            }
+            return false;
         }
-    }
 
-    private static IdleBehavior idleMode() {
-        try {
-            return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
-        } catch (Throwable t) {
-            return IdleBehavior.DECOUPLED;
+        private static IdleBehavior idleMode() {
+            try {
+                return SsrCameraFixesConfig.IDLE_BEHAVIOR.get();
+            } catch (Throwable t) {
+                return IdleBehavior.DECOUPLED;
+            }
         }
     }
 }
