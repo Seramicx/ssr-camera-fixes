@@ -7,14 +7,15 @@
   "client": [
     "AccessorKeyMapping",
     "MixinForceSsrOffsetDuringLockOn",
-    "MixinSuppressSsrSwapShoulderKeybind",
     "MixinDisableFollowPlayerRotations",
     "MixinSuppressIdleYawFollow",
     "MixinSuppressMovingInputYawFollow",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",
     "MixinSsrAttackDirection",
-    "MixinSyncLockOnCamera"
+    "MixinSyncLockOnCamera",
+    "MixinPhantomAscentForwardRoll",
+    "MixinPhantomAscentMidAirFacing"
   ],
   "injectors": {
     "defaultRequire": 1

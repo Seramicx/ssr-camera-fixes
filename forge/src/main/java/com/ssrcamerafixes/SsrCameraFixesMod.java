@@ -39,6 +39,8 @@ public class SsrCameraFixesMod {
         MinecraftForge.EVENT_BUS.register(WalkStopFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(AimingFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(AttackFaceCameraHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(com.ssrcamerafixes.handler.WomAquaCameraFrameHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(com.ssrcamerafixes.handler.FocusLockOnPerspectiveHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(EpicFightHelper.INSTANCE);
 
         LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.2.8 loaded.");

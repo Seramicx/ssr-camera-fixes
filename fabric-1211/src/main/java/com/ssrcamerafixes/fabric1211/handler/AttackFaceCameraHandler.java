@@ -5,6 +5,8 @@ import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 
 public final class AttackFaceCameraHandler {
 
@@ -35,7 +37,13 @@ public final class AttackFaceCameraHandler {
 
     private static boolean shouldSnap(Minecraft mc, LocalPlayer player) {
         if (mc.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
+        if (isControllingMobMount(player)) return false;
         return player.swinging || BetterCombatHelper.isAttackInProgress();
+    }
+
+    private static boolean isControllingMobMount(LocalPlayer player) {
+        Entity v = player.getVehicle();
+        return v instanceof Mob mob && mob.getControllingPassenger() == player;
     }
 
     private static void snapToCamera(LocalPlayer player, boolean isPostTick) {

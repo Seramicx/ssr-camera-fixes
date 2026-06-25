@@ -6,13 +6,21 @@
   "client": [
     "AccessorKeyMapping",
     "MixinDisableEpicFightSsrLockOnTick",
-    "MixinForceSsrOffsetDuringLockOn",
-    "MixinSuppressSsrSwapShoulderKeybind",
+    "MixinEpicFightForwardRotation",
+    "MixinEpicFightModelYRotSnap",
+    "MixinPhantomAscentForwardRoll",
     "MixinDisableFollowPlayerRotations",
     "MixinSuppressIdleYawFollow",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",
-    "MixinSyncLockOnCamera"
+    "MixinSyncLockOnCamera",
+    "MixinTaczGunHoldDecouple",
+    "MixinRadialAggroCameraYaw",
+    "MixinOptionsSableCameraPassthrough",
+    "MixinSsrObjectPickerSubLevel",
+    "MixinSableSkipBankWhileShoulderSurfing",
+    "MixinFocusKeepCrosshairForSsr",
+    "MixinFocusPickOnlyWhenLockedOn"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -2,8 +2,6 @@ package com.ssrcamerafixes.handler;
 
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
-import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfingCamera;
-import com.github.exopandora.shouldersurfing.api.client.ShoulderSurfing;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
@@ -23,11 +21,7 @@ public final class LockOnCameraSyncHandler {
 
         if (!lockedOn) {
             if (wasLockedOn && ShoulderSurfingHelper.isShoulderSurfingActive()) {
-                IShoulderSurfingCamera cam = ShoulderSurfing.getInstance().getCamera();
-                if (cam != null) {
-                    cam.setYRot((float) event.getYaw());
-                    cam.setXRot((float) event.getPitch());
-                }
+                ShoulderSurfingHelper.setCameraYawPitch((float) event.getYaw(), (float) event.getPitch());
             }
             wasLockedOn = false;
             return;
@@ -36,9 +30,6 @@ public final class LockOnCameraSyncHandler {
         wasLockedOn = true;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
 
-        IShoulderSurfingCamera cam = ShoulderSurfing.getInstance().getCamera();
-        if (cam == null) return;
-        cam.setYRot((float) event.getYaw());
-        cam.setXRot((float) event.getPitch());
+        ShoulderSurfingHelper.setCameraYawPitch((float) event.getYaw(), (float) event.getPitch());
     }
 }

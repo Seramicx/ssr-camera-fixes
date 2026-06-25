@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -33,10 +35,12 @@ public final class AimingFaceCameraHandler {
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
+        if (isControllingMobMount(player)) return;
 
         boolean shield = player.isBlocking();
         boolean tacz = TaczHelper.isAimingOrFiring();
-        boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown();
+        boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown()
+                || EpicFightHelper.isCastLatchActive();
         if (!shield && !tacz && !spell) return;
 
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
@@ -46,6 +50,11 @@ public final class AimingFaceCameraHandler {
         float bodyYaw = spell ? player.getYRot() : camYaw;
         player.yBodyRot = bodyYaw;
         player.yHeadRot = bodyYaw;
+    }
+
+    private static boolean isControllingMobMount(LocalPlayer player) {
+        Entity v = player.getVehicle();
+        return v instanceof Mob mob && mob.getControllingPassenger() == player;
     }
 
     // HIGHEST so aiming state is captured before downstream handlers
@@ -58,6 +67,7 @@ public final class AimingFaceCameraHandler {
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) { wasSpellCastDown = false; return; }
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) { wasSpellCastDown = false; return; }
         if (EpicFightHelper.isLockOnTargeting()) { wasSpellCastDown = false; return; }
+        if (isControllingMobMount(player)) { wasSpellCastDown = false; return; }
 
         boolean nowDown = IronSpellsHelper.anyCastKeymapDown();
         boolean pressEdge = nowDown && !wasSpellCastDown;
@@ -65,6 +75,7 @@ public final class AimingFaceCameraHandler {
         boolean ongoing = IronSpellsHelper.isCasting();
         if (!pressEdge && !ongoing) return;
 
+        EpicFightHelper.signalCast();
         ShoulderSurfingHelper.lookAtCrosshairTarget();
         ClientPacketListener conn = mc.getConnection();
         if (conn != null) {
@@ -87,6 +98,10 @@ public final class AimingFaceCameraHandler {
             return;
         }
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) {
+            wasTaczAimingOrFiring = false;
+            return;
+        }
+        if (isControllingMobMount(player)) {
             wasTaczAimingOrFiring = false;
             return;
         }

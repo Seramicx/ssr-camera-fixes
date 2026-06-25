@@ -38,6 +38,7 @@ public class SsrCameraFixesMod {
         NeoForge.EVENT_BUS.register(WalkStopFaceCameraHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(AimingFaceCameraHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(AttackFaceCameraHandler.INSTANCE);
+        NeoForge.EVENT_BUS.register(com.ssrcamerafixes.handler.FocusLockOnPerspectiveHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(EpicFightHelper.INSTANCE);
 
         LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.5 loaded.");

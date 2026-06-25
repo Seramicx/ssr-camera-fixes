@@ -40,6 +40,8 @@ public final class SprintRotateHandler {
         if (mc.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (!player.isSprinting()) return;
+        // Swimming (e.g. WoM Aqua Maneuver) stays fully decoupled; the sprint-backward lock is for land
+        if (player.isInWater()) return;
 
         if (EpicFightHelper.isAiming(player) || player.isUsingItem() || player.isBlocking()) return;
         if (TaczHelper.isAimingOrFiring()) return;

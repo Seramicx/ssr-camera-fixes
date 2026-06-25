@@ -11,7 +11,7 @@ version = mod_version
 group = mod_group_id
 
 base {
-    archivesName = mod_id
+    archivesName = "${mod_id}-forge-${minecraft_version}"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -61,7 +61,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     compileOnly fg.deobf("curse.maven:epic-fight-mod-405076:7878000")
-    compileOnly fg.deobf("curse.maven:shoulder-surfing-reloaded-243190:7974108")
+    compileOnly fg.deobf("curse.maven:shoulder-surfing-reloaded-243190:8301706")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }

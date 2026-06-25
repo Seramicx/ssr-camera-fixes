@@ -1,5 +1,6 @@
 package com.ssrcamerafixes.mixin;
 
+import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,6 +15,7 @@ import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerP
 import yesman.epicfight.skill.AirAttack;
 import yesman.epicfight.skill.BasicAttack;
 import yesman.epicfight.skill.Skill;
+import yesman.epicfight.skill.weaponinnate.WeaponInnateSkill;
 
 @Pseudo
 @Mixin(value = Skill.class, remap = false, priority = 1100)
@@ -24,12 +26,15 @@ public abstract class MixinSsrAttackDirection {
         LocalPlayerPatch executer, ControllEngine controllEngine,
         CallbackInfoReturnable<FriendlyByteBuf> cir
     ) {
-        if (!((Object) this instanceof BasicAttack) && !((Object) this instanceof AirAttack)) return;
+        if (!((Object) this instanceof BasicAttack) && !((Object) this instanceof AirAttack)
+                && !((Object) this instanceof WeaponInnateSkill)) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (executer == null) return;
 
         LocalPlayer player = executer.getOriginal();
         if (player == null) return;
+
+        EpicFightHelper.signalAttack();
 
         float cameraYaw = Mth.wrapDegrees(ShoulderSurfingHelper.getCameraYaw());
 

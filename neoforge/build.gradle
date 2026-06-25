@@ -10,7 +10,7 @@ version = neoforge_mod_version
 group = mod_group_id
 
 base {
-    archivesName = "${mod_id}-neoforge"
+    archivesName = "${mod_id}-neoforge-${neoforge_mc_version}"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -43,7 +43,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "curse.maven:shoulder-surfing-reloaded-243190:8043996"
+    compileOnly "curse.maven:shoulder-surfing-reloaded-243190:8301658"
     compileOnly "curse.maven:epic-fight-mod-405076:8080214"
 }
 

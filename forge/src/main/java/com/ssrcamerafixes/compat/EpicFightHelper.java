@@ -62,6 +62,23 @@ public final class EpicFightHelper {
         }
     }
 
+    // True while WoM's Aqua Maneuver mover skill is the equipped mover and the player is sprint-swimming.
+    public static boolean isWomMoverSwimming(LocalPlayer player) {
+        if (!isLoaded || player == null) return false;
+        if (!player.isInWater() || !player.isSprinting()) return false;
+        try {
+            yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch patch
+                    = yesman.epicfight.world.capabilities.EpicFightCapabilities.getLocalPlayerPatch(player);
+            if (patch == null) return false;
+            yesman.epicfight.skill.SkillContainer mover = patch.getSkill(yesman.epicfight.skill.SkillSlots.MOVER);
+            if (mover == null) return false;
+            yesman.epicfight.skill.Skill skill = mover.getSkill();
+            return skill != null && skill.getClass().getName().startsWith("reascer.wom");
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;

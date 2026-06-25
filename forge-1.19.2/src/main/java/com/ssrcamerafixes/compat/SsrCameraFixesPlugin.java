@@ -1,5 +1,6 @@
 package com.ssrcamerafixes.compat;
 
+import com.github.exopandora.shouldersurfing.api.callback.ICameraCouplingCallback;
 import com.github.exopandora.shouldersurfing.api.callback.IPlayerInputCallback;
 import com.github.exopandora.shouldersurfing.api.callback.ITargetCameraOffsetCallback;
 import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
@@ -21,6 +22,17 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
     public void register(IShoulderSurfingRegistrar registrar) {
         registrar.registerTargetCameraOffsetCallback(new OverheadOffsetCallback());
         registrar.registerPlayerInputCallback(new ForceVanillaInputCallback());
+        registrar.registerCameraCouplingCallback(new AttackCameraCouplingCallback());
+    }
+
+    // Epic Fight 1.20.1 ships its own coupling-on-attack; the 1.19.2 build does not, so the body
+    // would stay decoupled mid-swing and the hit would not line up with the crosshair
+    private static final class AttackCameraCouplingCallback implements ICameraCouplingCallback {
+        @Override
+        public boolean isForcingCameraCoupling(Minecraft minecraft) {
+            LocalPlayer player = minecraft.player;
+            return player != null && EpicFightHelper.isAttacking(player);
+        }
     }
 
     private static final class OverheadOffsetCallback implements ITargetCameraOffsetCallback {
@@ -69,6 +81,7 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
             }
             if (player != null
                     && player.isSprinting()
+                    && !player.isInWater()
                     && mc.options.getCameraType() == CameraType.THIRD_PERSON_BACK
                     && idleMode() != IdleBehavior.DECOUPLED) {
                 return true;

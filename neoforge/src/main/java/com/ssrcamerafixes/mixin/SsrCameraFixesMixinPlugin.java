@@ -10,10 +10,19 @@ import java.util.Set;
 public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
 
     private boolean hasEpicFight = false;
+    private boolean hasTacz = false;
+    private boolean hasRadialAggro = false;
+    private boolean hasSable = false;
+    private boolean hasFocus = false;
 
     @Override
     public void onLoad(String mixinPackage) {
-        hasEpicFight = this.getClass().getClassLoader().getResource("yesman/epicfight/api/client/camera/EpicFightCameraAPI.class") != null;
+        ClassLoader loader = this.getClass().getClassLoader();
+        hasEpicFight = loader.getResource("yesman/epicfight/api/client/camera/EpicFightCameraAPI.class") != null;
+        hasTacz = loader.getResource("com/tacz/guns/compat/shouldersurfing/ShoulderSurfingPlugin.class") != null;
+        hasRadialAggro = loader.getResource("com/mrbysco/radialaggroindicator/client/HudHandler.class") != null;
+        hasSable = loader.getResource("dev/ryanhcode/sable/api/entity/EntitySubLevelUtil.class") != null;
+        hasFocus = loader.getResource("com/jvn/focus/client/hud/VanillaCrosshairSuppressor.class") != null;
     }
 
     @Override
@@ -23,8 +32,20 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (mixinClassName.contains("MixinDisableEpicFightSsrLockOnTick") || mixinClassName.contains("MixinForceSsrOffsetDuringLockOn") || mixinClassName.contains("MixinSyncLockOnCamera") || mixinClassName.contains("MixinSsrDodgeDirection")) {
+        if (mixinClassName.contains("MixinDisableEpicFightSsrLockOnTick") || mixinClassName.contains("MixinForceSsrOffsetDuringLockOn") || mixinClassName.contains("MixinEpicFightForwardRotation") || mixinClassName.contains("MixinEpicFightModelYRotSnap") || mixinClassName.contains("MixinPhantomAscentForwardRoll") || mixinClassName.contains("MixinSyncLockOnCamera") || mixinClassName.contains("MixinSsrDodgeDirection")) {
             return hasEpicFight;
+        }
+        if (mixinClassName.contains("MixinTaczGunHoldDecouple")) {
+            return hasTacz;
+        }
+        if (mixinClassName.contains("MixinRadialAggroCameraYaw")) {
+            return hasRadialAggro;
+        }
+        if (mixinClassName.contains("MixinOptionsSableCameraPassthrough") || mixinClassName.contains("MixinSsrObjectPickerSubLevel") || mixinClassName.contains("MixinSableSkipBankWhileShoulderSurfing")) {
+            return hasSable;
+        }
+        if (mixinClassName.contains("MixinFocusKeepCrosshairForSsr") || mixinClassName.contains("MixinFocusPickOnlyWhenLockedOn")) {
+            return hasFocus;
         }
         return true;
     }
