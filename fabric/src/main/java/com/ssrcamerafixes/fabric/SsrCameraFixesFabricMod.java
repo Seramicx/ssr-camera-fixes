@@ -42,6 +42,7 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             AttackFaceCameraHandler.INSTANCE.onClientTickStart(client);
             AimingFaceCameraHandler.onClientTickStart(client);
+            AimingFaceCameraHandler.onMountedTickStart(client);
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             ShoulderCycleHandler.INSTANCE.onClientTickEnd(client);
@@ -50,6 +51,8 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
             WalkStopFaceCameraHandler.INSTANCE.onClientTickEnd(client);
             WizardsHelper.INSTANCE.tickLatch();
         });
+
+        com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 
         LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.3 (Fabric) loaded.");
     }

@@ -36,9 +36,8 @@ public abstract class MixinEpicFightModelYRotSnap {
         this.modelYRotO = this.modelYRot;
     }
 
-    // 1.21.1 renamed the per-tick hook to preTickClient. Keep the roll facing synced with current input while
-    // the skill facing is active (e.g. changing direction mid-air during Phantom Ascent).
-    @Inject(method = "preTickClient", at = @At("TAIL"), require = 0, remap = false)
+    // preTick sets modelYRotO to the prior modelYRot at HEAD, so writing modelYRot here lerps instead of snapping
+    @Inject(method = "preTick", at = @At("TAIL"), require = 0, remap = false)
     private void ssrcamerafixes$updateFacingMidAir(CallbackInfo ci) {
         if (!this.useModelYRot) return;
         if (!ShoulderSurfingHelper.isCameraDecoupled()) return;

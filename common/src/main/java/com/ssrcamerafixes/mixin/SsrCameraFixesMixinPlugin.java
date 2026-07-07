@@ -14,6 +14,9 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
     private boolean hasRadialAggro = false;
     private boolean hasValkyrienSkies = false;
     private boolean hasFocus = false;
+    private boolean hasBetterMountSteering = false;
+    private boolean hasScorchedGuns = false;
+    private boolean hasCgm = false;
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -23,6 +26,9 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
         hasRadialAggro = loader.getResource("com/mrbysco/radialaggroindicator/client/HudHandler.class") != null;
         hasValkyrienSkies = loader.getResource("org/valkyrienskies/mod/common/VSGameUtilsKt.class") != null;
         hasFocus = loader.getResource("com/jvn/focus/client/hud/VanillaCrosshairSuppressor.class") != null;
+        hasBetterMountSteering = loader.getResource("com/bettermountsteering/handler/MountSteeringHandler.class") != null;
+        hasScorchedGuns = loader.getResource("top/ribs/scguns/client/handler/ShootingHandler.class") != null;
+        hasCgm = loader.getResource("com/mrcrayfish/guns/client/handler/ShootingHandler.class") != null;
     }
 
     @Override
@@ -46,6 +52,17 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.contains("MixinFocusKeepCrosshairForSsr") || mixinClassName.contains("MixinFocusPickOnlyWhenLockedOn")) {
             return hasFocus;
+        }
+        if (mixinClassName.contains("MixinSsrSuppressFollowDuringMountRotate") || mixinClassName.contains("MixinSsrSuppressTurnSnapback") || mixinClassName.contains("MixinSsrSuppressPassengerConstraint")) {
+            return hasBetterMountSteering;
+        }
+        if (mixinClassName.contains("MixinScorchedGunsFaceCamera")) {
+            return hasScorchedGuns;
+        }
+        if (mixinClassName.contains("MixinCgmGunFaceCamera") || mixinClassName.contains("MixinCgmGunServerHeadYaw")
+                || mixinClassName.contains("MixinCgmMountGunArmFix") || mixinClassName.contains("MixinCgmMountedGunArms")
+                || mixinClassName.contains("MixinCgmWeaponPosePitch")) {
+            return hasCgm;
         }
         return true;
     }

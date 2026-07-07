@@ -5,7 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "MixinSprintRotateInput",
-    "MixinSpellEngineCastToCrosshair"
+    "MixinSpellEngineCastToCrosshair",
+    "MixinSpellEngineMountedTargetRay",
+    "MixinSsrSuppressFollowDuringMountRotate",
+    "MixinSsrSuppressTurnSnapback"
   ],
   "injectors": {
     "defaultRequire": 1

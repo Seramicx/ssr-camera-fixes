@@ -2,6 +2,7 @@ package com.ssrcamerafixes.handler;
 
 import com.ssrcamerafixes.compat.ConfluenceHelper;
 import com.ssrcamerafixes.compat.EpicFightHelper;
+import com.ssrcamerafixes.compat.GunModHelper;
 import com.ssrcamerafixes.compat.IronSpellsHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.compat.TaczHelper;
@@ -23,8 +24,6 @@ public final class AimingFaceCameraHandler {
 
     private static boolean wasSpellCastDown = false;
     private static boolean wasTaczAimingOrFiring = false;
-    private static boolean wasConfluenceGunFiring = false;
-    private static boolean wasManaUseDown = false;
 
     private AimingFaceCameraHandler() {}
 
@@ -93,8 +92,6 @@ public final class AimingFaceCameraHandler {
                 || !ShoulderSurfingHelper.isShoulderSurfingActive()
                 || isControllingMobMount(player)) {
             wasTaczAimingOrFiring = false;
-            wasConfluenceGunFiring = false;
-            wasManaUseDown = false;
             return;
         }
 
@@ -104,18 +101,36 @@ public final class AimingFaceCameraHandler {
         }
         wasTaczAimingOrFiring = tacz;
 
-        boolean confluenceGun = ConfluenceHelper.isGunFiringOrAiming(player);
-        if (confluenceGun && !wasConfluenceGunFiring) {
+        // TerraGuns fires on ClientTickEvent.Post with a rotation-less packet, so the shot uses whatever yaw is
+        // synced. While decoupled the body doesn't track the camera, so re-aim every tick the gun is up (not just
+        // the press edge) or moving the camera between held shots leaves the bullet at the old offset yaw
+        if (ConfluenceHelper.isGunFiringOrAiming(player)) {
             faceCrosshairAndSync(mc, player);
         }
-        wasConfluenceGunFiring = confluenceGun;
+    }
 
-        // Confluence mana weapons fire from player rotation the instant use() runs, so align on the click edge
-        boolean manaUse = mc.options.keyUse.isDown() && ConfluenceHelper.isHoldingManaWeapon(player);
-        if (manaUse && !wasManaUseDown) {
+    // Irons casts and TerraGuns shots both send rotation-less packets on ClientTickEvent.Post, and the server reads
+    // the player yaw when the spell/bullet resolves. Mounted, Better Mount Steering also rewrites the yaw to the
+    // camera angle at tick end. Re-aim here at Post/LOWEST, last of all, so the crosshair yaw is what the server
+    // sees whether or not the rider is on a mount
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onClientTickEnd(ClientTickEvent.Post event) {
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
+        if (player == null) return;
+        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
+        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
+        if (EpicFightHelper.isLockOnTargeting()) return;
+
+        if (TaczHelper.isAimingOrFiring()
+                || IronSpellsHelper.isCasting()
+                || IronSpellsHelper.anyCastKeymapDown()
+                || IronSpellsHelper.isCastLatchActive()
+                || ConfluenceHelper.isGunFiringOrAiming(player)
+                || (ConfluenceHelper.isHoldingManaWeapon(player) && player.isUsingItem())
+                || GunModHelper.isGunFiring()) {
             faceCrosshairAndSync(mc, player);
         }
-        wasManaUseDown = manaUse;
     }
 
     private static void faceCrosshairAndSync(Minecraft mc, LocalPlayer player) {

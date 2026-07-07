@@ -20,6 +20,7 @@ public final class WizardsHelper {
 
     private static Boolean spellEnginePresent;
     private static Method isCastingSpellMethod;
+    private static Method getSpellCastProgressMethod;
     private static boolean castMethodResolved;
 
     private static Field hotbarInstanceField;
@@ -45,8 +46,9 @@ public final class WizardsHelper {
         try {
             Class<?> iface = Class.forName("net.spell_engine.internals.casting.SpellCasterClient");
             isCastingSpellMethod = iface.getMethod("isCastingSpell");
+            getSpellCastProgressMethod = iface.getMethod("getSpellCastProgress");
         } catch (Throwable t) {
-            LOGGER.debug("WizardsHelper: isCastingSpell reflection unavailable: {}", t.toString());
+            LOGGER.debug("WizardsHelper: spell cast reflection unavailable: {}", t.toString());
         }
     }
 
@@ -82,7 +84,7 @@ public final class WizardsHelper {
         return false;
     }
 
-    private static boolean isCastingLive() {
+    public static boolean isCastingLive() {
         if (!isLoaded()) return false;
         resolveCastMethod();
         if (isCastingSpellMethod == null) return false;
@@ -93,6 +95,46 @@ public final class WizardsHelper {
             return v instanceof Boolean && (Boolean) v;
         } catch (Throwable ignored) {
             return false;
+        }
+    }
+
+    public static boolean isInstantCasting() {
+        if (!isCastingLive()) return false;
+        Integer length = currentCastLength();
+        return length != null && length == 0;
+    }
+
+    private static Integer currentCastLength() {
+        resolveCastMethod();
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) return null;
+        Integer fromProgress = lengthFromProgress(player);
+        if (fromProgress != null) return fromProgress;
+        return lengthFromProcess(player);
+    }
+
+    private static Integer lengthFromProgress(LocalPlayer player) {
+        if (getSpellCastProgressMethod == null) return null;
+        try {
+            Object progress = getSpellCastProgressMethod.invoke(player);
+            if (progress == null) return null;
+            Object process = progress.getClass().getMethod("process").invoke(progress);
+            if (process == null) return null;
+            Object length = process.getClass().getMethod("length").invoke(process);
+            return length instanceof Integer ? (Integer) length : null;
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static Integer lengthFromProcess(LocalPlayer player) {
+        try {
+            Object process = player.getClass().getMethod("getSpellCastProcess").invoke(player);
+            if (process == null) return null;
+            Object length = process.getClass().getMethod("length").invoke(process);
+            return length instanceof Integer ? (Integer) length : null;
+        } catch (Throwable ignored) {
+            return null;
         }
     }
 

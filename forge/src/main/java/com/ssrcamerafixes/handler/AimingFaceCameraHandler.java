@@ -1,6 +1,7 @@
 package com.ssrcamerafixes.handler;
 
 import com.ssrcamerafixes.compat.EpicFightHelper;
+import com.ssrcamerafixes.compat.GunModHelper;
 import com.ssrcamerafixes.compat.IronSpellsHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.compat.TaczHelper;
@@ -66,19 +67,14 @@ public final class AimingFaceCameraHandler {
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) { wasSpellCastDown = false; return; }
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) { wasSpellCastDown = false; return; }
         if (EpicFightHelper.isLockOnTargeting()) { wasSpellCastDown = false; return; }
-        if (isControllingMobMount(player)) { wasSpellCastDown = false; return; }
 
         boolean nowDown = IronSpellsHelper.anyCastKeymapDown();
         boolean pressEdge = nowDown && !wasSpellCastDown;
         wasSpellCastDown = nowDown;
-        boolean ongoing = IronSpellsHelper.isCasting();
+        boolean ongoing = IronSpellsHelper.isCasting() || IronSpellsHelper.isCastLatchActive();
         if (!pressEdge && !ongoing) return;
 
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
-        ClientPacketListener conn = mc.getConnection();
-        if (conn != null) {
-            conn.send(new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.onGround()));
-        }
+        faceCrosshairAndSync(mc, player);
     }
 
     // LOWEST so aiming-face-camera override wins over input handlers
@@ -99,19 +95,42 @@ public final class AimingFaceCameraHandler {
             wasTaczAimingOrFiring = false;
             return;
         }
-        if (isControllingMobMount(player)) {
-            wasTaczAimingOrFiring = false;
-            return;
-        }
 
         boolean tacz = TaczHelper.isAimingOrFiring();
         if (tacz && !wasTaczAimingOrFiring) {
-            ShoulderSurfingHelper.lookAtCrosshairTarget();
-            ClientPacketListener conn = mc.getConnection();
-            if (conn != null) {
-                conn.send(new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.onGround()));
-            }
+            faceCrosshairAndSync(mc, player);
         }
         wasTaczAimingOrFiring = tacz;
+    }
+
+    // Mounted: Better Mount Steering rewrites the player yaw to the camera angle in its tick-END handlers, which
+    // lands the shot at the shoulder offset instead of the crosshair. Re-aim here at END/LOWEST, after it runs, so
+    // the crosshair rotation is the last word before the projectile spawns next tick
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onClientTickEnd(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
+        if (player == null) return;
+        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
+        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
+        if (EpicFightHelper.isLockOnTargeting()) return;
+        if (!isControllingMobMount(player)) return;
+
+        if (TaczHelper.isAimingOrFiring()
+                || IronSpellsHelper.isCasting()
+                || IronSpellsHelper.anyCastKeymapDown()
+                || IronSpellsHelper.isCastLatchActive()
+                || GunModHelper.isGunFiring()) {
+            faceCrosshairAndSync(mc, player);
+        }
+    }
+
+    private static void faceCrosshairAndSync(Minecraft mc, LocalPlayer player) {
+        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        ClientPacketListener conn = mc.getConnection();
+        if (conn != null) {
+            conn.send(new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.onGround()));
+        }
     }
 }

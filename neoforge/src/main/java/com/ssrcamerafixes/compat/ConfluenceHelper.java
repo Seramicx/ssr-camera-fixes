@@ -17,6 +17,9 @@ public final class ConfluenceHelper {
     private static final String GUN_PACKAGE = "org.confluence.mod.common.item.gun";
     private static final String MANA_PACKAGE = "org.confluence.mod.common.item.mana";
 
+    private static Class<?> baseGunClass;
+    private static boolean baseGunResolved;
+
     private static boolean loaded;
     private static boolean loadedResolved = false;
 
@@ -59,9 +62,18 @@ public final class ConfluenceHelper {
         }
     }
 
+    // Confluence's own guns are in GUN_PACKAGE, but TerraGuns registers hand pistol/shotgun/etc as plain BaseGun
+    // instances in org.confluence.terra_guns...gun. Both extend BaseGun, so match the base class
     public static boolean isHoldingGun(LocalPlayer player) {
         if (!isLoaded() || player == null) return false;
         Item item = player.getMainHandItem().getItem();
+        if (!baseGunResolved) {
+            baseGunResolved = true;
+            try {
+                baseGunClass = Class.forName("org.confluence.terra_guns.common.item.gun.BaseGun");
+            } catch (Throwable ignored) {}
+        }
+        if (baseGunClass != null && baseGunClass.isInstance(item)) return true;
         return item.getClass().getName().startsWith(GUN_PACKAGE);
     }
 
@@ -73,8 +85,22 @@ public final class ConfluenceHelper {
 
     public static boolean isGunFiringOrAiming(LocalPlayer player) {
         if (!isHoldingGun(player)) return false;
+        if (isFireLatchActive()) return true;
         resolveKeys();
         if (shootKey != null && shootKey.isDown()) return true;
         return aimKey != null && aimKey.isDown();
+    }
+
+    private static final long FIRE_LATCH_MS = 500L;
+    private static long fireSignalMs = 0L;
+
+    // Manual guns consumeClick() the shoot key the same tick they fire, so isDown misses single shots. Latch at
+    // the shoot packet so the crosshair aim holds through the shot even when the key already released
+    public static void signalFire() {
+        fireSignalMs = System.currentTimeMillis();
+    }
+
+    public static boolean isFireLatchActive() {
+        return (System.currentTimeMillis() - fireSignalMs) < FIRE_LATCH_MS;
     }
 }

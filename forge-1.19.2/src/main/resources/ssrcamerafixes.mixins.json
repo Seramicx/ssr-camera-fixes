@@ -15,7 +15,17 @@
     "MixinSsrAttackDirection",
     "MixinSyncLockOnCamera",
     "MixinPhantomAscentForwardRoll",
-    "MixinPhantomAscentMidAirFacing"
+    "MixinPhantomAscentMidAirFacing",
+    "MixinCgmGunFaceCamera",
+    "MixinCgmMountGunArmFix",
+    "MixinCgmMountedGunArms",
+    "MixinCgmWeaponPosePitch",
+    "MixinCgmGunServerHeadYaw",
+    "MixinSsrSuppressFollowDuringMountRotate",
+    "MixinSsrSuppressTurnSnapback",
+    "MixinSsrSuppressPassengerConstraint",
+    "MixinIronsInstantCastFaceCamera",
+    "MixinIronsCastPacketFaceCamera"
   ],
   "injectors": {
     "defaultRequire": 1

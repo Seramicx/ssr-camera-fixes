@@ -17,11 +17,16 @@
     "MixinSyncLockOnCamera",
     "MixinTaczGunHoldDecouple",
     "MixinRadialAggroCameraYaw",
-    "MixinOptionsSableCameraPassthrough",
-    "MixinSsrObjectPickerSubLevel",
-    "MixinSableSkipBankWhileShoulderSurfing",
     "MixinFocusKeepCrosshairForSsr",
-    "MixinFocusPickOnlyWhenLockedOn"
+    "MixinFocusPickOnlyWhenLockedOn",
+    "MixinConfluenceWandFaceCamera",
+    "MixinConfluenceGunFaceCamera",
+    "MixinIronsInstantCastFaceCamera",
+    "MixinIronsCastPacketFaceCamera",
+    "MixinIronsQuickCastPacketFaceCamera",
+    "MixinScorchedGunsFaceCamera",
+    "MixinSsrSuppressFollowDuringMountRotate",
+    "MixinSsrSuppressTurnSnapback"
   ],
   "injectors": {
     "defaultRequire": 1

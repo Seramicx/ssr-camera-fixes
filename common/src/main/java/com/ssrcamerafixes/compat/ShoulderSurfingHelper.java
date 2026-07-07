@@ -5,9 +5,16 @@ import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfingCamera;
 import com.github.exopandora.shouldersurfing.api.client.ShoulderSurfing;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public final class ShoulderSurfingHelper {
@@ -16,6 +23,9 @@ public final class ShoulderSurfingHelper {
 
     private static volatile Method lookAtCrosshairMethod;
     private static volatile boolean lookAtCrosshairResolved;
+
+    private static volatile Field lastMovedYRotField;
+    private static volatile boolean lastMovedYRotResolved;
 
     private ShoulderSurfingHelper() {}
 
@@ -92,6 +102,35 @@ public final class ShoulderSurfingHelper {
         } catch (Throwable t) {
             return 0.0;
         }
+    }
+
+    public static void setLastMovedYRot(float value) {
+        IShoulderSurfingCamera cam;
+        try {
+            cam = ShoulderSurfing.getInstance().getCamera();
+        } catch (Throwable t) {
+            return;
+        }
+        if (cam == null) return;
+        if (!lastMovedYRotResolved) {
+            synchronized (ShoulderSurfingHelper.class) {
+                if (!lastMovedYRotResolved) {
+                    try {
+                        Field f = cam.getClass().getDeclaredField("lastMovedYRot");
+                        f.setAccessible(true);
+                        lastMovedYRotField = f;
+                    } catch (NoSuchFieldException e) {
+                        LOGGER.debug("SSR lastMovedYRot field not found on {}", cam.getClass().getName());
+                    }
+                    lastMovedYRotResolved = true;
+                }
+            }
+        }
+        Field field = lastMovedYRotField;
+        if (field == null) return;
+        try {
+            field.setFloat(cam, value);
+        } catch (Throwable ignored) {}
     }
 
     public static double getConfigOffsetX() {

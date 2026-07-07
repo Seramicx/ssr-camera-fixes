@@ -24,7 +24,12 @@
     "MixinSkipDynamicOffsetOnVsShip",
     "CameraMoveInvoker",
     "MixinFocusKeepCrosshairForSsr",
-    "MixinFocusPickOnlyWhenLockedOn"
+    "MixinFocusPickOnlyWhenLockedOn",
+    "MixinSsrSuppressFollowDuringMountRotate",
+    "MixinSsrSuppressTurnSnapback",
+    "MixinIronsInstantCastFaceCamera",
+    "MixinScorchedGunsFaceCamera",
+    "MixinCgmGunFaceCamera"
   ],
   "injectors": {
     "defaultRequire": 1

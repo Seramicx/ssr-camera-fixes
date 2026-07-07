@@ -43,6 +43,8 @@ public class SsrCameraFixesMod {
         MinecraftForge.EVENT_BUS.register(com.ssrcamerafixes.handler.FocusLockOnPerspectiveHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(EpicFightHelper.INSTANCE);
 
+        com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
+
         LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.2.8 loaded.");
     }
 
