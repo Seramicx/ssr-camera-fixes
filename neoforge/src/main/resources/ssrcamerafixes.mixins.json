@@ -7,12 +7,26 @@
     "AccessorKeyMapping",
     "MixinDisableEpicFightSsrLockOnTick",
     "MixinForceSsrOffsetDuringLockOn",
-    "MixinSuppressSsrSwapShoulderKeybind",
+    "MixinEpicFightForwardRotation",
+    "MixinEpicFightModelYRotSnap",
+    "MixinPhantomAscentForwardRoll",
     "MixinDisableFollowPlayerRotations",
     "MixinSuppressIdleYawFollow",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",
-    "MixinSyncLockOnCamera"
+    "MixinSyncLockOnCamera",
+    "MixinTaczGunHoldDecouple",
+    "MixinRadialAggroCameraYaw",
+    "MixinFocusKeepCrosshairForSsr",
+    "MixinFocusPickOnlyWhenLockedOn",
+    "MixinConfluenceWandFaceCamera",
+    "MixinConfluenceGunFaceCamera",
+    "MixinIronsInstantCastFaceCamera",
+    "MixinIronsCastPacketFaceCamera",
+    "MixinIronsQuickCastPacketFaceCamera",
+    "MixinScorchedGunsFaceCamera",
+    "MixinSsrSuppressFollowDuringMountRotate",
+    "MixinSsrSuppressTurnSnapback"
   ],
   "injectors": {
     "defaultRequire": 1

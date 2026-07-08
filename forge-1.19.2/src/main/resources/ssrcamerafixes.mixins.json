@@ -7,15 +7,25 @@
   "client": [
     "AccessorKeyMapping",
     "MixinForceSsrOffsetDuringLockOn",
-    "MixinSuppressSsrSwapShoulderKeybind",
     "MixinDisableFollowPlayerRotations",
     "MixinSuppressIdleYawFollow",
     "MixinSuppressMovingInputYawFollow",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",
     "MixinSsrAttackDirection",
-    "MixinSuppressMovingInputYawFollow",
-    "MixinSyncLockOnCamera"
+    "MixinSyncLockOnCamera",
+    "MixinPhantomAscentForwardRoll",
+    "MixinPhantomAscentMidAirFacing",
+    "MixinCgmGunFaceCamera",
+    "MixinCgmMountGunArmFix",
+    "MixinCgmMountedGunArms",
+    "MixinCgmWeaponPosePitch",
+    "MixinCgmGunServerHeadYaw",
+    "MixinSsrSuppressFollowDuringMountRotate",
+    "MixinSsrSuppressTurnSnapback",
+    "MixinSsrSuppressPassengerConstraint",
+    "MixinIronsInstantCastFaceCamera",
+    "MixinIronsCastPacketFaceCamera"
   ],
   "injectors": {
     "defaultRequire": 1

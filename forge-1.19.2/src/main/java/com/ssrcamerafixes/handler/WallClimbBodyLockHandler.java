@@ -1,29 +1,26 @@
 package com.ssrcamerafixes.handler;
 
-import com.ssrcamerafixes.SsrCameraFixesMod;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class WallClimbBodyLockHandler {
 
-    private static final Minecraft MC = Minecraft.getInstance();
+    public static final WallClimbBodyLockHandler INSTANCE = new WallClimbBodyLockHandler();
 
     private static Float lockedBodyYaw = null;
 
     private WallClimbBodyLockHandler() {}
 
+    // LOWEST so body-yaw lock applies after movement input handlers
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onPlayerTickEnd(TickEvent.PlayerTickEvent event) {
+    public void onPlayerTickEnd(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         if (!event.side.isClient()) return;
-        LocalPlayer player = MC.player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null || event.player != player) return;
 
         if (EpicFightHelper.isWallClimbing(player)) {

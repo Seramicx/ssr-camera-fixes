@@ -5,27 +5,31 @@ import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 
 public final class AttackFaceCameraHandler {
 
-    private static float prevTickCamYaw = Float.NaN;
-    private static boolean hadAttackLastTick = false;
+    public static final AttackFaceCameraHandler INSTANCE = new AttackFaceCameraHandler();
+
+    private static float camYawO = Float.NaN;
+    private static boolean hadAttackO = false;
 
     private AttackFaceCameraHandler() {}
 
-    public static void onClientTickStart(Minecraft mc) {
+    public void onClientTickStart(Minecraft mc) {
         LocalPlayer player = mc.player;
         if (player == null) return;
         if (!shouldSnap(mc)) return;
         snapToCamera(player, false);
     }
 
-    public static void onClientTickEnd(Minecraft mc) {
+    public void onClientTickEnd(Minecraft mc) {
         LocalPlayer player = mc.player;
         if (player == null) return;
         if (!shouldSnap(mc)) {
-            hadAttackLastTick = false;
-            prevTickCamYaw = Float.NaN;
+            hadAttackO = false;
+            camYawO = Float.NaN;
             return;
         }
         snapToCamera(player, true);
@@ -35,20 +39,26 @@ public final class AttackFaceCameraHandler {
         if (mc.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
         LocalPlayer player = mc.player;
         if (player == null) return false;
+        if (isControllingMobMount(player)) return false;
         return player.swinging || BetterCombatHelper.isAttackInProgress();
+    }
+
+    private static boolean isControllingMobMount(LocalPlayer player) {
+        Entity v = player.getVehicle();
+        return v instanceof Mob mob && mob.getControllingPassenger() == player;
     }
 
     private static void snapToCamera(LocalPlayer player, boolean isPostTick) {
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
         player.setYRot(camYaw);
         if (isPostTick) {
-            float prev = hadAttackLastTick && !Float.isNaN(prevTickCamYaw) ? prevTickCamYaw : camYaw;
+            float prev = hadAttackO && !Float.isNaN(camYawO) ? camYawO : camYaw;
             player.yBodyRotO = prev;
             player.yHeadRotO = prev;
             player.yBodyRot = camYaw;
             player.yHeadRot = camYaw;
-            prevTickCamYaw = camYaw;
-            hadAttackLastTick = true;
+            camYawO = camYaw;
+            hadAttackO = true;
         } else {
             player.yBodyRot = camYaw;
             player.yHeadRot = camYaw;

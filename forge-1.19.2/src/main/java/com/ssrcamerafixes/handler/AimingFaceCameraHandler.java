@@ -1,6 +1,5 @@
 package com.ssrcamerafixes.handler;
 
-import com.ssrcamerafixes.SsrCameraFixesMod;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.IronSpellsHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
@@ -10,35 +9,38 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class AimingFaceCameraHandler {
 
-    private static final Minecraft MC = Minecraft.getInstance();
+    public static final AimingFaceCameraHandler INSTANCE = new AimingFaceCameraHandler();
 
     private static boolean wasTaczAimingOrFiring = false;
     private static boolean wasSpellCastDown = false;
 
     private AimingFaceCameraHandler() {}
 
+    // LOWEST so aiming-face-camera override wins over input handlers
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onMovementInput(MovementInputUpdateEvent event) {
-        LocalPlayer player = MC.player;
+    public void onMovementInput(MovementInputUpdateEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
         if (player == null) return;
 
         if (EpicFightHelper.isLockOnTargeting()) return;
-        if (MC.options.getCameraType() == CameraType.FIRST_PERSON) return;
+        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
+        if (isControllingMobMount(player)) return;
 
         boolean shield = player.isBlocking();
         boolean tacz = TaczHelper.isAimingOrFiring();
-        boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown();
+        boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown()
+                || EpicFightHelper.isCastLatchActive();
         if (!shield && !tacz && !spell) return;
 
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
@@ -50,14 +52,22 @@ public final class AimingFaceCameraHandler {
         player.yHeadRot = bodyYaw;
     }
 
+    private static boolean isControllingMobMount(LocalPlayer player) {
+        Entity v = player.getVehicle();
+        return v instanceof Mob mob && mob.getControllingPassenger() == player;
+    }
+
+    // HIGHEST so aiming state is captured before downstream handlers
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onSpellCastTickStart(TickEvent.ClientTickEvent event) {
+    public void onSpellCastTickStart(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.START) return;
-        LocalPlayer player = MC.player;
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
         if (player == null) { wasSpellCastDown = false; return; }
-        if (MC.options.getCameraType() == CameraType.FIRST_PERSON) { wasSpellCastDown = false; return; }
+        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) { wasSpellCastDown = false; return; }
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) { wasSpellCastDown = false; return; }
         if (EpicFightHelper.isLockOnTargeting()) { wasSpellCastDown = false; return; }
+        if (isControllingMobMount(player)) { wasSpellCastDown = false; return; }
 
         boolean nowDown = IronSpellsHelper.anyCastKeymapDown();
         boolean pressEdge = nowDown && !wasSpellCastDown;
@@ -65,22 +75,25 @@ public final class AimingFaceCameraHandler {
         boolean ongoing = IronSpellsHelper.isCasting();
         if (!pressEdge && !ongoing) return;
 
+        EpicFightHelper.signalCast();
         ShoulderSurfingHelper.lookAtCrosshairTarget();
-        ClientPacketListener conn = MC.getConnection();
+        ClientPacketListener conn = mc.getConnection();
         if (conn != null) {
             conn.send(new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.isOnGround()));
         }
     }
 
+    // LOWEST so aiming-face-camera override wins over input handlers
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onClientTickStart(TickEvent.ClientTickEvent event) {
+    public void onClientTickStart(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.START) return;
-        LocalPlayer player = MC.player;
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
         if (player == null) {
             wasTaczAimingOrFiring = false;
             return;
         }
-        if (MC.options.getCameraType() == CameraType.FIRST_PERSON) {
+        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) {
             wasTaczAimingOrFiring = false;
             return;
         }
@@ -88,11 +101,15 @@ public final class AimingFaceCameraHandler {
             wasTaczAimingOrFiring = false;
             return;
         }
+        if (isControllingMobMount(player)) {
+            wasTaczAimingOrFiring = false;
+            return;
+        }
 
         boolean tacz = TaczHelper.isAimingOrFiring();
         if (tacz && !wasTaczAimingOrFiring) {
             ShoulderSurfingHelper.lookAtCrosshairTarget();
-            ClientPacketListener conn = MC.getConnection();
+            ClientPacketListener conn = mc.getConnection();
             if (conn != null) {
                 conn.send(new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.isOnGround()));
             }

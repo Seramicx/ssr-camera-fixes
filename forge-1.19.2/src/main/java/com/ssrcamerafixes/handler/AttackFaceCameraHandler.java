@@ -1,53 +1,57 @@
 package com.ssrcamerafixes.handler;
 
-import com.ssrcamerafixes.SsrCameraFixesMod;
 import com.ssrcamerafixes.compat.BetterCombatHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = SsrCameraFixesMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class AttackFaceCameraHandler {
 
-    private static final Minecraft MC = Minecraft.getInstance();
+    public static final AttackFaceCameraHandler INSTANCE = new AttackFaceCameraHandler();
 
-    private static float prevTickCamYaw = Float.NaN;
-    private static boolean hadAttackLastTick = false;
+    private static float camYawO = Float.NaN;
+    private static boolean hadAttackO = false;
 
     private AttackFaceCameraHandler() {}
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onClientTickStart(TickEvent.ClientTickEvent event) {
+    public void onClientTickStart(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.START) return;
-        LocalPlayer player = MC.player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
         if (!shouldSnap(player)) return;
         snapToCamera(player, false);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         if (!event.side.isClient()) return;
-        LocalPlayer player = MC.player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null || event.player != player) return;
         if (!shouldSnap(player)) {
-            hadAttackLastTick = false;
-            prevTickCamYaw = Float.NaN;
+            hadAttackO = false;
+            camYawO = Float.NaN;
             return;
         }
         snapToCamera(player, true);
     }
 
     private static boolean shouldSnap(LocalPlayer player) {
-        if (MC.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
+        if (Minecraft.getInstance().options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
+        if (isControllingMobMount(player)) return false;
         return player.swinging || BetterCombatHelper.isAttackInProgress();
+    }
+
+    private static boolean isControllingMobMount(LocalPlayer player) {
+        Entity v = player.getVehicle();
+        return v instanceof Mob mob && mob.getControllingPassenger() == player;
     }
 
     private static void snapToCamera(LocalPlayer player, boolean isPostTick) {
@@ -55,13 +59,13 @@ public final class AttackFaceCameraHandler {
             float camYaw = ShoulderSurfingHelper.getCameraYaw();
             player.setYRot(camYaw);
             if (isPostTick) {
-                float prev = hadAttackLastTick && !Float.isNaN(prevTickCamYaw) ? prevTickCamYaw : camYaw;
+                float prev = hadAttackO && !Float.isNaN(camYawO) ? camYawO : camYaw;
                 player.yBodyRotO = prev;
                 player.yHeadRotO = prev;
                 player.yBodyRot = camYaw;
                 player.yHeadRot = camYaw;
-                prevTickCamYaw = camYaw;
-                hadAttackLastTick = true;
+                camYawO = camYaw;
+                hadAttackO = true;
             } else {
                 player.yBodyRot = camYaw;
                 player.yHeadRot = camYaw;

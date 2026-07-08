@@ -57,7 +57,7 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
             if (player != null && (player.isUsingItem() || player.isBlocking())) {
                 return true;
             }
-            if (WizardsHelper.isCasting()) {
+            if (WizardsHelper.isCastingLive()) {
                 return true;
             }
             if (player != null

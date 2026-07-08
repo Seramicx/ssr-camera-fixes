@@ -10,4 +10,3 @@ run-client/
 logs/
 crash-reports/
 bin/
-*.py

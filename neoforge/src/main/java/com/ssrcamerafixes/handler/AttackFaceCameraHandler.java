@@ -1,51 +1,57 @@
 package com.ssrcamerafixes.handler;
 
-import com.ssrcamerafixes.SsrCameraFixesMod;
 import com.ssrcamerafixes.compat.BetterCombatHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.neoforged.api.distmarker.Dist;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@EventBusSubscriber(modid = SsrCameraFixesMod.MODID, value = Dist.CLIENT)
 public final class AttackFaceCameraHandler {
 
-    private static final Minecraft MC = Minecraft.getInstance();
+    public static final AttackFaceCameraHandler INSTANCE = new AttackFaceCameraHandler();
 
-    private static float prevTickCamYaw = Float.NaN;
-    private static boolean hadAttackLastTick = false;
+    private static float camYawO = Float.NaN;
+    private static boolean hadAttackO = false;
 
     private AttackFaceCameraHandler() {}
 
+    // LOWEST so attack-direction override applies after vanilla input
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onClientTickStart(ClientTickEvent.Pre event) {
-        LocalPlayer player = MC.player;
+    public void onClientTickStart(ClientTickEvent.Pre event) {
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
         if (!shouldSnap(player)) return;
         snapToCamera(player, false);
     }
 
+    // LOWEST so attack-direction override applies after vanilla input
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
+    public void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof LocalPlayer player)) return;
-        if (player != MC.player) return;
+        if (player != Minecraft.getInstance().player) return;
         if (!shouldSnap(player)) {
-            hadAttackLastTick = false;
-            prevTickCamYaw = Float.NaN;
+            hadAttackO = false;
+            camYawO = Float.NaN;
             return;
         }
         snapToCamera(player, true);
     }
 
     private static boolean shouldSnap(LocalPlayer player) {
-        if (MC.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
+        if (Minecraft.getInstance().options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
+        if (isControllingMobMount(player)) return false;
         return player.swinging || BetterCombatHelper.isAttackInProgress();
+    }
+
+    private static boolean isControllingMobMount(LocalPlayer player) {
+        Entity v = player.getVehicle();
+        return v instanceof Mob mob && mob.getControllingPassenger() == player;
     }
 
     private static void snapToCamera(LocalPlayer player, boolean isPostTick) {
@@ -53,13 +59,13 @@ public final class AttackFaceCameraHandler {
             float camYaw = ShoulderSurfingHelper.getCameraYaw();
             player.setYRot(camYaw);
             if (isPostTick) {
-                float prev = hadAttackLastTick && !Float.isNaN(prevTickCamYaw) ? prevTickCamYaw : camYaw;
+                float prev = hadAttackO && !Float.isNaN(camYawO) ? camYawO : camYaw;
                 player.yBodyRotO = prev;
                 player.yHeadRotO = prev;
                 player.yBodyRot = camYaw;
                 player.yHeadRot = camYaw;
-                prevTickCamYaw = camYaw;
-                hadAttackLastTick = true;
+                camYawO = camYaw;
+                hadAttackO = true;
             } else {
                 player.yBodyRot = camYaw;
                 player.yHeadRot = camYaw;
@@ -72,8 +78,8 @@ public final class AttackFaceCameraHandler {
         player.yHeadRot = yRot;
         player.yHeadRotO = yRot;
         if (isPostTick) {
-            hadAttackLastTick = false;
-            prevTickCamYaw = Float.NaN;
+            hadAttackO = false;
+            camYawO = Float.NaN;
         }
     }
 }

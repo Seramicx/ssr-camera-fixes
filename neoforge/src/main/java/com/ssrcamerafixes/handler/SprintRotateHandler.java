@@ -2,7 +2,6 @@ package com.ssrcamerafixes.handler;
 
 import com.ssrcamerafixes.SsrCameraFixesConfig;
 import com.ssrcamerafixes.SsrCameraFixesConfig.IdleBehavior;
-import com.ssrcamerafixes.SsrCameraFixesMod;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import net.minecraft.client.CameraType;
@@ -10,17 +9,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@EventBusSubscriber(modid = SsrCameraFixesMod.MODID, value = Dist.CLIENT)
 public final class SprintRotateHandler {
 
-    private static final Minecraft MC = Minecraft.getInstance();
+    public static final SprintRotateHandler INSTANCE = new SprintRotateHandler();
 
     private static boolean active = false;
     private static float savedYaw = 0F;
@@ -29,16 +25,18 @@ public final class SprintRotateHandler {
 
     public static boolean isActive() { return active; }
 
+    // LOWEST so sprint-back rotation override wins over vanilla input processing
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onMovementInput(MovementInputUpdateEvent event) {
-        LocalPlayer player = MC.player;
+    public void onMovementInput(MovementInputUpdateEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
         if (player == null) return;
 
         active = false;
 
         if (mode() == IdleBehavior.DECOUPLED) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
-        if (MC.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return;
+        if (mc.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (!player.isSprinting()) return;
 
@@ -49,12 +47,12 @@ public final class SprintRotateHandler {
         Input input = event.getInput();
 
         float rawForward = 0F;
-        if (MC.options.keyUp.isDown()) rawForward += 1F;
-        if (MC.options.keyDown.isDown()) rawForward -= 1F;
+        if (mc.options.keyUp.isDown()) rawForward += 1F;
+        if (mc.options.keyDown.isDown()) rawForward -= 1F;
 
         float rawStrafe = 0F;
-        if (MC.options.keyLeft.isDown()) rawStrafe += 1F;
-        if (MC.options.keyRight.isDown()) rawStrafe -= 1F;
+        if (mc.options.keyLeft.isDown()) rawStrafe += 1F;
+        if (mc.options.keyRight.isDown()) rawStrafe -= 1F;
 
         float rawMagnitude = Mth.sqrt(rawForward * rawForward + rawStrafe * rawStrafe);
         if (rawMagnitude < 0.01F) return;
@@ -83,10 +81,11 @@ public final class SprintRotateHandler {
         }
     }
 
+    // LOWEST so sprint-back rotation override wins over vanilla input processing
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
+    public void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof LocalPlayer player)) return;
-        if (player != MC.player) return;
+        if (player != Minecraft.getInstance().player) return;
 
         if (active) {
             player.setYRot(savedYaw);

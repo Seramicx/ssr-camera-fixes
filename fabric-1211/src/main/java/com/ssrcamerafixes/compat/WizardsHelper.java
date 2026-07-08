@@ -13,11 +13,14 @@ import java.util.List;
 
 public final class WizardsHelper {
 
+    public static final WizardsHelper INSTANCE = new WizardsHelper();
+
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final long CAST_LATCH_MS = 500L;
 
     private static Boolean spellEnginePresent;
     private static Method isCastingSpellMethod;
+    private static Method getSpellCastProgressMethod;
     private static boolean castMethodResolved;
 
     private static Field hotbarInstanceField;
@@ -25,7 +28,7 @@ public final class WizardsHelper {
     private static Method slotGetKeyBindingMethod;
     private static boolean hotbarResolved;
 
-    private static long lastCastSignalMs;
+    private static long castSignalMsO;
 
     private WizardsHelper() {}
 
@@ -43,8 +46,9 @@ public final class WizardsHelper {
         try {
             Class<?> iface = Class.forName("net.spell_engine.internals.casting.SpellCasterClient");
             isCastingSpellMethod = iface.getMethod("isCastingSpell");
+            getSpellCastProgressMethod = iface.getMethod("getSpellCastProgress");
         } catch (Throwable t) {
-            LOGGER.debug("WizardsHelper: isCastingSpell reflection unavailable: {}", t.toString());
+            LOGGER.debug("WizardsHelper: spell cast reflection unavailable: {}", t.toString());
         }
     }
 
@@ -80,7 +84,7 @@ public final class WizardsHelper {
         return false;
     }
 
-    private static boolean isCastingLive() {
+    public static boolean isCastingLive() {
         if (!isLoaded()) return false;
         resolveCastMethod();
         if (isCastingSpellMethod == null) return false;
@@ -94,10 +98,50 @@ public final class WizardsHelper {
         }
     }
 
-    public static void tickLatch() {
+    public static boolean isInstantCasting() {
+        if (!isCastingLive()) return false;
+        Integer length = currentCastLength();
+        return length != null && length == 0;
+    }
+
+    private static Integer currentCastLength() {
+        resolveCastMethod();
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) return null;
+        Integer fromProgress = lengthFromProgress(player);
+        if (fromProgress != null) return fromProgress;
+        return lengthFromProcess(player);
+    }
+
+    private static Integer lengthFromProgress(LocalPlayer player) {
+        if (getSpellCastProgressMethod == null) return null;
+        try {
+            Object progress = getSpellCastProgressMethod.invoke(player);
+            if (progress == null) return null;
+            Object process = progress.getClass().getMethod("process").invoke(progress);
+            if (process == null) return null;
+            Object length = process.getClass().getMethod("length").invoke(process);
+            return length instanceof Integer ? (Integer) length : null;
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static Integer lengthFromProcess(LocalPlayer player) {
+        try {
+            Object process = player.getClass().getMethod("getSpellCastProcess").invoke(player);
+            if (process == null) return null;
+            Object length = process.getClass().getMethod("length").invoke(process);
+            return length instanceof Integer ? (Integer) length : null;
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    public void tickLatch() {
         if (!isLoaded()) return;
         if (isCastingLive() || isCastKeyDown()) {
-            lastCastSignalMs = System.currentTimeMillis();
+            castSignalMsO = System.currentTimeMillis();
         }
     }
 
@@ -105,6 +149,6 @@ public final class WizardsHelper {
         if (!isLoaded()) return false;
         if (isCastingLive()) return true;
         if (isCastKeyDown()) return true;
-        return (System.currentTimeMillis() - lastCastSignalMs) < CAST_LATCH_MS;
+        return (System.currentTimeMillis() - castSignalMsO) < CAST_LATCH_MS;
     }
 }

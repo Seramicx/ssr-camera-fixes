@@ -4,7 +4,11 @@
   "package": "com.ssrcamerafixes.fabric1211.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "MixinSprintRotateInput"
+    "MixinSprintRotateInput",
+    "MixinSpellEngineCastToCrosshair",
+    "MixinSpellEngineMountedTargetRay",
+    "MixinSsrSuppressFollowDuringMountRotate",
+    "MixinSsrSuppressTurnSnapback"
   ],
   "injectors": {
     "defaultRequire": 1

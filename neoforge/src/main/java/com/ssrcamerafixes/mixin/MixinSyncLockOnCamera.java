@@ -4,12 +4,14 @@ import com.github.exopandora.shouldersurfing.client.ShoulderSurfingCamera;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+@Pseudo
 @Mixin(value = ShoulderSurfingCamera.class, remap = false)
 public class MixinSyncLockOnCamera {
 
@@ -17,10 +19,10 @@ public class MixinSyncLockOnCamera {
     @Shadow private float yRot;
 
     @Unique private static boolean wasLockedOn;
-    @Unique private static float lastPitch;
+    @Unique private static float pitchO;
     @Unique private static int blendFrames;
 
-    @Inject(method = "calcRotations", at = @At("HEAD"))
+    @Inject(method = "calcRotations", at = @At("HEAD"), remap = false)
     private void onCalcRotations(Entity cameraEntity, float partialTick, CallbackInfoReturnable<?> cir) {
         boolean lockedOn = EpicFightHelper.isLockOnTargeting();
 
@@ -28,7 +30,7 @@ public class MixinSyncLockOnCamera {
             // bypass ComputeCameraAngles circular dependency on NeoForge
             this.xRot = EpicFightHelper.getLockOnXRot(partialTick);
             this.yRot = EpicFightHelper.getLockOnYRot(partialTick);
-            lastPitch = this.xRot;
+            pitchO = this.xRot;
             wasLockedOn = true;
             blendFrames = 0;
             return;
@@ -41,7 +43,7 @@ public class MixinSyncLockOnCamera {
 
         if (blendFrames > 0) {
             float t = 1.0f - (float) blendFrames / 5.0f;
-            this.xRot = lastPitch + (this.xRot - lastPitch) * t;
+            this.xRot = pitchO + (this.xRot - pitchO) * t;
             blendFrames--;
         }
     }

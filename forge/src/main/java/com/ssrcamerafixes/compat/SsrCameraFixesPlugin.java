@@ -69,6 +69,7 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
             }
             if (player != null
                     && player.isSprinting()
+                    && !player.isInWater()
                     && mc.options.getCameraType() == CameraType.THIRD_PERSON_BACK
                     && idleMode() != IdleBehavior.DECOUPLED) {
                 return true;

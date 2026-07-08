@@ -110,4 +110,16 @@ public final class IronSpellsHelper {
         if (!isLoaded() || item == null) return false;
         return item.getClass().getName().startsWith("io.redspace.ironsspellbooks");
     }
+
+    private static final long CAST_LATCH_MS = 500L;
+    private static long castSignalMs = 0L;
+
+    // Instant casts (Firebolt) finish within a tick, so latch to hold the aim past the projectile spawn
+    public static void signalCast() {
+        castSignalMs = System.currentTimeMillis();
+    }
+
+    public static boolean isCastLatchActive() {
+        return (System.currentTimeMillis() - castSignalMs) < CAST_LATCH_MS;
+    }
 }

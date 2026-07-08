@@ -64,6 +64,12 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
                             || player.isBlocking())) {
                 return true;
             }
+            if (TaczHelper.isAimingOrFiring()) {
+                return true;
+            }
+            if (player != null && ConfluenceHelper.isGunFiringOrAiming(player)) {
+                return true;
+            }
             if (player != null
                     && player.isSprinting()
                     && mc.options.getCameraType() == CameraType.THIRD_PERSON_BACK
