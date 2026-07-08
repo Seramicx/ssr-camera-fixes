@@ -2,7 +2,6 @@ package com.ssrcamerafixes.compat;
 
 import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
 import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfingCamera;
-import com.github.exopandora.shouldersurfing.api.client.ShoulderSurfing;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -30,7 +29,7 @@ public final class ShoulderSurfingHelper {
 
     public static boolean isShoulderSurfingActive() {
         try {
-            return ShoulderSurfing.getInstance().isShoulderSurfing();
+            return IShoulderSurfing.getInstance().isShoulderSurfing();
         } catch (Throwable t) {
             return false;
         }
@@ -38,7 +37,7 @@ public final class ShoulderSurfingHelper {
 
     public static boolean isCameraDecoupled() {
         try {
-            IShoulderSurfing ssr = ShoulderSurfing.getInstance();
+            IShoulderSurfing ssr = IShoulderSurfing.getInstance();
             return ssr.isShoulderSurfing() && ssr.isCameraDecoupled();
         } catch (Throwable t) {
             return false;
@@ -48,7 +47,7 @@ public final class ShoulderSurfingHelper {
     public static float getCameraYaw() {
         try {
             if (isShoulderSurfingActive()) {
-                IShoulderSurfingCamera cam = ShoulderSurfing.getInstance().getCamera();
+                IShoulderSurfingCamera cam = IShoulderSurfing.getInstance().getCamera();
                 if (cam != null) return cam.getYRot();
             }
         } catch (Throwable ignored) {}
@@ -58,7 +57,7 @@ public final class ShoulderSurfingHelper {
     public static float getCameraXRot() {
         try {
             if (isShoulderSurfingActive()) {
-                IShoulderSurfingCamera cam = ShoulderSurfing.getInstance().getCamera();
+                IShoulderSurfingCamera cam = IShoulderSurfing.getInstance().getCamera();
                 if (cam != null) return cam.getXRot();
             }
         } catch (Throwable ignored) {}
@@ -67,7 +66,7 @@ public final class ShoulderSurfingHelper {
 
     public static void swapShoulder() {
         try {
-            IShoulderSurfing ssr = ShoulderSurfing.getInstance();
+            IShoulderSurfing ssr = IShoulderSurfing.getInstance();
             if (ssr != null) ssr.swapShoulder();
         } catch (Throwable t) {
             LOGGER.warn("ShoulderSurfingHelper.swapShoulder failed: {}", t.toString());
@@ -76,7 +75,7 @@ public final class ShoulderSurfingHelper {
 
     public static void lookAtCrosshairTarget() {
         try {
-            IShoulderSurfing ssr = ShoulderSurfing.getInstance();
+            IShoulderSurfing ssr = IShoulderSurfing.getInstance();
             if (ssr == null) return;
             if (!lookAtCrosshairResolved) {
                 synchronized (ShoulderSurfingHelper.class) {
@@ -128,7 +127,7 @@ public final class ShoulderSurfingHelper {
 
     public static double getStoredShoulderX() {
         try {
-            return ShoulderSurfing.getInstance().getClientConfig().getOffsetX();
+            return IShoulderSurfing.getInstance().getClientConfig().getCameraConfig().getOffsetX();
         } catch (Throwable t) {
             return 0.0;
         }
@@ -137,7 +136,7 @@ public final class ShoulderSurfingHelper {
     public static void setLastMovedYRot(float value) {
         IShoulderSurfingCamera cam;
         try {
-            cam = ShoulderSurfing.getInstance().getCamera();
+            cam = IShoulderSurfing.getInstance().getCamera();
         } catch (Throwable t) {
             return;
         }

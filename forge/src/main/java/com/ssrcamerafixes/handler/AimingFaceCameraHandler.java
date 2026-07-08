@@ -39,15 +39,16 @@ public final class AimingFaceCameraHandler {
         if (isControllingMobMount(player)) return;
 
         boolean shield = player.isBlocking();
+        boolean efHold = EpicFightHelper.isHoldingSkill(player);
+        boolean efAttack = EpicFightHelper.isAttackKeyActive();
         boolean tacz = TaczHelper.isAimingOrFiring();
         boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown();
-        if (!shield && !tacz && !spell) return;
+        if (!shield && !efHold && !efAttack && !tacz && !spell) return;
 
-        float camYaw = ShoulderSurfingHelper.getCameraYaw();
-        if (shield) {
-            player.setYRot(camYaw);
+        if (shield || efHold || efAttack) {
+            ShoulderSurfingHelper.lookAtCrosshairTarget();
         }
-        float bodyYaw = spell ? player.getYRot() : camYaw;
+        float bodyYaw = player.getYRot();
         player.yBodyRot = bodyYaw;
         player.yHeadRot = bodyYaw;
     }
@@ -103,9 +104,8 @@ public final class AimingFaceCameraHandler {
         wasTaczAimingOrFiring = tacz;
     }
 
-    // Mounted: Better Mount Steering rewrites the player yaw to the camera angle in its tick-END handlers, which
-    // lands the shot at the shoulder offset instead of the crosshair. Re-aim here at END/LOWEST, after it runs, so
-    // the crosshair rotation is the last word before the projectile spawns next tick
+    // Epic Fight hold skills (guard) and attack animations need the crosshair yaw to win over decoupled movement
+    // input each tick, especially midair while holding backward movement keys
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onClientTickEnd(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
@@ -115,13 +115,16 @@ public final class AimingFaceCameraHandler {
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
-        if (!isControllingMobMount(player)) return;
 
-        if (TaczHelper.isAimingOrFiring()
-                || IronSpellsHelper.isCasting()
-                || IronSpellsHelper.anyCastKeymapDown()
-                || IronSpellsHelper.isCastLatchActive()
-                || GunModHelper.isGunFiring()) {
+        boolean efAction = EpicFightHelper.isAttackKeyActive() || EpicFightHelper.isHoldingSkill(player);
+        boolean mountedGun = isControllingMobMount(player)
+                && (TaczHelper.isAimingOrFiring()
+                        || IronSpellsHelper.isCasting()
+                        || IronSpellsHelper.anyCastKeymapDown()
+                        || IronSpellsHelper.isCastLatchActive()
+                        || GunModHelper.isGunFiring());
+
+        if (efAction || mountedGun) {
             faceCrosshairAndSync(mc, player);
         }
     }

@@ -40,16 +40,17 @@ public final class AimingFaceCameraHandler {
         if (isControllingMobMount(player)) return;
 
         boolean shield = player.isBlocking();
+        boolean efHold = EpicFightHelper.isHoldingSkill(player);
+        boolean efAttack = EpicFightHelper.isAttackKeyActive();
         boolean tacz = TaczHelper.isAimingOrFiring();
         boolean confluenceGun = ConfluenceHelper.isGunFiringOrAiming(player);
         boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown();
-        if (!shield && !tacz && !confluenceGun && !spell) return;
+        if (!shield && !efHold && !efAttack && !tacz && !confluenceGun && !spell) return;
 
-        float camYaw = ShoulderSurfingHelper.getCameraYaw();
-        if (shield) {
-            player.setYRot(camYaw);
+        if (shield || efHold || efAttack) {
+            ShoulderSurfingHelper.lookAtCrosshairTarget();
         }
-        float bodyYaw = spell ? player.getYRot() : camYaw;
+        float bodyYaw = player.getYRot();
         player.yBodyRot = bodyYaw;
         player.yHeadRot = bodyYaw;
     }
@@ -122,7 +123,9 @@ public final class AimingFaceCameraHandler {
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
 
-        if (TaczHelper.isAimingOrFiring()
+        if (EpicFightHelper.isAttackKeyActive()
+                || EpicFightHelper.isHoldingSkill(player)
+                || TaczHelper.isAimingOrFiring()
                 || IronSpellsHelper.isCasting()
                 || IronSpellsHelper.anyCastKeymapDown()
                 || IronSpellsHelper.isCastLatchActive()

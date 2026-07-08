@@ -8,7 +8,9 @@
     "MixinSpellEngineCastToCrosshair",
     "MixinSpellEngineMountedTargetRay",
     "MixinSsrSuppressFollowDuringMountRotate",
-    "MixinSsrSuppressTurnSnapback"
+    "MixinSsrSuppressTurnSnapback",
+    "MixinSuppressIdleYawFollowV5",
+    "MixinDisableFollowPlayerRotationsV5"
   ],
   "injectors": {
     "defaultRequire": 1

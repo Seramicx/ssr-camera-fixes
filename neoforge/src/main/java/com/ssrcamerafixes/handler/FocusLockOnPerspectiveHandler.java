@@ -1,7 +1,7 @@
 package com.ssrcamerafixes.handler;
 
-import com.github.exopandora.shouldersurfing.api.client.ShoulderSurfing;
-import com.github.exopandora.shouldersurfing.api.model.Perspective;
+import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
+import com.github.exopandora.shouldersurfing.api.client.Perspective;
 import com.ssrcamerafixes.compat.FocusHelper;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,12 +24,12 @@ public final class FocusLockOnPerspectiveHandler {
         if (lockedOn && !wasLockedOn) {
             if (Perspective.current() == Perspective.SHOULDER_SURFING) {
                 tookOver = true;
-                ShoulderSurfing.getInstance().changePerspective(Perspective.THIRD_PERSON_BACK);
+                IShoulderSurfing.getInstance().changePerspective(Perspective.THIRD_PERSON_BACK);
             }
         } else if (!lockedOn && wasLockedOn) {
             // Only restore if we still own the view; if the player cycled away during lock-on, leave their choice
             if (tookOver && Perspective.current() == Perspective.THIRD_PERSON_BACK) {
-                ShoulderSurfing.getInstance().changePerspective(Perspective.SHOULDER_SURFING);
+                IShoulderSurfing.getInstance().changePerspective(Perspective.SHOULDER_SURFING);
             }
             tookOver = false;
         }

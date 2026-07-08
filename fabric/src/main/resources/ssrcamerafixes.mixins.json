@@ -5,8 +5,6 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "AccessorKeyMapping",
-    "MixinDisableFollowPlayerRotations",
-    "MixinSuppressIdleYawFollow",
     "MixinCombatRollDirection"
   ],
   "injectors": {

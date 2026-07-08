@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class MixinSuppressIdleYawFollow {
 
     @Redirect(
-        method = "turn",
+        method = "turnPlayerWithCamera",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/util/Mth;approachDegrees(FFF)F",
@@ -32,11 +32,11 @@ public abstract class MixinSuppressIdleYawFollow {
     }
 
     @Redirect(
-        method = "turn",
+        method = "turnPlayerWithCamera",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/player/LocalPlayer;setYRot(F)V",
-            ordinal = 1,
+            ordinal = 0,
             remap = true
         ),
         require = 0,

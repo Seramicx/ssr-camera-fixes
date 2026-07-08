@@ -21,6 +21,7 @@ public final class WizardsHelper {
     private static Boolean spellEnginePresent;
     private static Method isCastingSpellMethod;
     private static Method getSpellCastProgressMethod;
+    private static Method getCurrentSkillAttackMethod;
     private static boolean castMethodResolved;
 
     private static Field hotbarInstanceField;
@@ -47,6 +48,12 @@ public final class WizardsHelper {
             Class<?> iface = Class.forName("net.spell_engine.internals.casting.SpellCasterClient");
             isCastingSpellMethod = iface.getMethod("isCastingSpell");
             getSpellCastProgressMethod = iface.getMethod("getSpellCastProgress");
+            // getCurrentSkillAttack: 1.21.1+ only
+            try {
+                getCurrentSkillAttackMethod = iface.getMethod("getCurrentSkillAttack");
+            } catch (NoSuchMethodException ignored) {
+                getCurrentSkillAttackMethod = null;
+            }
         } catch (Throwable t) {
             LOGGER.debug("WizardsHelper: spell cast reflection unavailable: {}", t.toString());
         }
@@ -150,5 +157,18 @@ public final class WizardsHelper {
         if (isCastingLive()) return true;
         if (isCastKeyDown()) return true;
         return (System.currentTimeMillis() - castSignalMsO) < CAST_LATCH_MS;
+    }
+
+    public static boolean isMeleeSkillActive() {
+        if (!isLoaded()) return false;
+        resolveCastMethod();
+        if (getCurrentSkillAttackMethod == null) return false;
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) return false;
+        try {
+            return getCurrentSkillAttackMethod.invoke(player) != null;
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 }

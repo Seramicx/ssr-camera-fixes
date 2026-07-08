@@ -10,3 +10,4 @@ run-client/
 logs/
 crash-reports/
 bin/
+_bugtest_jars/

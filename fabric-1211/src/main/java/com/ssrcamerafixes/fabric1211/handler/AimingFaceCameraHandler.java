@@ -19,7 +19,7 @@ public final class AimingFaceCameraHandler {
         if (player == null) return;
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
-        if (!WizardsHelper.isCasting()) return;
+        if (!WizardsHelper.isCasting() && !WizardsHelper.isMeleeSkillActive()) return;
         if (isControllingMobMount(player)) return;
 
         ShoulderSurfingHelper.lookAtCrosshairTarget();
@@ -35,7 +35,7 @@ public final class AimingFaceCameraHandler {
         if (player == null) return;
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
-        if (!player.isBlocking() && !WizardsHelper.isCastingLive()) return;
+        if (!player.isBlocking() && !WizardsHelper.isCastingLive() && !WizardsHelper.isMeleeSkillActive()) return;
         if (isControllingMobMount(player)) return;
 
         float camYaw = ShoulderSurfingHelper.getCameraYaw();

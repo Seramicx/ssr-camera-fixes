@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
 import com.ssrcamerafixes.handler.AttackFaceCameraHandler;
+import com.ssrcamerafixes.handler.FreeLookMovementHandler;
 import com.ssrcamerafixes.handler.LockOnCameraSyncHandler;
 import com.ssrcamerafixes.handler.ShoulderCycleHandler;
 import com.ssrcamerafixes.handler.SprintRotateHandler;
@@ -36,6 +37,7 @@ public class SsrCameraFixesMod {
         NeoForge.EVENT_BUS.register(LockOnCameraSyncHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(SprintRotateHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(WalkStopFaceCameraHandler.INSTANCE);
+        NeoForge.EVENT_BUS.register(FreeLookMovementHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(AimingFaceCameraHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(AttackFaceCameraHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(com.ssrcamerafixes.handler.FocusLockOnPerspectiveHandler.INSTANCE);
@@ -43,7 +45,7 @@ public class SsrCameraFixesMod {
 
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.5 loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v2.0.0 loaded.");
     }
 
     private void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {

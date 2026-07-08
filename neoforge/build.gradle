@@ -43,7 +43,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "curse.maven:shoulder-surfing-reloaded-243190:8043996"
+    compileOnly "curse.maven:shoulder-surfing-reloaded-243190:8347905"
     compileOnly "curse.maven:epic-fight-mod-405076:8080214"
 }
 

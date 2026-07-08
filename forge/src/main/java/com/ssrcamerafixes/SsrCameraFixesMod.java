@@ -5,6 +5,7 @@ import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
 import com.ssrcamerafixes.handler.AttackFaceCameraHandler;
 import com.ssrcamerafixes.handler.LockOnCameraSyncHandler;
+import com.ssrcamerafixes.handler.FreeLookMovementHandler;
 import com.ssrcamerafixes.handler.ShoulderCycleHandler;
 import com.ssrcamerafixes.handler.SprintRotateHandler;
 import com.ssrcamerafixes.handler.WalkStopFaceCameraHandler;
@@ -37,6 +38,7 @@ public class SsrCameraFixesMod {
         MinecraftForge.EVENT_BUS.register(LockOnCameraSyncHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(SprintRotateHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(WalkStopFaceCameraHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(FreeLookMovementHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(AimingFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(AttackFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(com.ssrcamerafixes.handler.WomAquaCameraFrameHandler.INSTANCE);
@@ -45,7 +47,7 @@ public class SsrCameraFixesMod {
 
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.2.8 loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v2.0.0 loaded.");
     }
 
     private void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {

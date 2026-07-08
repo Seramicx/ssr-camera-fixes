@@ -6,7 +6,6 @@
   "client": [
     "AccessorKeyMapping",
     "MixinDisableEpicFightSsrLockOnTick",
-    "MixinForceSsrOffsetDuringLockOn",
     "MixinEpicFightForwardRotation",
     "MixinEpicFightModelYRotSnap",
     "MixinPhantomAscentForwardRoll",
@@ -14,6 +13,7 @@
     "MixinSuppressIdleYawFollow",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",
+    "MixinSsrAttackDirection",
     "MixinSyncLockOnCamera",
     "MixinTaczGunHoldDecouple",
     "MixinRadialAggroCameraYaw",

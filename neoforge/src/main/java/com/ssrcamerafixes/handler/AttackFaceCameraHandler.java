@@ -1,6 +1,7 @@
 package com.ssrcamerafixes.handler;
 
 import com.ssrcamerafixes.compat.BetterCombatHelper;
+import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -46,6 +47,7 @@ public final class AttackFaceCameraHandler {
     private static boolean shouldSnap(LocalPlayer player) {
         if (Minecraft.getInstance().options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
         if (isControllingMobMount(player)) return false;
+        if (EpicFightHelper.isAttacking(player) || EpicFightHelper.isAttackKeyActive() || EpicFightHelper.isHoldingSkill(player)) return false;
         return player.swinging || BetterCombatHelper.isAttackInProgress();
     }
 

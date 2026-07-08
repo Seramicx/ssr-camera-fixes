@@ -54,6 +54,6 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
 
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.2 (Fabric 1.21.1) loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v2.0.0 (Fabric 1.21.1) loaded.");
     }
 }

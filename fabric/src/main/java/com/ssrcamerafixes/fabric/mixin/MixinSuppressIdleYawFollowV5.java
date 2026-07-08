@@ -1,4 +1,4 @@
-package com.ssrcamerafixes.mixin;
+package com.ssrcamerafixes.fabric.mixin;
 
 import com.github.exopandora.shouldersurfing.client.ShoulderSurfingCamera;
 import com.ssrcamerafixes.SsrCameraFixesConfig;
@@ -10,9 +10,11 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+// v5 moved the idle yaw-follow out of turn() into private turnPlayerWithCamera. Same job as the v4
+// MixinSuppressIdleYawFollow, retargeted to the new method (setYRot is ordinal 0 there).
 @Pseudo
 @Mixin(value = ShoulderSurfingCamera.class, remap = false)
-public abstract class MixinSuppressIdleYawFollow {
+public abstract class MixinSuppressIdleYawFollowV5 {
 
     @Redirect(
         method = "turnPlayerWithCamera",

@@ -11,46 +11,36 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import yesman.epicfight.world.capabilities.EpicFightCapabilities;
+import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 
-// Mover skills (Phantom Ascent etc.) set the model facing via setModelYRot using an internal degree formula
-// that, under a decoupled camera, faces the wrong way for strafe/diagonal input (e.g. left looks backward).
-// Recompute the facing from the camera yaw and the actual movement keys, both when the skill sets it and on
-// each tick the skill facing stays active, so the roll turns to match if input changes mid-air. Visual only.
+// Mover skills (Phantom Ascent etc.) set model facing via setModelYRot. Do not override setModelYRot on
+// sendPacket=true: dodge and charged attacks already ship the correct angle from EF and we were breaking them.
 @Pseudo
 @Mixin(targets = "yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch", remap = false)
 public abstract class MixinEpicFightModelYRotSnap {
 
     @Shadow protected float modelYRot;
-    @Shadow protected float modelYRotO;
     @Shadow protected boolean useModelYRot;
 
-    // sendPacket=true marks a deliberate skill facing-set; the per-tick turning-lock adjustments pass false.
-    @Inject(method = "setModelYRot", at = @At("TAIL"), require = 0, remap = false)
-    private void ssrcamerafixes$correctFacing(float rotDeg, boolean sendPacket, CallbackInfo ci) {
-        if (!sendPacket) return;
-        if (!ShoulderSurfingHelper.isCameraDecoupled()) return;
-        Float facing = ssrcamerafixes$cameraRelativeFacing();
-        if (facing != null) {
-            this.modelYRot = facing;
-        }
-        this.modelYRotO = this.modelYRot;
-    }
-
-    // Keep the roll facing in sync with the current input while the skill facing is active (e.g. changing
-    // direction mid-air during Phantom Ascent). modelYRotO was set to the prior modelYRot earlier this tick,
-    // so updating modelYRot here lerps smoothly toward the new direction instead of snapping.
     @Inject(method = "tick", at = @At("TAIL"), require = 0, remap = false)
-    private void ssrcamerafixes$updateFacingMidAir(CallbackInfo ci) {
+    private void ssrcamerafixes$updateMoverFacingMidAir(CallbackInfo ci) {
         if (!this.useModelYRot) return;
         if (!ShoulderSurfingHelper.isCameraDecoupled()) return;
-        Float facing = ssrcamerafixes$cameraRelativeFacing();
+
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null || player.onGround()) return;
+
+        PlayerPatch<?> patch = EpicFightCapabilities.getEntityPatch(player, PlayerPatch.class);
+        if (patch != null && patch.getEntityState().turningLocked()) return;
+
+        Float facing = ssrcamerafixes$moverFacingFromInput();
         if (facing != null) {
             this.modelYRot = facing;
         }
     }
 
-    // Camera yaw rotated by the movement-key direction, or null when no direction is held.
-    private static Float ssrcamerafixes$cameraRelativeFacing() {
+    private static Float ssrcamerafixes$moverFacingFromInput() {
         Minecraft mc = Minecraft.getInstance();
         Options options = mc.options;
         LocalPlayer player = mc.player;

@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 // would freeze the camera. Redirect the follow guard instead, leaving renderRotation intact.
 @Pseudo
 @Mixin(value = ShoulderSurfingCamera.class, remap = false)
-public abstract class MixinDisableFollowPlayerRotations {
+public abstract class MixinDisableFollowPlayerRotationsV5 {
 
     @Shadow
     protected abstract boolean isCameraTurningWithPlayer();
