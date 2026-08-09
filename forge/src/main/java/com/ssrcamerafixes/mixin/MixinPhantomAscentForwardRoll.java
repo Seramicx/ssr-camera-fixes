@@ -25,12 +25,13 @@ public abstract class MixinPhantomAscentForwardRoll {
     @ModifyVariable(method = "playAnimationInClientSide", at = @At("HEAD"), argsOnly = true, require = 0, remap = false)
     private AssetAccessor<?> ssrcamerafixes$forwardRoll(AssetAccessor<?> animation) {
         if (!ShoulderSurfingHelper.isCameraDecoupled()) return animation;
-        if (animation == Animations.BIPED_PHANTOM_ASCENT_BACKWARD) {
+        boolean backward = animation == Animations.BIPED_PHANTOM_ASCENT_BACKWARD;
+        if (backward || animation == Animations.BIPED_PHANTOM_ASCENT_FORWARD) {
             Float facing = ssrcamerafixes$moverFacingFromInput();
             if (facing != null) {
                 ((PlayerPatch<?>) (Object) this).setModelYRot(facing, true);
             }
-            return Animations.BIPED_PHANTOM_ASCENT_FORWARD;
+            return backward ? Animations.BIPED_PHANTOM_ASCENT_FORWARD : animation;
         }
         return animation;
     }
