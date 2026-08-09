@@ -5,6 +5,7 @@ package com.ssrcamerafixes.mixin;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
+import com.ssrcamerafixes.compat.ValkyrienSkiesHelper;
 
 import net.minecraft.client.player.LocalPlayer;
 

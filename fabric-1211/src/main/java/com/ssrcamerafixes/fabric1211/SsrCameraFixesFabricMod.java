@@ -40,12 +40,13 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
         Keybinds.SHOULDER_CYCLE = cycle;
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            // Before/around SSR's InputHandler.tick so shared O (cycle vs swap) is ours alone.
+            ShoulderCycleHandler.INSTANCE.onClientTickStart(client);
             AttackFaceCameraHandler.INSTANCE.onClientTickStart(client);
             AimingFaceCameraHandler.onClientTickStart(client);
             AimingFaceCameraHandler.onMountedTickStart(client);
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            ShoulderCycleHandler.INSTANCE.onClientTickEnd(client);
             AttackFaceCameraHandler.INSTANCE.onClientTickEnd(client);
             SprintRotateHandler.INSTANCE.onClientTickEnd(client);
             WalkStopFaceCameraHandler.INSTANCE.onClientTickEnd(client);

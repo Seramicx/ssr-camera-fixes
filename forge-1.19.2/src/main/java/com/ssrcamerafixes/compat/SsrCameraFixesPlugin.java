@@ -37,15 +37,19 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
 
     private static final class OverheadOffsetCallback implements ITargetCameraOffsetCallback {
         @Override
+        public Vec3 pre(IShoulderSurfing instance, Vec3 targetOffset, Vec3 defaultOffset) {
+            return applyOverhead(targetOffset);
+        }
+
+        @Override
         public Vec3 post(IShoulderSurfing instance, Vec3 targetOffset, Vec3 defaultOffset) {
+            return applyOverhead(targetOffset);
+        }
+
+        private static Vec3 applyOverhead(Vec3 targetOffset) {
             if (ShoulderCycleHandler.getMode() != ShoulderCycleHandler.Mode.OVERHEAD) {
                 return targetOffset;
             }
-
-            if (Math.abs(targetOffset.x) < 1.0E-4 && Math.abs(targetOffset.y) < 1.0E-4) {
-                return targetOffset;
-            }
-
             double overheadY;
             try {
                 overheadY = SsrCameraFixesConfig.CAMERA_OVERHEAD_OFFSET_Y.get();

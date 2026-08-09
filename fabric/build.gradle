@@ -17,7 +17,13 @@ sourceSets.main {
     resources.srcDir rootProject.file('common/src/main/resources')
 }
 
+sourceSets {
+    ssrv4
+}
+
 loom {
+    createRemapConfigurations(sourceSets.ssrv4)
+
     runs {
         client {
             client()
@@ -48,6 +54,17 @@ dependencies {
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
     modCompileOnly "curse.maven:shoulder-surfing-reloaded-243190:8347881"
     modCompileOnly "curse.maven:better-combat-by-daedelus-639842:7287333"
+
+    // v4 SSR for the ssrv4 source set; Loom remaps it (intermediary -> named) so the v4 callback
+    // signatures line up with named MC. Kept off main so v5 stays the only SSR the main plugin sees.
+    modSsrv4CompileOnly "curse.maven:shoulder-surfing-reloaded-243190:8151311"
+}
+
+sourceSets.ssrv4.compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+
+tasks.named('jar', Jar).configure {
+    from sourceSets.ssrv4.output
+    duplicatesStrategy = DuplicatesStrategy.FAIL
 }
 
 tasks.named('processResources', ProcessResources).configure {

@@ -16,11 +16,14 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
     private boolean hasConfluence = false;
     private boolean hasIronsSpells = false;
     private boolean hasScorchedGuns = false;
+    private boolean hasSuperbWarfare = false;
     private boolean hasBetterMountSteering = false;
+    private boolean hasSsrV5 = false;
 
     @Override
     public void onLoad(String mixinPackage) {
         ClassLoader loader = this.getClass().getClassLoader();
+        hasSsrV5 = loader.getResource("com/github/exopandora/shouldersurfing/api/event/IEventBus.class") != null;
         hasEpicFight = loader.getResource("yesman/epicfight/api/client/camera/EpicFightCameraAPI.class") != null;
         hasTacz = loader.getResource("com/tacz/guns/compat/shouldersurfing/ShoulderSurfingPlugin.class") != null;
         hasRadialAggro = loader.getResource("com/mrbysco/radialaggroindicator/client/HudHandler.class") != null;
@@ -28,6 +31,7 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
         hasConfluence = loader.getResource("org/confluence/mod/common/item/mana/ManaStaffItem.class") != null;
         hasIronsSpells = loader.getResource("io/redspace/ironsspellbooks/player/ClientMagicData.class") != null;
         hasScorchedGuns = loader.getResource("top/ribs/scguns/client/handler/ShootingHandler.class") != null;
+        hasSuperbWarfare = loader.getResource("com/atsuishio/superbwarfare/event/ClientEventHandler.class") != null;
         hasBetterMountSteering = loader.getResource("com/bettermountsteering/handler/MountSteeringHandler.class") != null;
     }
 
@@ -38,6 +42,16 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        boolean versionOk = true;
+        if (mixinClassName.endsWith("V5")) {
+            versionOk = hasSsrV5;
+        } else if (mixinClassName.endsWith("V4")) {
+            versionOk = !hasSsrV5;
+        }
+        return versionOk && appliesForDependencies(mixinClassName);
+    }
+
+    private boolean appliesForDependencies(String mixinClassName) {
         if (mixinClassName.contains("MixinDisableEpicFightSsrLockOnTick") || mixinClassName.contains("MixinForceSsrOffsetDuringLockOn") || mixinClassName.contains("MixinEpicFightForwardRotation") || mixinClassName.contains("MixinEpicFightModelYRotSnap") || mixinClassName.contains("MixinPhantomAscentForwardRoll") || mixinClassName.contains("MixinSyncLockOnCamera") || mixinClassName.contains("MixinSsrDodgeDirection") || mixinClassName.contains("MixinSsrAttackDirection")) {
             return hasEpicFight;
         }
@@ -58,6 +72,9 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.contains("MixinScorchedGunsFaceCamera")) {
             return hasScorchedGuns;
+        }
+        if (mixinClassName.contains("MixinSuperbWarfareGunFaceCamera")) {
+            return hasSuperbWarfare;
         }
         if (mixinClassName.contains("MixinSsrSuppressFollowDuringMountRotate") || mixinClassName.contains("MixinSsrSuppressTurnSnapback")) {
             return hasBetterMountSteering;

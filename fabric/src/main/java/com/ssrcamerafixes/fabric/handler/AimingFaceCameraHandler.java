@@ -64,6 +64,15 @@ public final class AimingFaceCameraHandler {
         }
     }
 
+    public static void faceCrosshairAndSync(Minecraft mc, LocalPlayer player) {
+        ShoulderSurfingHelper.lookAtCrosshairTarget();
+
+        ClientPacketListener conn = mc.getConnection();
+        if (conn != null) {
+            conn.send(new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.onGround()));
+        }
+    }
+
     private static boolean isControllingMobMount(LocalPlayer player) {
         Entity v = player.getVehicle();
         return v instanceof Mob mob && mob.getControllingPassenger() == player;

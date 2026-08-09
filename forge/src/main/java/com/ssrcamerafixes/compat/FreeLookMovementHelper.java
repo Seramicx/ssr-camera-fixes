@@ -2,40 +2,38 @@ package com.ssrcamerafixes.compat;
 
 import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
 import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfingCamera;
-import com.github.exopandora.shouldersurfing.api.math.Vec2f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec2;
 
 public final class FreeLookMovementHelper {
 
     private FreeLookMovementHelper() {}
 
     public static void applyToInput(Input input) {
-        Vec2f rotated = cameraRelativeMoveVector(new Vec2f(input.getMoveVector()));
+        Vec2 rotated = cameraRelativeMoveVector(input.leftImpulse, input.forwardImpulse);
         if (rotated == null) {
             return;
         }
-        input.leftImpulse = rotated.x();
-        input.forwardImpulse = rotated.y();
+        input.leftImpulse = rotated.x;
+        input.forwardImpulse = rotated.y;
     }
 
-    public static Vec2f cameraRelativeMoveVector(Vec2f moveVector) {
-        IShoulderSurfing ssr;
-        try {
-            ssr = IShoulderSurfing.getInstance();
-        } catch (Throwable t) {
+    private static Vec2 cameraRelativeMoveVector(float leftImpulse, float forwardImpulse) {
+        IShoulderSurfing ssr = ShoulderSurfingHelper.instanceOrNull();
+        if (ssr == null) {
             return null;
         }
         if (!ssr.isFreeLooking()) {
             return null;
         }
-        if (!ssr.isShoulderSurfing() || !ssr.isCameraDecoupled() || ssr.isLookFollowingCrosshairTarget()) {
+        if (!ssr.isShoulderSurfing() || !ssr.isCameraDecoupled() || ShoulderSurfingHelper.isLookFollowingCrosshairTarget()) {
             return null;
         }
-        if (moveVector.lengthSquared() <= 0F) {
+        if (leftImpulse * leftImpulse + forwardImpulse * forwardImpulse <= 0F) {
             return null;
         }
 
@@ -54,8 +52,10 @@ public final class FreeLookMovementHelper {
             return null;
         }
 
-        float bodyYaw = player.getYRot();
-        return moveVector.rotateDegrees(Mth.degreesDifference(bodyYaw, camera.getYRot()));
+        float delta = Mth.degreesDifference(player.getYRot(), camera.getYRot()) * Mth.DEG_TO_RAD;
+        float sin = Mth.sin(delta);
+        float cos = Mth.cos(delta);
+        return new Vec2(leftImpulse * cos - forwardImpulse * sin, forwardImpulse * cos + leftImpulse * sin);
     }
 
     private static boolean isForcingVanillaInput(Entity cameraEntity) {

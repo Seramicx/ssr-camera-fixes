@@ -2,6 +2,7 @@ package com.ssrcamerafixes.mixin;
 
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
+import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 // Right-click Firebolt sends ServerboundCast from a client tick with no rotation; the server casts from the
-// synced yaw. The no-arg constructor is the client send, so face the crosshair before the packet leaves
+// synced yaw. Face + Rot-sync before the packet leaves, and latch for mounted tick-end re-aim vs BMS.
 @Pseudo
 @Mixin(targets = "io.redspace.ironsspellbooks.network.ServerboundCast", remap = false)
 public abstract class MixinIronsCastPacketFaceCamera {
@@ -25,6 +26,6 @@ public abstract class MixinIronsCastPacketFaceCamera {
         if (EpicFightHelper.isLockOnTargeting()) return;
 
         EpicFightHelper.signalCast();
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimingFaceCameraHandler.faceCrosshairAndSync(mc, mc.player);
     }
 }

@@ -13,6 +13,8 @@ public final class GunModHelper {
     private static Method cgmGet;
     private static Field cgmShooting;
     private static Method cgmShootKeyGet;
+    private static Method cgmAimingGet;
+    private static Method cgmIsAiming;
     private static Class<?> cgmGunItemClass;
 
     private static void resolve() {
@@ -33,6 +35,11 @@ public final class GunModHelper {
         try {
             Class<?> keyBinds = Class.forName("com.mrcrayfish.guns.client.KeyBinds");
             cgmShootKeyGet = keyBinds.getMethod("getShootMapping");
+        } catch (Throwable ignored) {}
+        try {
+            Class<?> aiming = Class.forName("com.mrcrayfish.guns.client.handler.AimingHandler");
+            cgmAimingGet = aiming.getMethod("get");
+            cgmIsAiming = aiming.getMethod("isAiming");
         } catch (Throwable ignored) {}
         try {
             cgmGunItemClass = Class.forName("com.mrcrayfish.guns.item.GunItem");
@@ -75,5 +82,17 @@ public final class GunModHelper {
 
     public static boolean isShootKeyDownOrFiring() {
         return isShootKeyDown() || isGunFiring();
+    }
+
+    public static boolean isAiming() {
+        resolve();
+        if (cgmAimingGet == null || cgmIsAiming == null) return false;
+        try {
+            Object handler = cgmAimingGet.invoke(null);
+            Object aiming = cgmIsAiming.invoke(handler);
+            return aiming instanceof Boolean && (Boolean) aiming;
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 }

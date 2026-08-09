@@ -20,6 +20,7 @@ public abstract class MixinSsrSuppressTurnSnapback {
     @Unique private float ssrcamerafixes$savedXRot;
     @Unique private float ssrcamerafixes$savedYRotO;
     @Unique private float ssrcamerafixes$savedXRotO;
+    @Unique private static int ssrcamerafixes$aimDbgCooldown;
 
     @Inject(
         method = "turn(Lnet/minecraft/client/player/LocalPlayer;DD)Z",
@@ -49,10 +50,22 @@ public abstract class MixinSsrSuppressTurnSnapback {
     private void ssrcamerafixes$afterTurn(LocalPlayer player, double yRot, double xRot,
                                           CallbackInfoReturnable<Boolean> cir) {
         if (!ssrcamerafixes$shouldRestore) return;
+        float yAfterSsr = player.getYRot();
+        float xAfterSsr = player.getXRot();
         player.setYRot(ssrcamerafixes$savedYRot);
         player.setXRot(ssrcamerafixes$savedXRot);
         player.yRotO = ssrcamerafixes$savedYRotO;
         player.xRotO = ssrcamerafixes$savedXRotO;
         ssrcamerafixes$shouldRestore = false;
+        // AIMDBG: temporary — proves BMS-compat undoes SSR aim coupling. Remove after diagnosis.
+        if (player.isUsingItem() && ssrcamerafixes$aimDbgCooldown-- <= 0) {
+            ssrcamerafixes$aimDbgCooldown = 5;
+            org.slf4j.LoggerFactory.getLogger("AIMDBG").info(
+                    "SuppressTurnSnapback FIRED using={} mounted={} ySsr={}→restored={} xSsr={}→restored={}",
+                    true,
+                    player.getVehicle() != null,
+                    yAfterSsr, player.getYRot(),
+                    xAfterSsr, player.getXRot());
+        }
     }
 }

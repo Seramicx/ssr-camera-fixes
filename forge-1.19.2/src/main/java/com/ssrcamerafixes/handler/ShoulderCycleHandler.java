@@ -19,18 +19,19 @@ public final class ShoulderCycleHandler {
 
     public enum Mode { RIGHT, LEFT, OVERHEAD }
 
-    private static volatile boolean isOverhead = false;
+    // SSR's default offset_x is -0.75, camera over the right shoulder; positive X is the other shoulder
+    private static volatile Mode mode = Mode.RIGHT;
+    private static volatile int shoulderSign = -1;
+    private static volatile boolean syncedFromConfig;
 
     private boolean sharedKeyDownO = false;
 
     private ShoulderCycleHandler() {}
 
     public static Mode getMode() {
-        if (isOverhead) return Mode.OVERHEAD;
-        return ShoulderSurfingHelper.getStoredShoulderX() >= 0.0 ? Mode.RIGHT : Mode.LEFT;
+        return mode;
     }
 
-    // HIGHEST so the shared-key case resolves before ShoulderSurfingImpl.tick consumes SWAP_SHOULDER on START
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.START) return;
@@ -39,9 +40,9 @@ public final class ShoulderCycleHandler {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.screen != null) return;
 
+        syncFromConfigIfNeeded();
+
         if (sharesKeyWithSsrSwap()) {
-            // SSR's bind wins KeyMapping.MAP since it registers before our RegisterKeyMappingsEvent,
-            // so its clicks must be drained here and the cycle advanced off the shared key's rising edge
             boolean down = InputHandler.SWAP_SHOULDER.isDown();
             boolean rising = down && !sharedKeyDownO;
             sharedKeyDownO = down;
@@ -60,6 +61,18 @@ public final class ShoulderCycleHandler {
         }
     }
 
+    private static void syncFromConfigIfNeeded() {
+        if (syncedFromConfig) return;
+        syncedFromConfig = true;
+        double x = ShoulderSurfingHelper.getStoredShoulderX();
+        if (Math.abs(x) > 1.0E-4) {
+            shoulderSign = x >= 0.0 ? 1 : -1;
+        }
+        if (mode != Mode.OVERHEAD) {
+            mode = shoulderSign < 0 ? Mode.RIGHT : Mode.LEFT;
+        }
+    }
+
     private static boolean sharesKeyWithSsrSwap() {
         KeyMapping cycle = SsrCameraFixesMod.SHOULDER_CYCLE;
         if (cycle == null) return false;
@@ -73,22 +86,27 @@ public final class ShoulderCycleHandler {
     }
 
     private static void advance() {
-        switch (getMode()) {
-            case RIGHT -> ShoulderSurfingHelper.swapShoulder();
-            case LEFT -> isOverhead = true;
-            case OVERHEAD -> {
-                isOverhead = false;
+        switch (mode) {
+            case RIGHT -> {
                 ShoulderSurfingHelper.swapShoulder();
+                shoulderSign = 1;
+                mode = Mode.LEFT;
+            }
+            case LEFT -> mode = Mode.OVERHEAD;
+            case OVERHEAD -> {
+                ShoulderSurfingHelper.swapShoulder();
+                shoulderSign = -1;
+                mode = Mode.RIGHT;
             }
         }
     }
 
     private static void showToast(Minecraft mc) {
         if (mc.player == null) return;
-        String label = switch (getMode()) {
+        String label = switch (mode) {
             case LEFT -> "left";
             case OVERHEAD -> "overhead";
-            default -> "right";
+            case RIGHT -> "right";
         };
         mc.player.displayClientMessage(
                 Component.literal("Shoulder: ")

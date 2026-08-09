@@ -21,6 +21,17 @@ sourceSets.main {
     resources.srcDir rootProject.file('common/src/main/resources')
 }
 
+sourceSets {
+    ssrv4
+}
+
+// v4 and v5 SSR share curse module 243190; a second fg.deobf on it breaks ForgeGradle's deobf
+// resolver, so the v4 API comes in as the raw jar. The v4 adapter makes no MC member calls, so
+// unmapped MC refs in the raw jar never matter - only type descriptors, which are mapping-agnostic.
+configurations {
+    ssrv4RawApi
+}
+
 minecraft {
     mappings channel: mapping_channel, version: mapping_version
     copyIdeResources = true
@@ -63,8 +74,14 @@ dependencies {
     compileOnly fg.deobf("curse.maven:epic-fight-mod-405076:7878000")
     compileOnly fg.deobf("curse.maven:shoulder-surfing-reloaded-243190:8347880")
 
+    ssrv4RawApi "curse.maven:shoulder-surfing-reloaded-243190:8151315"
+
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
+
+sourceSets.ssrv4.compileClasspath = configurations.ssrv4RawApi +
+        sourceSets.main.compileClasspath +
+        sourceSets.main.output
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
@@ -94,6 +111,9 @@ tasks.named('jar', Jar).configure {
                 'MixinConfigs'            : 'ssrcamerafixes.mixins.json'
         ])
     }
+
+    from sourceSets.ssrv4.output
+    duplicatesStrategy = DuplicatesStrategy.FAIL
 
     finalizedBy 'reobfJar'
 }

@@ -8,10 +8,17 @@
     "MixinSpellEngineCastToCrosshair",
     "MixinSpellEngineMountedTargetRay",
     "MixinSpellEngineMeleeTargetFacing",
-    "MixinSsrSuppressFollowDuringMountRotate",
-    "MixinSsrSuppressTurnSnapback"
+    "MixinSsrSuppressFollowDuringMountRotateV5",
+    "MixinSsrSuppressFollowDuringMountRotateV4",
+    "MixinSsrSuppressTurnSnapback",
+    "MixinSsrSuppressSwapOnCycleConflict",
+    "MixinCrossbowFaceCamera"
+  ],
+  "mixins": [
+    "MixinCrossbowServerHeadYaw"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "plugin": "com.ssrcamerafixes.mixin.SsrCameraFixesMixinPlugin"
 }

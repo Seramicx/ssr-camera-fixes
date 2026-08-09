@@ -3,6 +3,7 @@ package com.ssrcamerafixes.mixin;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.IronSpellsHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
+import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -32,6 +33,6 @@ public abstract class MixinIronsInstantCastFaceCamera {
         // Instant casts resolve server-side over the next few ticks; latch so the aim handlers keep correcting
         // the rotation against Better Mount Steering's end-of-tick reassert until the cast lands
         IronSpellsHelper.signalCast();
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimingFaceCameraHandler.faceCrosshair(mc.player);
     }
 }

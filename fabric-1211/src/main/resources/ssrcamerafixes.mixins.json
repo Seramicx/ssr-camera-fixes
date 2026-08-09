@@ -5,11 +5,15 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "AccessorKeyMapping",
-    "MixinDisableFollowPlayerRotations",
-    "MixinSuppressIdleYawFollow",
+    "MixinDisableFollowPlayerRotationsV5",
+    "MixinDisableFollowPlayerRotationsV4",
+    "MixinSuppressIdleYawFollowV5",
+    "MixinSuppressIdleYawFollowV4",
+    "MixinSsrHeldCrossbowNoAimV4",
     "MixinCombatRollDirection"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "plugin": "com.ssrcamerafixes.mixin.SsrCameraFixesMixinPlugin"
 }

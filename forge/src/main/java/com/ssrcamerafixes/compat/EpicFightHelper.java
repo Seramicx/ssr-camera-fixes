@@ -1,6 +1,7 @@
 package com.ssrcamerafixes.compat;
 
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
@@ -37,6 +38,10 @@ public final class EpicFightHelper {
     private static Object attackDestroyAction;
     private static Method cameraApiGetInstance;
     private static Method isLockingOnTarget;
+    private static Method getCameraXRot;
+    private static Method getCameraXRotO;
+    private static Method getCameraYRot;
+    private static Method getCameraYRotO;
     private static Method getSkill;
     private static Object moverSlot;
     private static Method skillContainerGetSkill;
@@ -73,6 +78,10 @@ public final class EpicFightHelper {
             Class<?> cameraApi = Class.forName("yesman.epicfight.api.client.camera.EpicFightCameraAPI");
             cameraApiGetInstance = cameraApi.getMethod("getInstance");
             isLockingOnTarget = cameraApi.getMethod("isLockingOnTarget");
+            getCameraXRot = cameraApi.getMethod("getCameraXRot");
+            getCameraXRotO = cameraApi.getMethod("getCameraXRotO");
+            getCameraYRot = cameraApi.getMethod("getCameraYRot");
+            getCameraYRotO = cameraApi.getMethod("getCameraYRotO");
 
             Class<?> skillSlots = Class.forName("yesman.epicfight.skill.SkillSlots");
             moverSlot = skillSlots.getField("MOVER").get(null);
@@ -148,6 +157,36 @@ public final class EpicFightHelper {
             return api != null && (boolean) isLockingOnTarget.invoke(api);
         } catch (Throwable t) {
             return false;
+        }
+    }
+
+    public static float getLockOnXRot(float partialTick) {
+        if (!isLoaded) return 0;
+        resolve();
+        if (cameraApiGetInstance == null || getCameraXRot == null || getCameraXRotO == null) return 0;
+        try {
+            Object api = cameraApiGetInstance.invoke(null);
+            if (api == null) return 0;
+            float cur = ((Number) getCameraXRot.invoke(api)).floatValue();
+            float prev = ((Number) getCameraXRotO.invoke(api)).floatValue();
+            return Mth.rotLerp(partialTick, prev, cur);
+        } catch (Throwable t) {
+            return 0;
+        }
+    }
+
+    public static float getLockOnYRot(float partialTick) {
+        if (!isLoaded) return 0;
+        resolve();
+        if (cameraApiGetInstance == null || getCameraYRot == null || getCameraYRotO == null) return 0;
+        try {
+            Object api = cameraApiGetInstance.invoke(null);
+            if (api == null) return 0;
+            float cur = ((Number) getCameraYRot.invoke(api)).floatValue();
+            float prev = ((Number) getCameraYRotO.invoke(api)).floatValue();
+            return Mth.rotLerp(partialTick, prev, cur);
+        } catch (Throwable t) {
+            return 0;
         }
     }
 

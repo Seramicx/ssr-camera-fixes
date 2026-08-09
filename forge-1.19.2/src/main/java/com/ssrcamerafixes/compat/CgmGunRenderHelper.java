@@ -9,7 +9,6 @@ import net.minecraft.world.item.ItemStack;
 
 import java.lang.reflect.Method;
 
-/** Re-apply CGM weapon arm pose after CGM's riding skip (runs at setupAnim TAIL, priority 1100). */
 public final class CgmGunRenderHelper {
 
     private static boolean resolved;

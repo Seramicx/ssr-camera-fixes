@@ -9,12 +9,17 @@
     "MixinEpicFightForwardRotation",
     "MixinEpicFightModelYRotSnap",
     "MixinPhantomAscentForwardRoll",
-    "MixinDisableFollowPlayerRotations",
-    "MixinSuppressIdleYawFollow",
+    "MixinDisableFollowPlayerRotationsV5",
+    "MixinDisableFollowPlayerRotationsV4",
+    "MixinSuppressIdleYawFollowV5",
+    "MixinSuppressIdleYawFollowV4",
+    "MixinSsrHeldCrossbowNoAimV4",
+    "MixinCrossbowFaceCamera",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",
     "MixinSsrAttackDirection",
-    "MixinSyncLockOnCamera",
+    "MixinSyncLockOnCameraV5",
+    "MixinSyncLockOnCameraV4",
     "MixinTaczGunHoldDecouple",
     "MixinRadialAggroCameraYaw",
     "MixinFocusKeepCrosshairForSsr",
@@ -25,8 +30,13 @@
     "MixinIronsCastPacketFaceCamera",
     "MixinIronsQuickCastPacketFaceCamera",
     "MixinScorchedGunsFaceCamera",
-    "MixinSsrSuppressFollowDuringMountRotate",
+    "MixinSuperbWarfareGunFaceCamera",
+    "MixinSsrSuppressFollowDuringMountRotateV5",
+    "MixinSsrSuppressFollowDuringMountRotateV4",
     "MixinSsrSuppressTurnSnapback"
+  ],
+  "mixins": [
+    "MixinCrossbowServerHeadYaw"
   ],
   "injectors": {
     "defaultRequire": 1

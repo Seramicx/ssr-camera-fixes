@@ -49,7 +49,7 @@ public final class BetterMountSteeringHelper {
         }
     }
 
-    /** BMS arms a 500ms latch at CGM fire() for semi-auto; prefer this over raw shoot-key state on mount. */
+    // BMS arms a 500ms latch at CGM fire(); raw shoot-key state misses semi-auto taps on mount
     public static boolean isGunCombatActive() {
         try {
             Class<?> helper = Class.forName("com.bettermountsteering.compat.GunModHelper");

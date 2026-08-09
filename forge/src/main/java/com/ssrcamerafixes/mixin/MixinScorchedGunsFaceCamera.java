@@ -2,6 +2,7 @@ package com.ssrcamerafixes.mixin;
 
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
+import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +28,6 @@ public abstract class MixinScorchedGunsFaceCamera {
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
 
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimingFaceCameraHandler.faceCrosshair(mc.player);
     }
 }

@@ -41,6 +41,7 @@ public final class EpicFightHelper {
     private static Method getCameraXRotO;
     private static Method getCameraYRot;
     private static Method getCameraYRotO;
+    private static Method setCameraRotationsMethod;
     private static boolean resolved = false;
 
     private EpicFightHelper() {}
@@ -78,6 +79,7 @@ public final class EpicFightHelper {
             getCameraXRotO = cameraApi.getMethod("getCameraXRotO");
             getCameraYRot = cameraApi.getMethod("getCameraYRot");
             getCameraYRotO = cameraApi.getMethod("getCameraYRotO");
+            setCameraRotationsMethod = cameraApi.getMethod("setCameraRotations", float.class, float.class, boolean.class);
         } catch (Throwable ignored) {
             getLocalPlayerPatch = null;
         }
@@ -177,6 +179,19 @@ public final class EpicFightHelper {
         } catch (Throwable t) {
             return 0;
         }
+    }
+
+    // Keep EF's camera API aligned with the SSR-aware aim or unlock snaps elsewhere
+    public static void setCameraRotations(float xRot, float yRot, boolean syncOld) {
+        if (!isLoaded) return;
+        resolve();
+        if (cameraApiGetInstance == null || setCameraRotationsMethod == null) return;
+        try {
+            Object api = cameraApiGetInstance.invoke(null);
+            if (api != null) {
+                setCameraRotationsMethod.invoke(api, xRot, yRot, syncOld);
+            }
+        } catch (Throwable ignored) {}
     }
 
     public static boolean animationOwnsLivingMotion(LocalPlayer player) {

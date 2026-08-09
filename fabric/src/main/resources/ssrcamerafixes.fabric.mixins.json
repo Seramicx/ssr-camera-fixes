@@ -7,12 +7,22 @@
     "MixinSprintRotateInput",
     "MixinSpellEngineCastToCrosshair",
     "MixinSpellEngineMountedTargetRay",
-    "MixinSsrSuppressFollowDuringMountRotate",
+    "MixinSsrSuppressFollowDuringMountRotateV5",
+    "MixinSsrSuppressFollowDuringMountRotateV4",
     "MixinSsrSuppressTurnSnapback",
     "MixinSuppressIdleYawFollowV5",
-    "MixinDisableFollowPlayerRotationsV5"
+    "MixinSuppressIdleYawFollowV4",
+    "MixinSsrHeldCrossbowNoAimV4",
+    "MixinCrossbowFaceCamera",
+    "MixinDisableFollowPlayerRotationsV5",
+    "MixinDisableFollowPlayerRotationsV4",
+    "MixinSsrSuppressSwapOnCycleConflict"
+  ],
+  "mixins": [
+    "MixinCrossbowServerHeadYaw"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "plugin": "com.ssrcamerafixes.mixin.SsrCameraFixesMixinPlugin"
 }

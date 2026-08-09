@@ -2,7 +2,7 @@ package com.ssrcamerafixes.mixin;
 
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.IronSpellsHelper;
-import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
+import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -14,8 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 // Instant casts (Firebolt right-click) resolve the same tick the use packet lands and never set isCasting, so a
-// tick handler aims too late. Face the crosshair at useItem HEAD before the packet is built, and latch so the
-// mounted end-of-tick re-aim keeps correcting against Better Mount Steering until the cast lands
+// tick handler aims too late. Face + Rot-sync here, and latch so mounted tick-end re-aim beats BMS until the cast lands.
 @Mixin(MultiPlayerGameMode.class)
 public abstract class MixinIronsInstantCastFaceCamera {
 
@@ -25,11 +24,11 @@ public abstract class MixinIronsInstantCastFaceCamera {
         Minecraft mc = Minecraft.getInstance();
         if (player != mc.player) return;
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
-        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
+        if (!com.ssrcamerafixes.compat.ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (!IronSpellsHelper.isIronsItem(player.getItemInHand(hand).getItem())) return;
 
         EpicFightHelper.signalCast();
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimingFaceCameraHandler.faceCrosshairAndSync(mc, mc.player);
     }
 }

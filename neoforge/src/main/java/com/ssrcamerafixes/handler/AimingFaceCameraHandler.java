@@ -136,7 +136,7 @@ public final class AimingFaceCameraHandler {
         }
     }
 
-    private static void faceCrosshairAndSync(Minecraft mc, LocalPlayer player) {
+    public static void faceCrosshairAndSync(Minecraft mc, LocalPlayer player) {
         ShoulderSurfingHelper.lookAtCrosshairTarget();
         ClientPacketListener conn = mc.getConnection();
         if (conn != null) {

@@ -9,6 +9,8 @@
     "MixinForceSsrOffsetDuringLockOn",
     "MixinDisableFollowPlayerRotations",
     "MixinSuppressIdleYawFollow",
+    "MixinSsrHeldCrossbowNoAim",
+    "MixinCrossbowFaceCamera",
     "MixinSuppressMovingInputYawFollow",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",
@@ -17,15 +19,20 @@
     "MixinPhantomAscentForwardRoll",
     "MixinPhantomAscentMidAirFacing",
     "MixinCgmGunFaceCamera",
+    "MixinCgmKeepCrosshairForSsr",
     "MixinCgmMountGunArmFix",
     "MixinCgmMountedGunArms",
     "MixinCgmWeaponPosePitch",
     "MixinCgmGunServerHeadYaw",
+    "MixinTaczGunHoldDecouple",
     "MixinSsrSuppressFollowDuringMountRotate",
     "MixinSsrSuppressTurnSnapback",
     "MixinSsrSuppressPassengerConstraint",
     "MixinIronsInstantCastFaceCamera",
     "MixinIronsCastPacketFaceCamera"
+  ],
+  "mixins": [
+    "MixinCrossbowServerHeadYaw"
   ],
   "injectors": {
     "defaultRequire": 1

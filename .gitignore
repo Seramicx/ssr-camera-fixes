@@ -1,13 +1,7 @@
 .gradle/
 build/
-out/
+bin/
+run/
 .idea/
 *.iml
-*.iws
-run/
-run-server/
-run-client/
-logs/
-crash-reports/
-bin/
 _bugtest_jars/

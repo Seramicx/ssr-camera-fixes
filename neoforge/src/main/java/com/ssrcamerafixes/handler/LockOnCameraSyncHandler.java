@@ -1,9 +1,7 @@
 package com.ssrcamerafixes.handler;
 
 import com.ssrcamerafixes.compat.EpicFightHelper;
-import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
-import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
-import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfingCamera;
+import com.ssrcamerafixes.compat.LockOnSsrAim;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
@@ -16,29 +14,17 @@ public final class LockOnCameraSyncHandler {
 
     private LockOnCameraSyncHandler() {}
 
-    // LOWEST so this mod's camera angle override runs after EpicFight's camera adjustments
+    // Never write ComputeCameraAngles into SSR while locked on (NeoForge circular clobber).
+    // On unlock, re-apply the last lock-on facing so free-look starts from the enemy view
+    // (do not snap to the player's body look).
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onComputeCameraAngles(ViewportEvent.ComputeCameraAngles event) {
         boolean lockedOn = EpicFightHelper.isLockOnTargeting();
 
-        if (!lockedOn) {
-            if (wasLockedOn && ShoulderSurfingHelper.isShoulderSurfingActive()) {
-                IShoulderSurfingCamera cam = IShoulderSurfing.getInstance().getCamera();
-                if (cam != null) {
-                    cam.setYRot((float) event.getYaw());
-                    cam.setXRot((float) event.getPitch());
-                }
-            }
-            wasLockedOn = false;
-            return;
+        if (!lockedOn && wasLockedOn) {
+            LockOnSsrAim.applyLastFacingToSsr();
         }
 
-        wasLockedOn = true;
-        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
-
-        IShoulderSurfingCamera cam = IShoulderSurfing.getInstance().getCamera();
-        if (cam == null) return;
-        cam.setYRot((float) event.getYaw());
-        cam.setXRot((float) event.getPitch());
+        wasLockedOn = lockedOn;
     }
 }

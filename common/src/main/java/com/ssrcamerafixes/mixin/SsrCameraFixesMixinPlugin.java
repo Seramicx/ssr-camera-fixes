@@ -17,10 +17,14 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
     private boolean hasBetterMountSteering = false;
     private boolean hasScorchedGuns = false;
     private boolean hasCgm = false;
+    private boolean hasSuperbWarfare = false;
+    private boolean hasSsrV5 = false;
 
     @Override
     public void onLoad(String mixinPackage) {
         ClassLoader loader = this.getClass().getClassLoader();
+        // v5 adds api.event.IEventBus; v4 does not
+        hasSsrV5 = loader.getResource("com/github/exopandora/shouldersurfing/api/event/IEventBus.class") != null;
         hasEpicFight = loader.getResource("yesman/epicfight/client/world/capabilites/entitypatch/player/LocalPlayerPatch.class") != null;
         hasTacz = loader.getResource("com/tacz/guns/compat/shouldersurfing/ShoulderSurfingPlugin.class") != null;
         hasRadialAggro = loader.getResource("com/mrbysco/radialaggroindicator/client/HudHandler.class") != null;
@@ -29,6 +33,7 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
         hasBetterMountSteering = loader.getResource("com/bettermountsteering/handler/MountSteeringHandler.class") != null;
         hasScorchedGuns = loader.getResource("top/ribs/scguns/client/handler/ShootingHandler.class") != null;
         hasCgm = loader.getResource("com/mrcrayfish/guns/client/handler/ShootingHandler.class") != null;
+        hasSuperbWarfare = loader.getResource("com/atsuishio/superbwarfare/event/ClientEventHandler.class") != null;
     }
 
     @Override
@@ -38,16 +43,24 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if (mixinClassName.endsWith("V5")) {
+            if (!hasSsrV5) return false;
+        } else if (mixinClassName.endsWith("V4")) {
+            if (hasSsrV5) return false;
+        }
+
         if (mixinClassName.contains("MixinDisableEpicFightSsrLockOnTick") || mixinClassName.contains("MixinForceSsrOffsetDuringLockOn") || mixinClassName.contains("MixinEpicFightForwardRotation") || mixinClassName.contains("MixinEpicFightModelYRotSnap") || mixinClassName.contains("MixinPhantomAscent") || mixinClassName.contains("MixinSyncLockOnCamera") || mixinClassName.contains("MixinSsrDodgeDirection") || mixinClassName.contains("MixinSsrAttackDirection") || mixinClassName.contains("MixinSuppressMovingInputYawFollow")) {
             return hasEpicFight;
         }
-        if (mixinClassName.contains("MixinTaczGunHoldDecouple")) {
+        if (mixinClassName.contains("MixinTaczGunHoldDecouple") || mixinClassName.contains("MixinTaczShootFaceCamera")
+                || mixinClassName.contains("MixinTaczBulletShipDirection")) {
             return hasTacz;
         }
         if (mixinClassName.contains("MixinRadialAggroCameraYaw")) {
             return hasRadialAggro;
         }
-        if (mixinClassName.contains("MixinSyncPlayerToSsrOnVsShip") || mixinClassName.contains("MixinSuppressSsrVsIncompatWarning") || mixinClassName.contains("MixinSsrLevelRendererForVs") || mixinClassName.contains("MixinSkipDynamicOffsetOnVsShip") || mixinClassName.contains("CameraMoveInvoker")) {
+        if (mixinClassName.contains("MixinSyncPlayerToSsrOnVsShip") || mixinClassName.contains("MixinSuppressSsrVsIncompatWarning") || mixinClassName.contains("MixinSsrLevelRendererForVs") || mixinClassName.contains("MixinSkipDynamicOffsetOnVsShip") || mixinClassName.contains("CameraMoveInvoker") || mixinClassName.contains("MixinEntityHelperLookAtOnVsShip")
+                || mixinClassName.contains("MixinVsCameraSkipZoomOnSsr") || mixinClassName.contains("MixinSsrSkipMaxZoomOnVsShip")) {
             return hasValkyrienSkies;
         }
         if (mixinClassName.contains("MixinFocusKeepCrosshairForSsr") || mixinClassName.contains("MixinFocusPickOnlyWhenLockedOn")) {
@@ -56,13 +69,26 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.contains("MixinSsrSuppressFollowDuringMountRotate") || mixinClassName.contains("MixinSsrSuppressTurnSnapback") || mixinClassName.contains("MixinSsrSuppressPassengerConstraint")) {
             return hasBetterMountSteering;
         }
-        if (mixinClassName.contains("MixinScorchedGunsFaceCamera")) {
+        if (mixinClassName.contains("MixinScorchedGunsFaceCamera")
+                || mixinClassName.contains("MixinScorchedFlareFaceCamera")
+                || mixinClassName.contains("MixinScorchedProjectileShipDirection")
+                || mixinClassName.contains("MixinScorchedArrowShipDirection")
+                || mixinClassName.contains("MixinScorchedThrowableShipDirection")
+                || mixinClassName.contains("MixinScorchedFlareShipDirection")
+                || mixinClassName.contains("MixinScorchedBeamRenderDirection")) {
             return hasScorchedGuns;
         }
         if (mixinClassName.contains("MixinCgmGunFaceCamera") || mixinClassName.contains("MixinCgmGunServerHeadYaw")
                 || mixinClassName.contains("MixinCgmMountGunArmFix") || mixinClassName.contains("MixinCgmMountedGunArms")
-                || mixinClassName.contains("MixinCgmWeaponPosePitch")) {
+                || mixinClassName.contains("MixinCgmWeaponPosePitch")
+                || mixinClassName.contains("MixinCgmProjectileShipDirection")
+                || mixinClassName.contains("MixinCgmKeepCrosshairForSsr")) {
             return hasCgm;
+        }
+        if (mixinClassName.contains("MixinSuperbWarfareGunFaceCamera")
+                || mixinClassName.contains("MixinSwSkipThirdPersonGunCameraOnSsr")
+                || mixinClassName.contains("MixinSwSkipThirdPersonCameraYawOnSsr")) {
+            return hasSuperbWarfare;
         }
         return true;
     }

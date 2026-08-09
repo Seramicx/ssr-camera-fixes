@@ -2,6 +2,7 @@ package com.ssrcamerafixes.mixin;
 
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
+import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -19,10 +20,15 @@ public abstract class MixinCgmGunFaceCamera {
 
     @Inject(method = "fire", at = @At("HEAD"), require = 0, remap = false)
     private void ssrcamerafixes$faceCrosshairForGun(Player player, ItemStack heldItem, CallbackInfo ci) {
-        if (player != Minecraft.getInstance().player) return;
-        if (Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (player != mc.player) return;
+        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+
+        // Packet captures crosshair aim here; do not restore yaw at RETURN because that breaks
+        // sustained hold-fire cadence and "standing still follow-up shot" accuracy on mounts.
+        AimingFaceCameraHandler.faceCrosshairAndSync(mc, mc.player);
+        player.yHeadRot = player.getYRot();
     }
 }

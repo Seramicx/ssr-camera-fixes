@@ -22,12 +22,32 @@ public final class ShoulderSurfingHelper {
     private static volatile Method lookAtCrosshairMethod;
     private static volatile boolean lookAtCrosshairResolved;
 
+    // v5-only; absent on v4's IShoulderSurfing, so free look must not gate on it there
+    private static volatile Method lookFollowingCrosshairMethod;
+    private static volatile boolean lookFollowingCrosshairResolved;
+
+    private static volatile Field crosshairOffsetField;
+    private static volatile boolean crosshairOffsetResolved;
+    private static volatile Method crosshairOffsetXMethod;
+    private static volatile Method crosshairOffsetYMethod;
+
     private static volatile Field lastMovedYRotField;
     private static volatile boolean lastMovedYRotResolved;
 
-    // v5 moved the offset getters onto getClientConfig().getCameraConfig(); v4 had them on getClientConfig()
+    // v5 moved the offset getters onto getClientConfig().getCameraConfig(); v4 had them on getClientConfig().
+    // getClientConfig()'s return type also moved api.client → api.config, so both must be resolved reflectively
+    // or a v5-compiled invokeinterface NoSuchMethodErrors on v4 and we silently return 0 (centered cam on ship).
+    private static volatile Method getClientConfigMethod;
     private static volatile Method cameraConfigMethod;
     private static volatile boolean offsetPathResolved;
+    private static volatile boolean cameraConfigResolved;
+
+    // Perspective enum moved api.model (v4) -> api.client (v5); resolve reflectively so both work
+    private static volatile Method perspectiveCurrent;
+    private static volatile Object perspectiveShoulderSurfing;
+    private static volatile Object perspectiveThirdPersonBack;
+    private static volatile Method changePerspectiveMethod;
+    private static volatile boolean perspectiveResolved;
 
     private ShoulderSurfingHelper() {}
 
@@ -100,6 +120,82 @@ public final class ShoulderSurfingHelper {
         return Minecraft.getInstance().gameRenderer.getMainCamera().getXRot();
     }
 
+    public static void setCameraRotation(float yaw, float pitch) {
+        try {
+            IShoulderSurfing ssr = instance();
+            IShoulderSurfingCamera cam = ssr != null ? ssr.getCamera() : null;
+            if (cam != null) {
+                cam.setYRot(yaw);
+                cam.setXRot(pitch);
+            }
+        } catch (Throwable ignored) {}
+    }
+
+    private static void resolvePerspective() {
+        if (perspectiveResolved) return;
+        synchronized (ShoulderSurfingHelper.class) {
+            if (perspectiveResolved) return;
+            Class<?> perspective = null;
+            for (String name : new String[]{
+                    "com.github.exopandora.shouldersurfing.api.client.Perspective",
+                    "com.github.exopandora.shouldersurfing.api.model.Perspective"}) {
+                try {
+                    perspective = Class.forName(name);
+                    break;
+                } catch (Throwable ignored) {}
+            }
+            if (perspective != null) {
+                try {
+                    perspectiveCurrent = perspective.getMethod("current");
+                    perspectiveShoulderSurfing = perspective.getField("SHOULDER_SURFING").get(null);
+                    perspectiveThirdPersonBack = perspective.getField("THIRD_PERSON_BACK").get(null);
+                    changePerspectiveMethod = IShoulderSurfing.class.getMethod("changePerspective", perspective);
+                } catch (Throwable e) {
+                    LOGGER.debug("SSR Perspective API not resolvable on {}", perspective.getName());
+                }
+            }
+            perspectiveResolved = true;
+        }
+    }
+
+    public static boolean isShoulderSurfingPerspective() {
+        resolvePerspective();
+        try {
+            return perspectiveCurrent != null && perspectiveCurrent.invoke(null) == perspectiveShoulderSurfing;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    public static boolean isThirdPersonBackPerspective() {
+        resolvePerspective();
+        try {
+            return perspectiveCurrent != null && perspectiveCurrent.invoke(null) == perspectiveThirdPersonBack;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    public static void changeToThirdPersonBack() {
+        resolvePerspective();
+        try {
+            IShoulderSurfing ssr = instance();
+            if (ssr != null && changePerspectiveMethod != null) {
+                changePerspectiveMethod.invoke(ssr, perspectiveThirdPersonBack);
+            }
+        } catch (Throwable ignored) {}
+    }
+
+    public static void changeToShoulderSurfing() {
+        resolvePerspective();
+        try {
+            IShoulderSurfing ssr = instance();
+            if (ssr != null && changePerspectiveMethod != null) {
+                changePerspectiveMethod.invoke(ssr, perspectiveShoulderSurfing);
+            }
+        } catch (Throwable ignored) {}
+    }
+
     public static void swapShoulder() {
         try {
             IShoulderSurfing ssr = instance();
@@ -128,6 +224,79 @@ public final class ShoulderSurfingHelper {
             Method m = lookAtCrosshairMethod;
             if (m != null) m.invoke(ssr);
         } catch (Throwable ignored) {}
+    }
+
+    public static boolean isLookFollowingCrosshairTarget() {
+        try {
+            IShoulderSurfing ssr = instance();
+            if (ssr == null) return false;
+            if (!lookFollowingCrosshairResolved) {
+                synchronized (ShoulderSurfingHelper.class) {
+                    if (!lookFollowingCrosshairResolved) {
+                        try {
+                            lookFollowingCrosshairMethod = ssr.getClass().getMethod("isLookFollowingCrosshairTarget");
+                        } catch (NoSuchMethodException e) {
+                            LOGGER.debug("SSR isLookFollowingCrosshairTarget not found on {}", ssr.getClass().getName());
+                        }
+                        lookFollowingCrosshairResolved = true;
+                    }
+                }
+            }
+            Method m = lookFollowingCrosshairMethod;
+            if (m != null) return (boolean) m.invoke(ssr);
+        } catch (Throwable ignored) {}
+        return false;
+    }
+
+    // SSR dynamic/adaptive crosshair is translated by CrosshairRenderer.crosshairOffset (screen px from
+    // center). SW draws at geometric center — read this so HUD overlays can match SSR (v4 math.Vec2f /
+    // v5 api.math.Vec2f; field on client.CrosshairRenderer or client.renderer.CrosshairRenderer).
+    public static float getCrosshairOffsetX() {
+        float[] xy = crosshairOffsetXy();
+        return xy[0];
+    }
+
+    public static float getCrosshairOffsetY() {
+        float[] xy = crosshairOffsetXy();
+        return xy[1];
+    }
+
+    private static float[] crosshairOffsetXy() {
+        float[] zero = new float[]{0.0F, 0.0F};
+        try {
+            IShoulderSurfing ssr = instance();
+            if (ssr == null || !ssr.isShoulderSurfing()) return zero;
+            Object renderer = ssr.getCrosshairRenderer();
+            if (renderer == null) return zero;
+            if (!crosshairOffsetResolved) {
+                synchronized (ShoulderSurfingHelper.class) {
+                    if (!crosshairOffsetResolved) {
+                        try {
+                            Field f = renderer.getClass().getDeclaredField("crosshairOffset");
+                            f.setAccessible(true);
+                            crosshairOffsetField = f;
+                        } catch (NoSuchFieldException e) {
+                            LOGGER.debug("SSR crosshairOffset not on {}", renderer.getClass().getName());
+                        }
+                        crosshairOffsetResolved = true;
+                    }
+                }
+            }
+            Field f = crosshairOffsetField;
+            if (f == null) return zero;
+            Object vec = f.get(renderer);
+            if (vec == null) return zero;
+            if (crosshairOffsetXMethod == null) {
+                crosshairOffsetXMethod = vec.getClass().getMethod("x");
+                crosshairOffsetYMethod = vec.getClass().getMethod("y");
+            }
+            return new float[]{
+                    ((Number) crosshairOffsetXMethod.invoke(vec)).floatValue(),
+                    ((Number) crosshairOffsetYMethod.invoke(vec)).floatValue()
+            };
+        } catch (Throwable t) {
+            return zero;
+        }
     }
 
     public static double getStoredShoulderX() {
@@ -176,23 +345,44 @@ public final class ShoulderSurfingHelper {
         try {
             IShoulderSurfing ssr = instance();
             if (ssr == null) return 0.0;
-            Object clientConfig = ssr.getClientConfig();
-            if (clientConfig == null) return 0.0;
-            Object offsetSource = clientConfig;
             if (!offsetPathResolved) {
                 synchronized (ShoulderSurfingHelper.class) {
                     if (!offsetPathResolved) {
+                        // Prefer runtime class so the method descriptor matches v4 or v5
+                        Class<?> ssrClass = ssr.getClass();
                         try {
-                            cameraConfigMethod = clientConfig.getClass().getMethod("getCameraConfig");
+                            getClientConfigMethod = ssrClass.getMethod("getClientConfig");
                         } catch (NoSuchMethodException e) {
-                            cameraConfigMethod = null;
+                            try {
+                                getClientConfigMethod = IShoulderSurfing.class.getMethod("getClientConfig");
+                            } catch (NoSuchMethodException e2) {
+                                getClientConfigMethod = null;
+                            }
                         }
                         offsetPathResolved = true;
                     }
                 }
             }
+            Method getCfg = getClientConfigMethod;
+            if (getCfg == null) return 0.0;
+            Object clientConfig = getCfg.invoke(ssr);
+            if (clientConfig == null) return 0.0;
+            Object offsetSource = clientConfig;
+            if (!cameraConfigResolved) {
+                synchronized (ShoulderSurfingHelper.class) {
+                    if (!cameraConfigResolved) {
+                        try {
+                            cameraConfigMethod = clientConfig.getClass().getMethod("getCameraConfig");
+                        } catch (NoSuchMethodException e) {
+                            cameraConfigMethod = null; // v4: offsets live on clientConfig itself
+                        }
+                        cameraConfigResolved = true;
+                    }
+                }
+            }
             if (cameraConfigMethod != null) {
                 offsetSource = cameraConfigMethod.invoke(clientConfig);
+                if (offsetSource == null) return 0.0;
             }
             Method m = offsetSource.getClass().getMethod(getter);
             return ((Number) m.invoke(offsetSource)).doubleValue();
@@ -211,5 +401,38 @@ public final class ShoulderSurfingHelper {
             }
         } catch (Throwable ignored) {}
         return Vec3.ZERO;
+    }
+
+    public static Vec3 getOffset() {
+        try {
+            IShoulderSurfing ssr = instance();
+            IShoulderSurfingCamera cam = ssr != null ? ssr.getCamera() : null;
+            if (cam != null) {
+                Vec3 o = cam.getOffset();
+                if (o != null) return o;
+            }
+        } catch (Throwable ignored) {}
+        return Vec3.ZERO;
+    }
+
+    public static Vec3 getRenderOffset() {
+        try {
+            IShoulderSurfing ssr = instance();
+            IShoulderSurfingCamera cam = ssr != null ? ssr.getCamera() : null;
+            if (cam != null) {
+                Vec3 ro = cam.getRenderOffset();
+                if (ro != null) return ro;
+            }
+        } catch (Throwable ignored) {}
+        return Vec3.ZERO;
+    }
+
+    public static double getCameraDistance() {
+        try {
+            IShoulderSurfing ssr = instance();
+            IShoulderSurfingCamera cam = ssr != null ? ssr.getCamera() : null;
+            if (cam != null) return cam.getCameraDistance();
+        } catch (Throwable ignored) {}
+        return Double.NaN;
     }
 }
