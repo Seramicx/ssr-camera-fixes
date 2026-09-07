@@ -14,7 +14,8 @@
   },
   "mixins": [
     "ssrcamerafixes.mixins.json",
-    "ssrcamerafixes.fabric1211.mixins.json"
+    "ssrcamerafixes.fabric1211.mixins.json",
+    "ssrcamerafixes.ia.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",

@@ -25,6 +25,12 @@ public final class ShoulderSurfingHelper {
     private static volatile Method lookFollowingCrosshairMethod;
     private static volatile boolean lookFollowingCrosshairResolved;
 
+    private static volatile Field cameraDecoupledField;
+    private static volatile boolean cameraDecoupledFieldResolved;
+    private static volatile Field lookFollowField;
+    private static volatile Field turningLockTimeField;
+    private static volatile boolean lookFollowFieldsResolved;
+
     private static volatile Field lastMovedYRotField;
     private static volatile boolean lastMovedYRotResolved;
 
@@ -90,6 +96,60 @@ public final class ShoulderSurfingHelper {
         }
     }
 
+    // Adaptive+isAiming hardcodes isCameraDecoupled=false (no plugin override). Write the field so
+    // charged-hold can keep adaptive crosshair (isAiming) without locking walk-to-look.
+    public static void forceCameraDecoupled(boolean decoupled) {
+        try {
+            IShoulderSurfing ssr = instance();
+            if (ssr == null) return;
+            if (!cameraDecoupledFieldResolved) {
+                synchronized (ShoulderSurfingHelper.class) {
+                    if (!cameraDecoupledFieldResolved) {
+                        try {
+                            Field f = ssr.getClass().getDeclaredField("isCameraDecoupled");
+                            f.setAccessible(true);
+                            cameraDecoupledField = f;
+                        } catch (Throwable t) {
+                            LOGGER.debug("SSR isCameraDecoupled field not found on {}", ssr.getClass().getName());
+                        }
+                        cameraDecoupledFieldResolved = true;
+                    }
+                }
+            }
+            Field f = cameraDecoupledField;
+            if (f != null) f.setBoolean(ssr, decoupled);
+        } catch (Throwable ignored) {}
+    }
+
+    // v5 pins the body to the crosshair target while aiming, which also cancels its own decoupled
+    // movement turn. No such state on v4.
+    public static void clearLookFollowingCrosshairTarget() {
+        try {
+            IShoulderSurfing ssr = instance();
+            if (ssr == null) return;
+            if (!lookFollowFieldsResolved) {
+                synchronized (ShoulderSurfingHelper.class) {
+                    if (!lookFollowFieldsResolved) {
+                        lookFollowField = declaredField(ssr, "isLookFollowingCrosshairTarget");
+                        turningLockTimeField = declaredField(ssr, "turningLockTime");
+                        lookFollowFieldsResolved = true;
+                    }
+                }
+            }
+            if (lookFollowField != null) lookFollowField.setBoolean(ssr, false);
+            if (turningLockTimeField != null) turningLockTimeField.setInt(ssr, 0);
+        } catch (Throwable ignored) {}
+    }
+    private static Field declaredField(Object owner, String name) {
+        try {
+            Field f = owner.getClass().getDeclaredField(name);
+            f.setAccessible(true);
+            return f;
+        } catch (Throwable t) {
+            LOGGER.debug("SSR {} field not found on {}", name, owner.getClass().getName());
+            return null;
+        }
+    }
     public static float getCameraYaw() {
         try {
             if (isShoulderSurfingActive()) {

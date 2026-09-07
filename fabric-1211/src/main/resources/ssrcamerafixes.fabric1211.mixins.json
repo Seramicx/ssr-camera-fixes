@@ -8,11 +8,16 @@
     "MixinSpellEngineCastToCrosshair",
     "MixinSpellEngineMountedTargetRay",
     "MixinSpellEngineMeleeTargetFacing",
+    "MixinJegGunFaceCamera",
+    "MixinJegCrosshairInShoulder",
     "MixinSsrSuppressFollowDuringMountRotateV5",
     "MixinSsrSuppressFollowDuringMountRotateV4",
     "MixinSsrSuppressTurnSnapback",
     "MixinSsrSuppressSwapOnCycleConflict",
-    "MixinCrossbowFaceCamera"
+    "MixinSsrCrossbowTickBracketV5",
+    "MixinSsrCrossbowTickBracketV4",
+    "MixinCrossbowFaceCamera",
+    "MixinMusketFaceCamera"
   ],
   "mixins": [
     "MixinCrossbowServerHeadYaw"

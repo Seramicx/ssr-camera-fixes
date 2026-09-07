@@ -42,6 +42,20 @@ public final class GunModHelper {
                 if (cgmShooting.getBoolean(cgmGet.invoke(null))) return true;
             } catch (Throwable ignored) {}
         }
-        return false;
+        return isJegFireLatchActive();
+    }
+
+    private static final long FIRE_LATCH_MS = 500L;
+    private static long jegFireMs;
+
+    // The JEG port has no shooting flag to poll and its shoot packet carries no rotation, so the server reads the
+    // synced yaw when the shot resolves. Latch at the packet and keep re-aiming for a moment after, since mounted
+    // Better Mount Steering rewrites the yaw back to the camera angle at tick end
+    public static void signalJegFire() {
+        jegFireMs = System.currentTimeMillis();
+    }
+
+    public static boolean isJegFireLatchActive() {
+        return (System.currentTimeMillis() - jegFireMs) < FIRE_LATCH_MS;
     }
 }

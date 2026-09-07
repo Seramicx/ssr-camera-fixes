@@ -3,6 +3,7 @@ package com.ssrcamerafixes;
 import com.mojang.logging.LogUtils;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
+import com.ssrcamerafixes.handler.ChargedCrossbowDecoupleHandler;
 import com.ssrcamerafixes.handler.AttackFaceCameraHandler;
 import com.ssrcamerafixes.handler.LockOnCameraSyncHandler;
 import com.ssrcamerafixes.handler.PhantomAscentFaceCameraHandler;
@@ -41,6 +42,7 @@ public class SsrCameraFixesMod {
         MinecraftForge.EVENT_BUS.register(WalkStopFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(AimingFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(AttackFaceCameraHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(ChargedCrossbowDecoupleHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(PhantomAscentFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(EpicFightHelper.INSTANCE);
 

@@ -1,6 +1,7 @@
 package com.ssrcamerafixes.fabric.handler;
 
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
+import com.ssrcamerafixes.fabric.compat.WizardryReduxHelper;
 import com.ssrcamerafixes.fabric.compat.WizardsHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -19,7 +20,7 @@ public final class AimingFaceCameraHandler {
         if (player == null) return;
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
-        if (!WizardsHelper.isCasting()) return;
+        if (!WizardsHelper.isCasting() && !WizardryReduxHelper.isCastActive(player)) return;
         if (isControllingMobMount(player)) return;
 
         ShoulderSurfingHelper.lookAtCrosshairTarget();
@@ -54,7 +55,7 @@ public final class AimingFaceCameraHandler {
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (!isControllingMobMount(player)) return;
-        if (!WizardsHelper.isCastingLive()) return;
+        if (!WizardsHelper.isCastingLive() && !WizardryReduxHelper.isCastActive(player)) return;
 
         ShoulderSurfingHelper.lookAtCrosshairTarget();
 

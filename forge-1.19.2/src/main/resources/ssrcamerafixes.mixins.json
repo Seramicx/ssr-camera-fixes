@@ -11,6 +11,7 @@
     "MixinSuppressIdleYawFollow",
     "MixinSsrHeldCrossbowNoAim",
     "MixinCrossbowFaceCamera",
+    "MixinMusketFaceCamera",
     "MixinSuppressMovingInputYawFollow",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",

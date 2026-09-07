@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
+import com.ssrcamerafixes.handler.ChargedCrossbowDecoupleHandler;
 import com.ssrcamerafixes.handler.AttackFaceCameraHandler;
 import com.ssrcamerafixes.handler.FreeLookMovementHandler;
 import com.ssrcamerafixes.handler.LockOnCameraSyncHandler;
@@ -40,6 +41,7 @@ public class SsrCameraFixesMod {
         NeoForge.EVENT_BUS.register(FreeLookMovementHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(AimingFaceCameraHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(AttackFaceCameraHandler.INSTANCE);
+        NeoForge.EVENT_BUS.register(ChargedCrossbowDecoupleHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(com.ssrcamerafixes.handler.FocusLockOnPerspectiveHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(EpicFightHelper.INSTANCE);
 

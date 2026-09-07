@@ -8,11 +8,11 @@ Camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforg
 
 | Loader | Minecraft | Mod version | Integrations |
 |---|---|---|---|
-| Forge | 1.20.1 | 1.2.9 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, TaCZ, Radial Aggro Indicator, Valkyrien Skies |
-| Forge | 1.19.2 | 1.0.0 | Epic Fight, Better Combat, Iron's Spells, TaCZ, Weapons of Miracle |
-| NeoForge | 1.21.1 | 1.0.6 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, TaCZ, Confluence: Otherworld, Radial Aggro Indicator, Create: Aeronautics (Sable) |
-| Fabric | 1.20.1 | 1.0.4 | Better Combat, Spell Engine |
-| Fabric | 1.21.1 | 1.0.3 | Better Combat, Spell Engine |
+| Forge | 1.20.1 | 2.1.1 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, TaCZ, Radial Aggro Indicator, Valkyrien Skies |
+| Forge | 1.19.2 | 1.1.1 | Epic Fight, Better Combat, Iron's Spells, TaCZ, Weapons of Miracle |
+| NeoForge | 1.21.1 | 2.1.1 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, TaCZ, Confluence: Otherworld, Radial Aggro Indicator, Create: Aeronautics (Sable) |
+| Fabric | 1.20.1 | 2.1.1 | Better Combat, Spell Engine |
+| Fabric | 1.21.1 | 2.1.1 | Better Combat, Spell Engine |
 
 ## Forge 1.20.1
 
@@ -95,6 +95,8 @@ Other offsets live in `config/shouldersurfing-client.toml`.
 ## Keybinds
 
 - Shoulder Cycle - default `O`. Right shoulder -> left shoulder -> overhead -> right.
+
+TaCZ defaults its "Interact With Gun" key to `O` too, and that key opens the gun smith table. Rebind one of them in Controls if you run both.
 
 ## License
 

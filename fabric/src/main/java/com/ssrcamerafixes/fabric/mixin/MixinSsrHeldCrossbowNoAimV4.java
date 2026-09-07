@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 // v4 has no aim-state callback, and the adaptive-item ones are OR'd so returning false can't cancel
 // SSR's own config match. Targets PlayerStateHelper rather than ShoulderSurfingImpl.computeIsAiming
 // (its only caller) because ShoulderSurfingImpl can get classloaded before mixin prepare.
+// Only cancels uncharged false-positives from SSR matching the "charged" property by registration.
 @Pseudo
 @Mixin(targets = "com.github.exopandora.shouldersurfing.client.PlayerStateHelper", remap = false)
 public abstract class MixinSsrHeldCrossbowNoAimV4 {

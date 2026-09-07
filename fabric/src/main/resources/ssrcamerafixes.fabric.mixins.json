@@ -13,7 +13,11 @@
     "MixinSuppressIdleYawFollowV5",
     "MixinSuppressIdleYawFollowV4",
     "MixinSsrHeldCrossbowNoAimV4",
+    "MixinSsrCrossbowTickBracketV5",
+    "MixinSsrCrossbowTickBracketV4",
     "MixinCrossbowFaceCamera",
+    "MixinMusketFaceCamera",
+    "MixinWizardryCastFaceCamera",
     "MixinDisableFollowPlayerRotationsV5",
     "MixinDisableFollowPlayerRotationsV4",
     "MixinSsrSuppressSwapOnCycleConflict"

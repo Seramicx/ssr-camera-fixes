@@ -29,7 +29,8 @@ public abstract class MixinCrossbowFaceCamera {
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
-        if (!HeldCrossbowAim.isPassiveHold(local)) return;
+        // Snap on charged fire even when aiming=true (decoupled freelook can still leave body off-crosshair).
+        if (!HeldCrossbowAim.isChargedHold(local)) return;
 
         AimingFaceCameraHandler.faceCrosshairAndSync(mc, local);
     }

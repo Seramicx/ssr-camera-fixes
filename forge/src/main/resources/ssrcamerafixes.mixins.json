@@ -16,6 +16,7 @@
     "MixinSuppressIdleYawFollowV4",
     "MixinSsrHeldCrossbowNoAimV4",
     "MixinCrossbowFaceCamera",
+    "MixinMusketFaceCamera",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",
     "MixinSsrAttackDirection",
@@ -29,7 +30,6 @@
     "MixinSsrLevelRendererForVs",
     "MixinSuppressSsrVsIncompatWarningV4",
     "CameraMoveInvoker",
-    "MixinVsCameraSkipZoomOnSsr",
     "MixinSsrSkipMaxZoomOnVsShipV5",
     "MixinSsrSkipMaxZoomOnVsShipV4",
     "MixinFocusKeepCrosshairForSsr",
@@ -40,13 +40,18 @@
     "MixinIronsInstantCastFaceCamera",
     "MixinIronsCastPacketFaceCamera",
     "MixinIronsQuickCastPacketFaceCamera",
+    "MixinWizardryCastFaceCamera",
     "MixinScorchedGunsFaceCamera",
     "MixinScorchedFlareFaceCamera",
     "MixinScorchedBeamRenderDirection",
     "MixinSuperbWarfareGunFaceCamera",
     "MixinSwSkipThirdPersonGunCameraOnSsr",
     "MixinSwSkipThirdPersonCameraYawOnSsr",
-    "MixinCgmGunFaceCamera"
+    "MixinCgmGunFaceCamera",
+    "MixinJegGunFaceCamera",
+    "MixinJegGunHoldDecouple",
+    "MixinJegRecoilCameraPush",
+    "MixinJegCrosshairInShoulder"
   ],
   "mixins": [
     "MixinCrossbowServerHeadYaw",
@@ -54,8 +59,10 @@
     "MixinScorchedProjectileShipDirection",
     "MixinScorchedArrowShipDirection",
     "MixinScorchedThrowableShipDirection",
+    "MixinMusketBulletShipDirection",
     "MixinScorchedFlareShipDirection",
-    "MixinTaczBulletShipDirection"
+    "MixinTaczBulletShipDirection",
+    "MixinJegProjectileShipDirection"
   ],
   "injectors": {
     "defaultRequire": 1

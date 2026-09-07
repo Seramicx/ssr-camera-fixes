@@ -33,7 +33,8 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
                 event.setResult(true);
             }
         });
-        // Above the builtin's 1000 so this overwrites its "charged" match.
+        // Above the builtin's 1000 so this overwrites its false-positive uncharged "charged" property match.
+        // Charged holds are left alone so adaptive crosshair stays on.
         eventBus.register(5000, (ComputePlayerAimStateEventHandler) event -> {
             if (event.getResult() && HeldCrossbowAim.isPassiveHold(event.getEntity())) {
                 event.setResult(false);

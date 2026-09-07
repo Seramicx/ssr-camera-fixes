@@ -17,6 +17,7 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
     private boolean hasIronsSpells = false;
     private boolean hasScorchedGuns = false;
     private boolean hasSuperbWarfare = false;
+    private boolean hasJeg = false;
     private boolean hasBetterMountSteering = false;
     private boolean hasSsrV5 = false;
 
@@ -32,6 +33,7 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
         hasIronsSpells = loader.getResource("io/redspace/ironsspellbooks/player/ClientMagicData.class") != null;
         hasScorchedGuns = loader.getResource("top/ribs/scguns/client/handler/ShootingHandler.class") != null;
         hasSuperbWarfare = loader.getResource("com/atsuishio/superbwarfare/event/ClientEventHandler.class") != null;
+        hasJeg = loader.getResource("ttv/migami/jeg/network/NetworkHandler.class") != null;
         hasBetterMountSteering = loader.getResource("com/bettermountsteering/handler/MountSteeringHandler.class") != null;
     }
 
@@ -75,6 +77,9 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.contains("MixinSuperbWarfareGunFaceCamera")) {
             return hasSuperbWarfare;
+        }
+        if (mixinClassName.contains("MixinJegGunFaceCamera") || mixinClassName.contains("MixinJegCrosshairInShoulder")) {
+            return hasJeg;
         }
         if (mixinClassName.contains("MixinSsrSuppressFollowDuringMountRotate") || mixinClassName.contains("MixinSsrSuppressTurnSnapback")) {
             return hasBetterMountSteering;

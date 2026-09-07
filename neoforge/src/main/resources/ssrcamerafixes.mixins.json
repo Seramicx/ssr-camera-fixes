@@ -15,6 +15,7 @@
     "MixinSuppressIdleYawFollowV4",
     "MixinSsrHeldCrossbowNoAimV4",
     "MixinCrossbowFaceCamera",
+    "MixinMusketFaceCamera",
     "MixinCombatRollDirection",
     "MixinSsrDodgeDirection",
     "MixinSsrAttackDirection",
@@ -31,6 +32,8 @@
     "MixinIronsQuickCastPacketFaceCamera",
     "MixinScorchedGunsFaceCamera",
     "MixinSuperbWarfareGunFaceCamera",
+    "MixinJegGunFaceCamera",
+    "MixinJegCrosshairInShoulder",
     "MixinSsrSuppressFollowDuringMountRotateV5",
     "MixinSsrSuppressFollowDuringMountRotateV4",
     "MixinSsrSuppressTurnSnapback"

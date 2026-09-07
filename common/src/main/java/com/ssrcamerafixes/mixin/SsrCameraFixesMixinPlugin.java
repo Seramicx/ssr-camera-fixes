@@ -18,6 +18,7 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
     private boolean hasScorchedGuns = false;
     private boolean hasCgm = false;
     private boolean hasSuperbWarfare = false;
+    private boolean hasJeg = false;
     private boolean hasSsrV5 = false;
 
     @Override
@@ -34,6 +35,7 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
         hasScorchedGuns = loader.getResource("top/ribs/scguns/client/handler/ShootingHandler.class") != null;
         hasCgm = loader.getResource("com/mrcrayfish/guns/client/handler/ShootingHandler.class") != null;
         hasSuperbWarfare = loader.getResource("com/atsuishio/superbwarfare/event/ClientEventHandler.class") != null;
+        hasJeg = loader.getResource("ttv/migami/jeg/client/handler/ShootingHandler.class") != null;
     }
 
     @Override
@@ -89,6 +91,12 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
                 || mixinClassName.contains("MixinSwSkipThirdPersonGunCameraOnSsr")
                 || mixinClassName.contains("MixinSwSkipThirdPersonCameraYawOnSsr")) {
             return hasSuperbWarfare;
+        }
+        if (mixinClassName.contains("MixinJegGunFaceCamera") || mixinClassName.contains("MixinJegGunHoldDecouple")
+                || mixinClassName.contains("MixinJegRecoilCameraPush")
+                || mixinClassName.contains("MixinJegProjectileShipDirection")
+                || mixinClassName.contains("MixinJegCrosshairInShoulder")) {
+            return hasJeg;
         }
         return true;
     }

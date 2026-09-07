@@ -1,0 +1,15 @@
+{
+  "required": false,
+  "minVersion": "0.8.5",
+  "package": "com.ssrcamerafixes.mixin",
+  "refmap": "ssrcamerafixes.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "priority": 500,
+  "client": [
+    "MixinVsCameraSkipZoomOnSsr"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  },
+  "plugin": "com.ssrcamerafixes.mixin.SsrCameraFixesMixinPlugin"
+}

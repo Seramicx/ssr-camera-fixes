@@ -8,6 +8,7 @@ import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.compat.SuperbWarfareHelper;
 import com.ssrcamerafixes.compat.TaczHelper;
 import com.ssrcamerafixes.compat.ValkyrienSkiesHelper;
+import com.ssrcamerafixes.compat.WizardryReduxHelper;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -54,7 +55,8 @@ public final class AimingFaceCameraHandler {
         boolean efHold = EpicFightHelper.isHoldingSkill(player);
         boolean efAttack = EpicFightHelper.isAttackKeyActive();
         boolean tacz = TaczHelper.isAimingOrFiring();
-        boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown();
+        boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown()
+                || WizardryReduxHelper.isCastActive(player);
         if (!shield && !efHold && !efAttack && !tacz && !spell) return;
 
         if (shield || efHold || efAttack) {
@@ -116,7 +118,8 @@ public final class AimingFaceCameraHandler {
         boolean nowDown = IronSpellsHelper.anyCastKeymapDown();
         boolean pressEdge = nowDown && !wasSpellCastDown;
         wasSpellCastDown = nowDown;
-        boolean ongoing = IronSpellsHelper.isCasting() || IronSpellsHelper.isCastLatchActive();
+        boolean ongoing = IronSpellsHelper.isCasting() || IronSpellsHelper.isCastLatchActive()
+                || WizardryReduxHelper.isCastActive(player);
         if (!pressEdge && !ongoing) return;
 
         faceCrosshairAndSync(mc, player);
@@ -169,6 +172,7 @@ public final class AimingFaceCameraHandler {
                 || IronSpellsHelper.isCasting()
                 || IronSpellsHelper.anyCastKeymapDown()
                 || IronSpellsHelper.isCastLatchActive()
+                || WizardryReduxHelper.isCastActive(player)
                 || SuperbWarfareHelper.isAimingOrFiring()
                 || SuperbWarfareHelper.isFireLatchActive()
                 || GunModHelper.isGunFiring()) {
