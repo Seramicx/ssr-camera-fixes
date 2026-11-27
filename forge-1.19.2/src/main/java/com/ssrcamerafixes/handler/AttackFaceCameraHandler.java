@@ -1,5 +1,6 @@
 package com.ssrcamerafixes.handler;
 
+import com.ssrcamerafixes.SsrCameraFixesConfig;
 import com.ssrcamerafixes.compat.BetterCombatHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import net.minecraft.client.CameraType;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import com.ssrcamerafixes.compat.AimRules;
 
 public final class AttackFaceCameraHandler {
 
@@ -45,8 +47,10 @@ public final class AttackFaceCameraHandler {
 
     private static boolean shouldSnap(LocalPlayer player) {
         if (Minecraft.getInstance().options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
+        if (!AimRules.get(SsrCameraFixesConfig.ATTACK_BODY_SNAP, true)) return false;
         if (isControllingMobMount(player)) return false;
-        return player.swinging || BetterCombatHelper.isAttackInProgress();
+        if (!player.swinging && !BetterCombatHelper.isAttackInProgress()) return false;
+        return !AimRules.isFreeLooking() && AimRules.attackTurnAllowed();
     }
 
     private static boolean isControllingMobMount(LocalPlayer player) {

@@ -1,5 +1,6 @@
 package com.ssrcamerafixes.mixin;
 
+import com.ssrcamerafixes.compat.CompatSwitches;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -24,6 +25,7 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if (!CompatSwitches.mixinEnabled(mixinClassName)) return false;
         if (mixinClassName.endsWith("V5")) {
             return hasSsrV5;
         }

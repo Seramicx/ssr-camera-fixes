@@ -20,6 +20,10 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
+import com.ssrcamerafixes.handler.PunchyCameraHandler;
+import com.ssrcamerafixes.handler.RestoreShoulderSurfingHandler;
+import com.ssrcamerafixes.handler.SableRagdollCameraHandler;
+import com.ssrcamerafixes.handler.UniversalAimHandler;
 
 @Mod(SsrCameraFixesMod.MODID)
 public class SsrCameraFixesMod {
@@ -41,13 +45,17 @@ public class SsrCameraFixesMod {
         NeoForge.EVENT_BUS.register(FreeLookMovementHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(AimingFaceCameraHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(AttackFaceCameraHandler.INSTANCE);
+        NeoForge.EVENT_BUS.register(UniversalAimHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(ChargedCrossbowDecoupleHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(com.ssrcamerafixes.handler.FocusLockOnPerspectiveHandler.INSTANCE);
+        NeoForge.EVENT_BUS.register(PunchyCameraHandler.INSTANCE);
+        NeoForge.EVENT_BUS.register(SableRagdollCameraHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(EpicFightHelper.INSTANCE);
+        NeoForge.EVENT_BUS.register(RestoreShoulderSurfingHandler.INSTANCE);
 
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v2.0.0 loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions loaded.");
     }
 
     private void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {

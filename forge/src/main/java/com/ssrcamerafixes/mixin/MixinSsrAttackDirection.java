@@ -2,6 +2,7 @@ package com.ssrcamerafixes.mixin;
 
 
 
+import com.ssrcamerafixes.compat.AimRules;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
@@ -55,7 +56,7 @@ public abstract class MixinSsrAttackDirection {
 
         if (!((Object) this instanceof BasicAttack) && !((Object) this instanceof WeaponInnateSkill)) return;
 
-        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
+        if (!ShoulderSurfingHelper.isShoulderSurfingActive() || AimRules.isFreeLooking() || !AimRules.attackTurnAllowed()) return;
 
 
 

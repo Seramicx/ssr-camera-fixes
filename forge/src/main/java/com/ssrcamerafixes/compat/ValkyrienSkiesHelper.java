@@ -32,6 +32,7 @@ public final class ValkyrienSkiesHelper {
     private static void resolve() {
         if (resolved) return;
         resolved = true;
+        if (!CompatSwitches.enabled("valkyrienskies")) return;
         try {
             Class<?> gameUtilsKt = Class.forName("org.valkyrienskies.mod.common.VSGameUtilsKt");
             getShipMountedToMethod = gameUtilsKt.getMethod("getShipMountedTo", Entity.class);

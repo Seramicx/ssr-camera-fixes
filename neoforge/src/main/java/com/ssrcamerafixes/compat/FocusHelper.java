@@ -17,6 +17,7 @@ public final class FocusHelper {
     private static void resolve() {
         if (resolved) return;
         resolved = true;
+        if (!CompatSwitches.enabled("focus")) return;
         try {
             Class<?> handler = Class.forName("com.jvn.focus.client.LockOnHandler");
             getLockedTarget = handler.getMethod("getLockedTarget");

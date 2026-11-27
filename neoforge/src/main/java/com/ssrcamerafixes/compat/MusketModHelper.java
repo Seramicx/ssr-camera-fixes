@@ -17,6 +17,7 @@ public final class MusketModHelper {
     private static void resolve() {
         if (resolved) return;
         resolved = true;
+        if (!CompatSwitches.enabled("musketmod")) return;
 
         try {
             gunItem = Class.forName("ewewukek.musketmod.GunItem");

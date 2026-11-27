@@ -1,5 +1,6 @@
 package com.ssrcamerafixes.fabric.handler;
 
+import com.ssrcamerafixes.SsrCameraFixesConfig;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.fabric.compat.WizardryReduxHelper;
 import com.ssrcamerafixes.fabric.compat.WizardsHelper;
@@ -10,6 +11,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
+import com.ssrcamerafixes.compat.AimRules;
 
 public final class AimingFaceCameraHandler {
 
@@ -23,6 +25,7 @@ public final class AimingFaceCameraHandler {
         if (!WizardsHelper.isCasting() && !WizardryReduxHelper.isCastActive(player)) return;
         if (isControllingMobMount(player)) return;
 
+        if (AimRules.isFreeLooking() || !AimRules.useTurnAllowed()) return;
         ShoulderSurfingHelper.lookAtCrosshairTarget();
 
         ClientPacketListener conn = mc.getConnection();
@@ -34,11 +37,13 @@ public final class AimingFaceCameraHandler {
     public static void applyAfterInputTick(Minecraft mc) {
         LocalPlayer player = mc.player;
         if (player == null) return;
+        if (!AimRules.get(SsrCameraFixesConfig.AIMING_BODY_FOLLOW, true)) return;
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (!player.isBlocking() && !WizardsHelper.isCastingLive()) return;
         if (isControllingMobMount(player)) return;
 
+        if (AimRules.isFreeLooking() || !AimRules.useTurnAllowed()) return;
         float camYaw = ShoulderSurfingHelper.getCameraYaw();
         player.setYRot(camYaw);
         player.yBodyRot = camYaw;
@@ -57,6 +62,7 @@ public final class AimingFaceCameraHandler {
         if (!isControllingMobMount(player)) return;
         if (!WizardsHelper.isCastingLive() && !WizardryReduxHelper.isCastActive(player)) return;
 
+        if (AimRules.isFreeLooking() || !AimRules.useTurnAllowed()) return;
         ShoulderSurfingHelper.lookAtCrosshairTarget();
 
         ClientPacketListener conn = mc.getConnection();
@@ -66,6 +72,7 @@ public final class AimingFaceCameraHandler {
     }
 
     public static void faceCrosshairAndSync(Minecraft mc, LocalPlayer player) {
+        if (AimRules.isFreeLooking() || !AimRules.useTurnAllowed()) return;
         ShoulderSurfingHelper.lookAtCrosshairTarget();
 
         ClientPacketListener conn = mc.getConnection();

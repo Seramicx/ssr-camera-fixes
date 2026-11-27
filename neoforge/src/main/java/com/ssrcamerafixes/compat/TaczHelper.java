@@ -26,7 +26,7 @@ public final class TaczHelper {
 
     public static boolean isLoaded() {
         if (!loadedResolved) {
-            loaded = ModList.get().isLoaded("tacz");
+            loaded = ModList.get().isLoaded("tacz") && CompatSwitches.enabled("tacz");
             loadedResolved = true;
         }
         return loaded;

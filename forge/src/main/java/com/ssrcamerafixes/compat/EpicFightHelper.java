@@ -23,7 +23,7 @@ public final class EpicFightHelper {
     private static final long ATTACK_LATCH_MS = 1000L;
     private static long attackSignalMsO = 0L;
 
-    private static final boolean isLoaded = ModList.get().isLoaded("epicfight");
+    private static final boolean isLoaded = ModList.get().isLoaded("epicfight") && CompatSwitches.enabled("epicfight");
 
     private static Method getLocalPlayerPatch;
     private static Method entityStateAttacking;
@@ -145,7 +145,7 @@ public final class EpicFightHelper {
 
     // Mirrors EF ShoulderSurfingCompat: attack key held OR any holdable/chargeable skill.
     public static boolean needsCameraCoupling(LocalPlayer player) {
-        return isAttackKeyActive() || isHoldingSkill(player);
+        return isAttackKeyActive() && AimRules.attackTurnAllowed() || isHoldingSkill(player) && AimRules.useTurnAllowed();
     }
 
     public static boolean isLockOnTargeting() {

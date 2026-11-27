@@ -23,7 +23,7 @@ public final class EpicFightHelper {
     private static final long ATTACK_LATCH_MS = 1000L;
     private static long attackSignalMsO = 0L;
 
-    private static final boolean isLoaded = ModList.get().isLoaded("epicfight");
+    private static final boolean isLoaded = ModList.get().isLoaded("epicfight") && CompatSwitches.enabled("epicfight");
 
     private static Method getEntityPatch;
     private static Class<?> localPlayerPatchClass;

@@ -1,5 +1,6 @@
 package com.ssrcamerafixes.compat;
 
+import com.ssrcamerafixes.SsrCameraFixesConfig;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -41,6 +42,14 @@ public final class HeldCrossbowAim {
         if (!(entity instanceof LivingEntity living)) return false;
         if (!canReadHands(living)) return false;
         return isChargedCrossbow(living.getMainHandItem()) || isChargedCrossbow(living.getOffhandItem());
+    }
+
+    public static boolean isDecoupleEnabled() {
+        try {
+            return SsrCameraFixesConfig.DECOUPLE_HELD_CROSSBOW.get();
+        } catch (Throwable t) {
+            return true;
+        }
     }
 
     // World-join can call into hand checks before Player.inventory exists (Better Combat etc.).

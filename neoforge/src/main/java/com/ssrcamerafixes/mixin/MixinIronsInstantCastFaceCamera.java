@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import com.ssrcamerafixes.compat.AimRules;
 
 // Instant casts (Firebolt right-click) resolve the same tick the use packet lands and never set isCasting, so a
 // tick handler aims too late. Face the crosshair at useItem HEAD before the packet is built, and arm the latch
@@ -30,6 +31,6 @@ public abstract class MixinIronsInstantCastFaceCamera {
         if (!IronSpellsHelper.isIronsItem(player.getItemInHand(hand).getItem())) return;
 
         IronSpellsHelper.signalCast();
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimRules.lookAtCrosshairForUse();
     }
 }

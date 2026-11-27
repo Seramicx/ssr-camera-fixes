@@ -20,7 +20,7 @@ public final class IronSpellsHelper {
 
     public static boolean isLoaded() {
         if (!loadedResolved) {
-            loaded = ModList.get().isLoaded("irons_spellbooks");
+            loaded = ModList.get().isLoaded("irons_spellbooks") && CompatSwitches.enabled("irons_spellbooks");
             loadedResolved = true;
         }
         return loaded;

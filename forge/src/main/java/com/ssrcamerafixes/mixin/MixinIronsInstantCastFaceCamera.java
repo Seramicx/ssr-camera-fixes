@@ -33,6 +33,6 @@ public abstract class MixinIronsInstantCastFaceCamera {
         // Instant casts resolve server-side over the next few ticks; latch so the aim handlers keep correcting
         // the rotation against Better Mount Steering's end-of-tick reassert until the cast lands
         IronSpellsHelper.signalCast();
-        AimingFaceCameraHandler.faceCrosshair(mc.player);
+        AimingFaceCameraHandler.faceCrosshairForUse(mc.player);
     }
 }

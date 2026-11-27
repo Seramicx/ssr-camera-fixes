@@ -15,15 +15,7 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-sourceSets {
-    ssrv4
-}
 
-// v4 and v5 SSR share curse module 243190. The v4 adapter makes no MC member calls, so it compiles
-// against the raw v4 jar (no mapping needed - moddev runs Mojmap and only type descriptors matter).
-configurations {
-    ssrv4RawApi
-}
 
 neoForge {
     version = project.neoforge_version
@@ -56,12 +48,8 @@ dependencies {
     compileOnly "curse.maven:shoulder-surfing-reloaded-243190:8347905"
     compileOnly "curse.maven:epic-fight-mod-405076:8080214"
 
-    ssrv4RawApi "curse.maven:shoulder-surfing-reloaded-243190:8151282"
 }
 
-sourceSets.ssrv4.compileClasspath = configurations.ssrv4RawApi +
-        sourceSets.main.compileClasspath +
-        sourceSets.main.output
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
@@ -94,7 +82,6 @@ tasks.named('jar', Jar).configure {
         ])
     }
 
-    from sourceSets.ssrv4.output
     duplicatesStrategy = DuplicatesStrategy.FAIL
 }
 

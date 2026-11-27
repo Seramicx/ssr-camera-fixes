@@ -1,5 +1,6 @@
 package com.ssrcamerafixes.mixin;
 
+import com.ssrcamerafixes.compat.CompatSwitches;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -29,7 +30,8 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
         hasTacz = loader.getResource("com/tacz/guns/compat/shouldersurfing/ShoulderSurfingPlugin.class") != null;
         hasRadialAggro = loader.getResource("com/mrbysco/radialaggroindicator/client/HudHandler.class") != null;
         hasFocus = loader.getResource("com/jvn/focus/client/hud/VanillaCrosshairSuppressor.class") != null;
-        hasConfluence = loader.getResource("org/confluence/mod/common/item/mana/ManaStaffItem.class") != null;
+        hasConfluence = loader.getResource("org/confluence/mod/common/item/mana/ManaStaffItem.class") != null
+                || loader.getResource("org/confluence/mod/common/item/gun/BaseGun.class") != null;
         hasIronsSpells = loader.getResource("io/redspace/ironsspellbooks/player/ClientMagicData.class") != null;
         hasScorchedGuns = loader.getResource("top/ribs/scguns/client/handler/ShootingHandler.class") != null;
         hasSuperbWarfare = loader.getResource("com/atsuishio/superbwarfare/event/ClientEventHandler.class") != null;
@@ -44,6 +46,7 @@ public class SsrCameraFixesMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if (!CompatSwitches.mixinEnabled(mixinClassName)) return false;
         boolean versionOk = true;
         if (mixinClassName.endsWith("V5")) {
             versionOk = hasSsrV5;

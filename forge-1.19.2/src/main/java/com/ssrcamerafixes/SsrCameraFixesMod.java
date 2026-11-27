@@ -20,6 +20,9 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
+import com.ssrcamerafixes.compat.TaczHelper;
+import com.ssrcamerafixes.handler.RestoreShoulderSurfingHandler;
+import com.ssrcamerafixes.handler.UniversalAimHandler;
 
 @Mod(SsrCameraFixesMod.MODID)
 public class SsrCameraFixesMod {
@@ -42,13 +45,16 @@ public class SsrCameraFixesMod {
         MinecraftForge.EVENT_BUS.register(WalkStopFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(AimingFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(AttackFaceCameraHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(UniversalAimHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(RestoreShoulderSurfingHandler.INSTANCE);
+        if (TaczHelper.isLoaded()) TaczHelper.registerShootListener();
         MinecraftForge.EVENT_BUS.register(ChargedCrossbowDecoupleHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(PhantomAscentFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(EpicFightHelper.INSTANCE);
 
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v1.0.0 (1.19.2) loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions (1.19.2) loaded.");
     }
 
     private void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {

@@ -45,6 +45,7 @@ public abstract class MixinForceSsrOffsetDuringLockOn {
         double offX = Config.CLIENT.getOffsetX();
         double offY = Config.CLIENT.getOffsetY();
         double offZ = Config.CLIENT.getOffsetZ();
+        offX = ShoulderCycleHandler.applySide(offX);
         if (ShoulderCycleHandler.getMode() == ShoulderCycleHandler.Mode.OVERHEAD) {
             offX = 0.0;
             try {

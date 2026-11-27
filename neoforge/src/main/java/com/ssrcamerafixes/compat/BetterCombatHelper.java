@@ -21,6 +21,7 @@ public final class BetterCombatHelper {
     private static synchronized void resolveMethod() {
         if (methodResolved) return;
         methodResolved = true;
+        if (!CompatSwitches.enabled("bettercombat")) return;
         try {
             Class<?> apiClass = Class.forName(BC_API_CLASS);
             isWeaponSwingInProgressMethod = apiClass.getMethod(BC_API_METHOD);

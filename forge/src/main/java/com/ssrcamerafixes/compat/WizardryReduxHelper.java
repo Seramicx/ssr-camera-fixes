@@ -19,7 +19,7 @@ public final class WizardryReduxHelper {
 
     public static boolean isLoaded() {
         if (!loadedResolved) {
-            loaded = ModList.get().isLoaded("ebwizardry");
+            loaded = ModList.get().isLoaded("ebwizardry") && CompatSwitches.enabled("ebwizardry");
             loadedResolved = true;
         }
         return loaded;

@@ -9,6 +9,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.phys.Vec3;
+import com.ssrcamerafixes.compat.AimRules;
 
 public final class CameraFixCore {
 
@@ -22,7 +23,7 @@ public final class CameraFixCore {
             return true;
         }
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null && (player.isUsingItem() || player.isBlocking())) {
+        if (player != null && !AimRules.isFreeLooking() && AimRules.useTurnAllowed() && (player.isUsingItem() || player.isBlocking())) {
             return true;
         }
         if (WizardsHelper.isCastingLive()) {
@@ -37,9 +38,9 @@ public final class CameraFixCore {
         return false;
     }
 
-    public static Vec3 overheadOffset(Vec3 current) {
+    public static Vec3 cycleOffset(Vec3 current) {
         if (ShoulderCycleHandler.getMode() != ShoulderCycleHandler.Mode.OVERHEAD) {
-            return current;
+            return new Vec3(ShoulderCycleHandler.applySide(current.x), current.y, current.z);
         }
         double overheadY;
         try {

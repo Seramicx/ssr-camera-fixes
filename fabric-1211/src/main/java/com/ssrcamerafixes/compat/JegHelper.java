@@ -45,4 +45,33 @@ public final class JegHelper {
             return false;
         }
     }
+
+    private static int shotDelay;
+    private static boolean resending;
+    private static Object deferredHand;
+
+    public static boolean isResending() {
+        return resending;
+    }
+
+    public static void deferShot(Object hand) {
+        deferredHand = hand;
+        shotDelay = 2;
+    }
+
+    public static void flushDeferredShot() {
+        if (shotDelay <= 0 || --shotDelay > 0) return;
+        resending = true;
+        try {
+            for (java.lang.reflect.Method m : Class.forName("ttv.migami.jeg.network.ClientNetworkHandler").getMethods()) {
+                if (m.getName().equals("sendShoot") && m.getParameterCount() == 1) {
+                    m.invoke(null, deferredHand);
+                    break;
+                }
+            }
+        } catch (Throwable ignored) {
+        } finally {
+            resending = false;
+        }
+    }
 }

@@ -6,6 +6,7 @@ import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,23 +15,27 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// The 1.21.1 port dropped the rotation fields from the shoot packet, so the server fires from whatever yaw was last
-// synced. The shot is sent from a client tick handler, after the vanilla move packet already left, so turning alone
-// leaves the server a tick behind. Face the crosshair and push the rotation ahead of the shoot packet
+// JEG aims the bullet from last tick's rotation, so after a turn the shot waits for the server to catch up
 @Pseudo
 @Mixin(targets = "ttv.migami.jeg.network.NetworkHandler", remap = false)
 public abstract class MixinJegGunFaceCamera {
 
-    @Inject(method = "sendShoot", at = @At("HEAD"), require = 0, remap = false)
+    @Inject(method = "sendShoot", at = @At("HEAD"), cancellable = true, require = 0, remap = false)
     private static void ssrcamerafixes$faceCrosshairForGun(InteractionHand hand, CallbackInfo ci) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer local = mc.player;
-        if (local == null) return;
+        if (local == null || GunModHelper.isResending()) return;
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
 
         GunModHelper.signalJegFire();
+        float yRotO = local.getYRot();
+        float xRotO = local.getXRot();
         AimingFaceCameraHandler.faceCrosshairAndSync(mc, local);
+        if (Math.abs(Mth.wrapDegrees(local.getYRot() - yRotO)) > 0.5F || Math.abs(local.getXRot() - xRotO) > 0.5F) {
+            GunModHelper.deferShot(hand);
+            ci.cancel();
+        }
     }
 }

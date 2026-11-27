@@ -1,5 +1,4 @@
 {
-    "entrypoint": "com.ssrcamerafixes.compat.SsrCameraFixesPluginV4",
     "entrypoints": [
         "com.ssrcamerafixes.compat.SsrCameraFixesPlugin"
     ]

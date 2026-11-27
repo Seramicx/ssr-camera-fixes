@@ -16,13 +16,13 @@ public final class GunModHelper {
     private static void resolve() {
         if (resolved) return;
         resolved = true;
-        try {
+        if (CompatSwitches.enabled("scguns")) try {
             Class<?> c = Class.forName("top.ribs.scguns.client.handler.ShootingHandler");
             scorchedGet = c.getMethod("get");
             scorchedShooting = c.getDeclaredField("shooting");
             scorchedShooting.setAccessible(true);
         } catch (Throwable ignored) {}
-        try {
+        if (CompatSwitches.enabled("cgm")) try {
             Class<?> c = Class.forName("com.mrcrayfish.guns.client.handler.ShootingHandler");
             cgmGet = c.getMethod("get");
             cgmShooting = c.getDeclaredField("shooting");
@@ -57,5 +57,34 @@ public final class GunModHelper {
 
     public static boolean isJegFireLatchActive() {
         return (System.currentTimeMillis() - jegFireMs) < FIRE_LATCH_MS;
+    }
+
+    private static int shotDelay;
+    private static boolean resending;
+    private static Object deferredHand;
+
+    public static boolean isResending() {
+        return resending;
+    }
+
+    public static void deferShot(Object hand) {
+        deferredHand = hand;
+        shotDelay = 2;
+    }
+
+    public static void flushDeferredShot() {
+        if (shotDelay <= 0 || --shotDelay > 0) return;
+        resending = true;
+        try {
+            for (java.lang.reflect.Method m : Class.forName("ttv.migami.jeg.network.NetworkHandler").getMethods()) {
+                if (m.getName().equals("sendShoot") && m.getParameterCount() == 1) {
+                    m.invoke(null, deferredHand);
+                    break;
+                }
+            }
+        } catch (Throwable ignored) {
+        } finally {
+            resending = false;
+        }
     }
 }

@@ -208,6 +208,8 @@ public final class ShoulderSurfingHelper {
         }
     }
 
+    public static boolean switchedAwayByUs;
+
     public static boolean isShoulderSurfingPerspective() {
         resolvePerspective();
         try {
@@ -227,6 +229,7 @@ public final class ShoulderSurfingHelper {
     }
 
     public static void changeToThirdPersonBack() {
+        switchedAwayByUs = true;
         resolvePerspective();
         try {
             IShoulderSurfing ssr = instance();
@@ -244,15 +247,6 @@ public final class ShoulderSurfingHelper {
                 changePerspectiveMethod.invoke(ssr, perspectiveShoulderSurfing);
             }
         } catch (Throwable ignored) {}
-    }
-
-    public static void swapShoulder() {
-        try {
-            IShoulderSurfing ssr = instance();
-            if (ssr != null) ssr.swapShoulder();
-        } catch (Throwable t) {
-            LOGGER.warn("ShoulderSurfingHelper.swapShoulder failed: {}", t.toString());
-        }
     }
 
     public static void lookAtCrosshairTarget() {

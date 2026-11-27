@@ -17,7 +17,6 @@ public final class ShoulderCycleHandler {
 
     // SSR's default offset_x is -0.75, camera over the right shoulder; positive X is the other shoulder
     private static volatile Mode mode = Mode.RIGHT;
-    private static volatile int shoulderSign = -1;
     private static volatile boolean syncedFromConfig;
 
     private static boolean sharedKeyDownO = false;
@@ -26,6 +25,10 @@ public final class ShoulderCycleHandler {
 
     public static Mode getMode() {
         return mode;
+    }
+
+    public static double applySide(double x) {
+        return mode == Mode.LEFT ? Math.abs(x) : -Math.abs(x);
     }
 
     // Called from InputHandler.tick HEAD so SSR never sees the shared click
@@ -64,11 +67,8 @@ public final class ShoulderCycleHandler {
         if (syncedFromConfig) return;
         syncedFromConfig = true;
         double x = ShoulderSurfingHelper.getStoredShoulderX();
-        if (Math.abs(x) > 1.0E-4) {
-            shoulderSign = x >= 0.0 ? 1 : -1;
-        }
         if (mode != Mode.OVERHEAD) {
-            mode = shoulderSign < 0 ? Mode.RIGHT : Mode.LEFT;
+            mode = x >= 1.0E-4 ? Mode.LEFT : Mode.RIGHT;
         }
     }
 
@@ -96,19 +96,11 @@ public final class ShoulderCycleHandler {
     }
 
     private static void advance() {
-        switch (mode) {
-            case RIGHT -> {
-                ShoulderSurfingHelper.swapShoulder();
-                shoulderSign = 1;
-                mode = Mode.LEFT;
-            }
-            case LEFT -> mode = Mode.OVERHEAD;
-            case OVERHEAD -> {
-                ShoulderSurfingHelper.swapShoulder();
-                shoulderSign = -1;
-                mode = Mode.RIGHT;
-            }
-        }
+        mode = switch (mode) {
+            case RIGHT -> Mode.LEFT;
+            case LEFT -> Mode.OVERHEAD;
+            case OVERHEAD -> Mode.RIGHT;
+        };
     }
 
     private static void showToast(Minecraft mc) {

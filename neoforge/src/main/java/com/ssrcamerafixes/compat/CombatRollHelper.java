@@ -10,6 +10,7 @@ public final class CombatRollHelper {
     private static synchronized void resolve() {
         if (resolved) return;
         resolved = true;
+        if (!CompatSwitches.enabled("combatroll")) return;
         try {
             Class.forName("net.combat_roll.CombatRollMod");
             loaded = true;

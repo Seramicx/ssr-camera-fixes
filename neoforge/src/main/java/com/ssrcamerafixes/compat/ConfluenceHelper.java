@@ -27,7 +27,7 @@ public final class ConfluenceHelper {
 
     public static boolean isLoaded() {
         if (!loadedResolved) {
-            loaded = ModList.get().isLoaded("confluence");
+            loaded = ModList.get().isLoaded("confluence") && CompatSwitches.enabled("confluence");
             loadedResolved = true;
         }
         return loaded;
@@ -40,6 +40,13 @@ public final class ConfluenceHelper {
     private static void resolveKeys() {
         if (keysResolved) return;
         keysResolved = true;
+        // 1.2.13 folded TerraGuns into the main mod and moved its keys
+        try {
+            Class<?> keys = Class.forName("org.confluence.mod.client.ModKeyBindings");
+            shootKey = readLazyKey(keys, "GUN_SHOOT");
+            aimKey = readLazyKey(keys, "GUN_AIM");
+        } catch (Throwable ignored) {}
+        if (shootKey != null) return;
         try {
             Class<?> keys = Class.forName("org.confluence.terra_guns.client.init.TGKeys");
             shootKey = readLazyKey(keys, "SHOOT");
@@ -102,5 +109,27 @@ public final class ConfluenceHelper {
 
     public static boolean isFireLatchActive() {
         return (System.currentTimeMillis() - fireSignalMs) < FIRE_LATCH_MS;
+    }
+
+    private static int shotDelay;
+    private static boolean resending;
+
+    public static boolean isResending() {
+        return resending;
+    }
+
+    public static void deferShot() {
+        shotDelay = 2;
+    }
+
+    public static void flushDeferredShot() {
+        if (shotDelay <= 0 || --shotDelay > 0) return;
+        resending = true;
+        try {
+            Class.forName("org.confluence.mod.network.c2s.ShootPacketC2S").getMethod("sendToServer").invoke(null);
+        } catch (Throwable ignored) {
+        } finally {
+            resending = false;
+        }
     }
 }

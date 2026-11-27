@@ -48,7 +48,7 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
 
         private static Vec3 applyOverhead(Vec3 targetOffset) {
             if (ShoulderCycleHandler.getMode() != ShoulderCycleHandler.Mode.OVERHEAD) {
-                return targetOffset;
+                return new Vec3(ShoulderCycleHandler.applySide(targetOffset.x), targetOffset.y, targetOffset.z);
             }
             double overheadY;
             try {
@@ -74,13 +74,11 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
             }
             Minecraft mc = ctx.minecraft();
             LocalPlayer player = mc != null ? mc.player : null;
-            if (player != null
+            if (player != null && !AimRules.isFreeLooking() && AimRules.useTurnAllowed()
                     && (com.ssrcamerafixes.compat.EpicFightHelper.isAiming(player)
                             || player.isUsingItem()
-                            || player.isBlocking())) {
-                return true;
-            }
-            if (TaczHelper.isAimingOrFiring()) {
+                            || player.isBlocking()
+                            || TaczHelper.isAimingOrFiring())) {
                 return true;
             }
             if (player != null

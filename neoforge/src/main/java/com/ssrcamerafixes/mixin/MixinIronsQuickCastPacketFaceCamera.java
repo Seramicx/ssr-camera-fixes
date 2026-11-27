@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import com.ssrcamerafixes.compat.AimRules;
 
 // Quick-cast keybind sends QuickCastPacket(slot) from a client tick with no rotation. The int constructor is
 // the client send (the FriendlyByteBuf one is server decode), so face the crosshair before the packet leaves
@@ -26,6 +27,6 @@ public abstract class MixinIronsQuickCastPacketFaceCamera {
         if (EpicFightHelper.isLockOnTargeting()) return;
 
         IronSpellsHelper.signalCast();
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimRules.lookAtCrosshairForUse();
     }
 }

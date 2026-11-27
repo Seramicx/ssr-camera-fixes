@@ -18,6 +18,9 @@ import net.minecraft.client.KeyMapping;
 import net.neoforged.fml.config.ModConfig;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
+import com.ssrcamerafixes.compat.PerspectiveRestore;
+import com.ssrcamerafixes.fabric1211.handler.UniversalAimHandler;
+import com.ssrcamerafixes.fabric1211.mixin.AccessorKeyMappingClicks;
 
 public class SsrCameraFixesFabricMod implements ClientModInitializer {
 
@@ -40,13 +43,16 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
         Keybinds.SHOULDER_CYCLE = cycle;
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            PerspectiveRestore.INSTANCE.tickStart(client, k -> ((AccessorKeyMappingClicks) k).ssrcamerafixes$getClickCount() > 0);
             // Before/around SSR's InputHandler.tick so shared O (cycle vs swap) is ours alone.
             ShoulderCycleHandler.INSTANCE.onClientTickStart(client);
             AttackFaceCameraHandler.INSTANCE.onClientTickStart(client);
+            UniversalAimHandler.INSTANCE.onClientTickStart(client);
             AimingFaceCameraHandler.onClientTickStart(client);
             AimingFaceCameraHandler.onMountedTickStart(client);
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            PerspectiveRestore.INSTANCE.tickEnd(client);
             AttackFaceCameraHandler.INSTANCE.onClientTickEnd(client);
             SprintRotateHandler.INSTANCE.onClientTickEnd(client);
             WalkStopFaceCameraHandler.INSTANCE.onClientTickEnd(client);
@@ -55,6 +61,6 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
 
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 
-        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions v2.0.0 (Fabric 1.21.1) loaded.");
+        LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions (Fabric 1.21.1) loaded.");
     }
 }

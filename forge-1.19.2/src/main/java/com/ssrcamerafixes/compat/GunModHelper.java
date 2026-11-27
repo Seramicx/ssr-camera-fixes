@@ -20,28 +20,28 @@ public final class GunModHelper {
     private static void resolve() {
         if (resolved) return;
         resolved = true;
-        try {
+        if (CompatSwitches.enabled("scguns")) try {
             Class<?> c = Class.forName("top.ribs.scguns.client.handler.ShootingHandler");
             scorchedGet = c.getMethod("get");
             scorchedShooting = c.getDeclaredField("shooting");
             scorchedShooting.setAccessible(true);
         } catch (Throwable ignored) {}
-        try {
+        if (CompatSwitches.enabled("cgm")) try {
             Class<?> c = Class.forName("com.mrcrayfish.guns.client.handler.ShootingHandler");
             cgmGet = c.getMethod("get");
             cgmShooting = c.getDeclaredField("shooting");
             cgmShooting.setAccessible(true);
         } catch (Throwable ignored) {}
-        try {
+        if (CompatSwitches.enabled("cgm")) try {
             Class<?> keyBinds = Class.forName("com.mrcrayfish.guns.client.KeyBinds");
             cgmShootKeyGet = keyBinds.getMethod("getShootMapping");
         } catch (Throwable ignored) {}
-        try {
+        if (CompatSwitches.enabled("cgm")) try {
             Class<?> aiming = Class.forName("com.mrcrayfish.guns.client.handler.AimingHandler");
             cgmAimingGet = aiming.getMethod("get");
             cgmIsAiming = aiming.getMethod("isAiming");
         } catch (Throwable ignored) {}
-        try {
+        if (CompatSwitches.enabled("cgm")) try {
             cgmGunItemClass = Class.forName("com.mrcrayfish.guns.item.GunItem");
         } catch (Throwable ignored) {}
     }

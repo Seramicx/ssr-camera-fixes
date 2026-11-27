@@ -4,6 +4,11 @@
   "package": "com.ssrcamerafixes.fabric1211.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "AccessorKeyMappingClicks",
+    "MixinUniversalAimInput",
+    "MixinUniversalAimRelease",
+    "MixinUniversalAimModPacket",
+    "MixinSsrFovOverride",
     "MixinSprintRotateInput",
     "MixinSpellEngineCastToCrosshair",
     "MixinSpellEngineMountedTargetRay",
@@ -11,13 +16,12 @@
     "MixinJegGunFaceCamera",
     "MixinJegCrosshairInShoulder",
     "MixinSsrSuppressFollowDuringMountRotateV5",
-    "MixinSsrSuppressFollowDuringMountRotateV4",
     "MixinSsrSuppressTurnSnapback",
     "MixinSsrSuppressSwapOnCycleConflict",
     "MixinSsrCrossbowTickBracketV5",
-    "MixinSsrCrossbowTickBracketV4",
     "MixinCrossbowFaceCamera",
-    "MixinMusketFaceCamera"
+    "MixinMusketFaceCamera",
+    "MixinPotatoCannonFaceCamera"
   ],
   "mixins": [
     "MixinCrossbowServerHeadYaw"

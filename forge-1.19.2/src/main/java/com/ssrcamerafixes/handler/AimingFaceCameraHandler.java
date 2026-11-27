@@ -1,5 +1,6 @@
 package com.ssrcamerafixes.handler;
 
+import com.ssrcamerafixes.SsrCameraFixesConfig;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.GunModHelper;
 import com.ssrcamerafixes.compat.IronSpellsHelper;
@@ -24,6 +25,7 @@ import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import com.ssrcamerafixes.compat.AimRules;
 
 public final class AimingFaceCameraHandler {
 
@@ -41,12 +43,14 @@ public final class AimingFaceCameraHandler {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null) return;
+        if (!AimRules.get(SsrCameraFixesConfig.AIMING_BODY_FOLLOW, true)) return;
 
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (isControllingMobMount(player)) return;
 
+        if (AimRules.isFreeLooking() || !AimRules.useTurnAllowed()) return;
         boolean shield = player.isBlocking();
         boolean tacz = TaczHelper.isAimingOrFiring();
         boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown()
@@ -151,6 +155,7 @@ public final class AimingFaceCameraHandler {
     }
 
     public static void faceCrosshairAndSync(Minecraft mc, LocalPlayer player) {
+        if (AimRules.isFreeLooking() || !AimRules.useTurnAllowed()) return;
         faceCrosshair(player);
         ClientPacketListener conn = mc.getConnection();
         if (conn != null) {

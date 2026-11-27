@@ -16,6 +16,7 @@ import yesman.epicfight.skill.AirAttack;
 import yesman.epicfight.skill.BasicAttack;
 import yesman.epicfight.skill.Skill;
 import yesman.epicfight.skill.weaponinnate.WeaponInnateSkill;
+import com.ssrcamerafixes.compat.AimRules;
 
 @Pseudo
 @Mixin(value = Skill.class, remap = false, priority = 1100)
@@ -28,7 +29,7 @@ public abstract class MixinSsrAttackDirection {
     ) {
         if (!((Object) this instanceof BasicAttack) && !((Object) this instanceof AirAttack)
                 && !((Object) this instanceof WeaponInnateSkill)) return;
-        if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
+        if (!ShoulderSurfingHelper.isShoulderSurfingActive() || AimRules.isFreeLooking() || !AimRules.attackTurnAllowed()) return;
         if (executer == null) return;
 
         LocalPlayer player = executer.getOriginal();

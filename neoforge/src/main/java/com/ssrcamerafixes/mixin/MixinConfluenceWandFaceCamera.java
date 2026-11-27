@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import com.ssrcamerafixes.compat.AimRules;
 
 // Confluence mana weapons spawn their projectile server-side from the player's body rotation the instant the
 // use packet lands, and that packet carries the rotation captured here at HEAD. Facing the crosshair before it
@@ -29,6 +30,6 @@ public abstract class MixinConfluenceWandFaceCamera {
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (!ConfluenceHelper.isHoldingManaWeapon(mc.player)) return;
 
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimRules.lookAtCrosshairForUse();
     }
 }

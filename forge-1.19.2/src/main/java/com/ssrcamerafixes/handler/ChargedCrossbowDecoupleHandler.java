@@ -30,6 +30,7 @@ public final class ChargedCrossbowDecoupleHandler {
         saved = false;
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
+        if (!HeldCrossbowAim.isDecoupleEnabled()) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (!HeldCrossbowAim.isChargedPassiveHold(player)) return;
         savedYRot = player.getYRot();

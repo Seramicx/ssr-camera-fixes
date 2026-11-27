@@ -2,6 +2,7 @@
   "required": false,
   "minVersion": "0.8.5",
   "package": "com.ssrcamerafixes.mixin",
+  "plugin": "com.ssrcamerafixes.mixin.SsrCameraFixesMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "priority": 500,
   "client": [

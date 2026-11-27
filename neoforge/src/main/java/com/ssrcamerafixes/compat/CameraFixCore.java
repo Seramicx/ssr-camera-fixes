@@ -25,22 +25,11 @@ public final class CameraFixCore {
             return true;
         }
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null
-                && (EpicFightHelper.isAiming(player)
-                        || EpicFightHelper.isAttackKeyActive()
-                        || EpicFightHelper.isHoldingSkill(player)
-                        || player.isUsingItem()
-                        || player.isBlocking())) {
-            return true;
-        }
-        if (TaczHelper.isAimingOrFiring()) {
-            return true;
-        }
-        if (SuperbWarfareHelper.isAimingOrFiring()) {
-            return true;
-        }
-        if (player != null && ConfluenceHelper.isGunFiringOrAiming(player)) {
-            return true;
+        if (player != null && !AimRules.isFreeLooking()) {
+            boolean useTurn = AimRules.useTurnAllowed();
+            if (EpicFightHelper.isAttackKeyActive() && AimRules.attackTurnAllowed()) return true;
+            if (useTurn && (EpicFightHelper.isAiming(player) || EpicFightHelper.isHoldingSkill(player) || player.isUsingItem() || player.isBlocking())) return true;
+            if (useTurn && (TaczHelper.isAimingOrFiring() || SuperbWarfareHelper.isAimingOrFiring() || ConfluenceHelper.isGunFiringOrAiming(player))) return true;
         }
         if (player != null
                 && player.isSprinting()
@@ -56,12 +45,11 @@ public final class CameraFixCore {
         return player != null && EpicFightHelper.needsCameraCoupling(player);
     }
 
-    public static Vec3 overheadOffset(Vec3 current) {
+    public static Vec3 cycleOffset(Vec3 current) {
         if (ShoulderCycleHandler.getMode() != ShoulderCycleHandler.Mode.OVERHEAD) {
-            return current;
+            return new Vec3(ShoulderCycleHandler.applySide(current.x), current.y, current.z);
         }
-        // Always apply — SSR may zero x/y when looking down (center_camera_when_looking_down),
-        // and the old early-out made OVERHEAD look identical to a centered shoulder.
+        // SSR zeroes x/y when looking down (center_camera_when_looking_down), so don't early-out
         return new Vec3(0.0, overheadY(), current.z);
     }
 
@@ -72,7 +60,7 @@ public final class CameraFixCore {
         if (ShoulderCycleHandler.getMode() == ShoulderCycleHandler.Mode.OVERHEAD) {
             return new Vec3(0.0, overheadY(), defaultOffset.z);
         }
-        return defaultOffset;
+        return new Vec3(ShoulderCycleHandler.applySide(defaultOffset.x), defaultOffset.y, defaultOffset.z);
     }
 
     private static double overheadY() {

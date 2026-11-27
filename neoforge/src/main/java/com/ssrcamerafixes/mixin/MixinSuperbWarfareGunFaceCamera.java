@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import com.ssrcamerafixes.compat.AimRules;
 
 // SW sends a rotationless ShootMessage and the server shoots from the player's live lookAngle. While
 // decoupled the body yaw is the shoulder offset, so face the crosshair before handleClientShoot sends the packet
@@ -24,6 +25,6 @@ public abstract class MixinSuperbWarfareGunFaceCamera {
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
 
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimRules.lookAtCrosshairForUse();
     }
 }

@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import com.ssrcamerafixes.compat.AimRules;
 
 @Pseudo
 @Mixin(LocalPlayer.class)
@@ -18,7 +19,7 @@ public abstract class MixinSpellEngineCastToCrosshair {
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (!WizardsHelper.isCastingLive()) return;
         if (WizardsHelper.isInstantCasting() && isRidingMount((LocalPlayer) (Object) this)) return;
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimRules.lookAtCrosshairForUse();
     }
 
     private static boolean isRidingMount(LocalPlayer player) {

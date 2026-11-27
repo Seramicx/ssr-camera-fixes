@@ -30,6 +30,6 @@ public abstract class MixinWizardryCastFaceCamera {
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (!WizardryReduxHelper.isCastItem(player.getItemInHand(hand).getItem())) return;
 
-        AimingFaceCameraHandler.faceCrosshair(mc.player);
+        AimingFaceCameraHandler.faceCrosshairForUse(mc.player);
     }
 }

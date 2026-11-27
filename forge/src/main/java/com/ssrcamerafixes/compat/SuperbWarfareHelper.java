@@ -24,7 +24,7 @@ public final class SuperbWarfareHelper {
 
     public static boolean isLoaded() {
         if (!loadedResolved) {
-            loaded = ModList.get().isLoaded("superbwarfare");
+            loaded = ModList.get().isLoaded("superbwarfare") && CompatSwitches.enabled("superbwarfare");
             loadedResolved = true;
         }
         return loaded;

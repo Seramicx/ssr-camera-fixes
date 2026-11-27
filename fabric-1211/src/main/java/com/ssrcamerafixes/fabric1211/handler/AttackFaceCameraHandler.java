@@ -1,5 +1,7 @@
 package com.ssrcamerafixes.fabric1211.handler;
 
+import com.ssrcamerafixes.SsrCameraFixesConfig;
+import com.ssrcamerafixes.compat.AimRules;
 import com.ssrcamerafixes.compat.BetterCombatHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.compat.WizardsHelper;
@@ -38,10 +40,12 @@ public final class AttackFaceCameraHandler {
 
     private static boolean shouldSnap(Minecraft mc, LocalPlayer player) {
         if (mc.options.getCameraType() != CameraType.THIRD_PERSON_BACK) return false;
+        if (!AimRules.get(SsrCameraFixesConfig.ATTACK_BODY_SNAP, true)) return false;
         if (isControllingMobMount(player)) return false;
-        return player.swinging
+        if (!(player.swinging
                 || BetterCombatHelper.isAttackInProgress()
-                || WizardsHelper.isMeleeSkillActive();
+                || WizardsHelper.isMeleeSkillActive())) return false;
+        return !AimRules.isFreeLooking() && AimRules.attackTurnAllowed();
     }
 
     private static boolean isControllingMobMount(LocalPlayer player) {

@@ -1,5 +1,7 @@
 package com.ssrcamerafixes.handler;
 
+import com.ssrcamerafixes.SsrCameraFixesConfig;
+import com.ssrcamerafixes.compat.AimRules;
 import com.ssrcamerafixes.compat.BetterMountSteeringHelper;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.GunModHelper;
@@ -45,18 +47,21 @@ public final class AimingFaceCameraHandler {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null) return;
+        if (!AimRules.get(SsrCameraFixesConfig.AIMING_BODY_FOLLOW, true)) return;
 
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (isControllingMobMount(player)) return;
 
-        boolean shield = player.isBlocking();
-        boolean efHold = EpicFightHelper.isHoldingSkill(player);
-        boolean efAttack = EpicFightHelper.isAttackKeyActive();
-        boolean tacz = TaczHelper.isAimingOrFiring();
-        boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown()
-                || WizardryReduxHelper.isCastActive(player);
+        if (AimRules.isFreeLooking()) return;
+        boolean useTurn = AimRules.useTurnAllowed();
+        boolean shield = player.isBlocking() && useTurn;
+        boolean efHold = EpicFightHelper.isHoldingSkill(player) && useTurn;
+        boolean efAttack = EpicFightHelper.isAttackKeyActive() && AimRules.attackTurnAllowed();
+        boolean tacz = TaczHelper.isAimingOrFiring() && useTurn;
+        boolean spell = (IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown()
+                || WizardryReduxHelper.isCastActive(player)) && useTurn;
         if (!shield && !efHold && !efAttack && !tacz && !spell) return;
 
         if (shield || efHold || efAttack) {
@@ -166,7 +171,7 @@ public final class AimingFaceCameraHandler {
         // Irons casts and Superb Warfare shots both send rotation-less packets and the server reads the player yaw
         // when the spell or bullet resolves, so this cannot be gated on the mount being a Mob or the correction
         // never runs on a Valkyrien Skies ship
-        if (EpicFightHelper.isAttackKeyActive()
+        if (EpicFightHelper.isAttackKeyActive() && AimRules.attackTurnAllowed()
                 || EpicFightHelper.isHoldingSkill(player)
                 || TaczHelper.isAimingOrFiring()
                 || IronSpellsHelper.isCasting()
@@ -286,7 +291,13 @@ public final class AimingFaceCameraHandler {
         ShoulderSurfingHelper.setLastMovedYRot(yaw);
     }
 
+    public static void faceCrosshairForUse(LocalPlayer player) {
+        if (AimRules.isFreeLooking() || !AimRules.useTurnAllowed()) return;
+        faceCrosshair(player);
+    }
+
     public static void faceCrosshairAndSync(Minecraft mc, LocalPlayer player) {
+        if (AimRules.isFreeLooking() || !AimRules.useTurnAllowed()) return;
         faceCrosshair(player);
         ClientPacketListener conn = mc.getConnection();
         if (conn != null) {

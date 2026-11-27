@@ -1,5 +1,7 @@
 package com.ssrcamerafixes.compat;
 
+import net.minecraft.world.entity.Entity;
+
 import com.github.exopandora.shouldersurfing.api.client.event.ComputeTargetCameraOffsetEvent;
 import com.github.exopandora.shouldersurfing.api.client.event.handler.ComputeCameraCouplingEventHandler;
 import com.github.exopandora.shouldersurfing.api.client.event.handler.ComputePlayerAimStateEventHandler;
@@ -13,7 +15,7 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
 
     @Override
     public void register(IEventBus eventBus) {
-        eventBus.register(5000, (ComputeTargetCameraOffsetEventHandler) SsrCameraFixesPlugin::overheadOffset);
+        eventBus.register(5000, (ComputeTargetCameraOffsetEventHandler) SsrCameraFixesPlugin::cycleOffset);
         eventBus.register(5100, (ComputeTargetCameraOffsetEventHandler) LockOnOffsetHandler::apply);
         eventBus.register((ForceVanillaPlayerInputEventHandler) event -> {
             if (!event.getResult() && CameraFixCore.forceVanillaInput()) {
@@ -33,13 +35,14 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
         // Above the builtin's 1000 so this overwrites its false-positive uncharged "charged" property match.
         // Charged holds are left alone so adaptive crosshair stays on.
         eventBus.register(5000, (ComputePlayerAimStateEventHandler) event -> {
-            if (event.getResult() && HeldCrossbowAim.isPassiveHold(event.getEntity())) {
+            if (event.getResult() && HeldCrossbowAim.isDecoupleEnabled() && HeldCrossbowAim.isPassiveHold(event.getEntity())) {
                 event.setResult(false);
             }
         });
     }
 
-    private static void overheadOffset(ComputeTargetCameraOffsetEvent event) {
-        event.setResult(CameraFixCore.overheadOffset(event.getResult()));
+    private static void cycleOffset(ComputeTargetCameraOffsetEvent event) {
+        event.setResult(CameraFixCore.cycleOffset(event.getResult()));
     }
+
 }

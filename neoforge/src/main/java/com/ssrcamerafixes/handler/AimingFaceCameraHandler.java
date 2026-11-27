@@ -1,5 +1,7 @@
 package com.ssrcamerafixes.handler;
 
+import com.ssrcamerafixes.SsrCameraFixesConfig;
+import com.ssrcamerafixes.compat.AimRules;
 import com.ssrcamerafixes.compat.ConfluenceHelper;
 import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.compat.GunModHelper;
@@ -33,18 +35,21 @@ public final class AimingFaceCameraHandler {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null) return;
+        if (!AimRules.get(SsrCameraFixesConfig.AIMING_BODY_FOLLOW, true)) return;
 
         if (EpicFightHelper.isLockOnTargeting()) return;
         if (mc.options.getCameraType() == CameraType.FIRST_PERSON) return;
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (isControllingMobMount(player)) return;
 
-        boolean shield = player.isBlocking();
-        boolean efHold = EpicFightHelper.isHoldingSkill(player);
-        boolean efAttack = EpicFightHelper.isAttackKeyActive();
-        boolean tacz = TaczHelper.isAimingOrFiring();
-        boolean confluenceGun = ConfluenceHelper.isGunFiringOrAiming(player);
-        boolean spell = IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown();
+        if (AimRules.isFreeLooking()) return;
+        boolean useTurn = AimRules.useTurnAllowed();
+        boolean shield = player.isBlocking() && useTurn;
+        boolean efHold = EpicFightHelper.isHoldingSkill(player) && useTurn;
+        boolean efAttack = EpicFightHelper.isAttackKeyActive() && AimRules.attackTurnAllowed();
+        boolean tacz = TaczHelper.isAimingOrFiring() && useTurn;
+        boolean confluenceGun = ConfluenceHelper.isGunFiringOrAiming(player) && useTurn;
+        boolean spell = (IronSpellsHelper.isCasting() || IronSpellsHelper.anyCastKeymapDown()) && useTurn;
         if (!shield && !efHold && !efAttack && !tacz && !confluenceGun && !spell) return;
 
         if (shield || efHold || efAttack) {
@@ -77,7 +82,7 @@ public final class AimingFaceCameraHandler {
         boolean ongoing = IronSpellsHelper.isCasting();
         if (!pressEdge && !ongoing) return;
 
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimRules.lookAtCrosshairForUse();
         ClientPacketListener conn = mc.getConnection();
         if (conn != null) {
             conn.send(new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.onGround()));
@@ -123,7 +128,7 @@ public final class AimingFaceCameraHandler {
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
 
-        if (EpicFightHelper.isAttackKeyActive()
+        if (EpicFightHelper.isAttackKeyActive() && AimRules.attackTurnAllowed()
                 || EpicFightHelper.isHoldingSkill(player)
                 || TaczHelper.isAimingOrFiring()
                 || IronSpellsHelper.isCasting()
@@ -137,6 +142,7 @@ public final class AimingFaceCameraHandler {
     }
 
     public static void faceCrosshairAndSync(Minecraft mc, LocalPlayer player) {
+        if (AimRules.isFreeLooking() || !AimRules.useTurnAllowed()) return;
         ShoulderSurfingHelper.lookAtCrosshairTarget();
         ClientPacketListener conn = mc.getConnection();
         if (conn != null) {

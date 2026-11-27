@@ -26,6 +26,7 @@ public final class CgmGunRenderHelper {
     private static void resolve() {
         if (resolved) return;
         resolved = true;
+        if (!CompatSwitches.enabled("cgm")) return;
         try {
             gunItemClass = Class.forName("com.mrcrayfish.guns.item.GunItem");
             getModifiedGun = gunItemClass.getMethod("getModifiedGun", ItemStack.class);

@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import com.ssrcamerafixes.compat.AimRules;
 
 // Right-click Firebolt sends CastPacket from a client tick with no rotation; the server casts from the synced
 // yaw. The no-arg constructor is the client send (the FriendlyByteBuf one is server decode), so face the
@@ -28,6 +29,6 @@ public abstract class MixinIronsCastPacketFaceCamera {
         if (EpicFightHelper.isLockOnTargeting()) return;
 
         IronSpellsHelper.signalCast();
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimRules.lookAtCrosshairForUse();
     }
 }

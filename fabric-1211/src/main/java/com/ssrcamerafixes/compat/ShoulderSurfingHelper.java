@@ -1,6 +1,7 @@
 package com.ssrcamerafixes.compat;
 
 import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
+import com.github.exopandora.shouldersurfing.api.client.Perspective;
 import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfingCamera;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -75,6 +76,21 @@ public final class ShoulderSurfingHelper {
         } catch (Throwable t) {
             return null;
         }
+    }
+
+    public static boolean switchedAwayByUs;
+
+    public static boolean isShoulderSurfingPerspective() {
+        return instanceOrNull() != null && Perspective.current() == Perspective.SHOULDER_SURFING;
+    }
+
+    public static boolean isThirdPersonBackPerspective() {
+        return instanceOrNull() != null && Perspective.current() == Perspective.THIRD_PERSON_BACK;
+    }
+
+    public static void changeToShoulderSurfing() {
+        IShoulderSurfing ssr = instanceOrNull();
+        if (ssr != null) ssr.changePerspective(Perspective.SHOULDER_SURFING);
     }
 
     public static boolean isShoulderSurfingActive() {
@@ -167,15 +183,6 @@ public final class ShoulderSurfingHelper {
             }
         } catch (Throwable ignored) {}
         return Minecraft.getInstance().gameRenderer.getMainCamera().getXRot();
-    }
-
-    public static void swapShoulder() {
-        try {
-            IShoulderSurfing ssr = instance();
-            if (ssr != null) ssr.swapShoulder();
-        } catch (Throwable t) {
-            LOGGER.warn("ShoulderSurfingHelper.swapShoulder failed: {}", t.toString());
-        }
     }
 
     public static void lookAtCrosshairTarget() {

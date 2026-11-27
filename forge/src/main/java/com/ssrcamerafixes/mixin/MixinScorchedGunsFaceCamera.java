@@ -28,6 +28,6 @@ public abstract class MixinScorchedGunsFaceCamera {
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
 
-        AimingFaceCameraHandler.faceCrosshair(mc.player);
+        AimingFaceCameraHandler.faceCrosshairForUse(mc.player);
     }
 }

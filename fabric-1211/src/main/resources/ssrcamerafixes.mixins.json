@@ -6,10 +6,7 @@
   "client": [
     "AccessorKeyMapping",
     "MixinDisableFollowPlayerRotationsV5",
-    "MixinDisableFollowPlayerRotationsV4",
     "MixinSuppressIdleYawFollowV5",
-    "MixinSuppressIdleYawFollowV4",
-    "MixinSsrHeldCrossbowNoAimV4",
     "MixinCombatRollDirection"
   ],
   "injectors": {

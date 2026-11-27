@@ -20,6 +20,7 @@ public final class BetterMountSteeringHelper {
     private static void resolveState() {
         if (stateResolved) return;
         stateResolved = true;
+        if (!CompatSwitches.enabled("bettermountsteering")) return;
         try {
             Class<?> handler = Class.forName("com.bettermountsteering.handler.MountSteeringHandler");
             isMountRotateActive = handler.getMethod("isMountRotateActive");
@@ -50,6 +51,7 @@ public final class BetterMountSteeringHelper {
     }
 
     public static void registerCameraSource() {
+        if (!CompatSwitches.enabled("bettermountsteering")) return;
         try {
             Class<?> sourceIface = Class.forName("com.bettermountsteering.api.MountCameraSource");
             Class<?> api = Class.forName("com.bettermountsteering.api.MountSteeringApi");

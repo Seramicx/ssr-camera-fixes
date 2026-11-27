@@ -19,7 +19,7 @@ public abstract class MixinSsrHeldCrossbowNoAim {
 
     @Inject(method = "isHoldingAdaptiveItem", at = @At("RETURN"), cancellable = true, require = 0, remap = false)
     private static void ssrcamerafixes$ignoreHeldCrossbow(Minecraft minecraft, Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if (cir.getReturnValueZ() && HeldCrossbowAim.isPassiveHold(entity)) {
+        if (cir.getReturnValueZ() && HeldCrossbowAim.isDecoupleEnabled() && HeldCrossbowAim.isPassiveHold(entity)) {
             cir.setReturnValue(false);
         }
     }

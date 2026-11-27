@@ -1,5 +1,7 @@
 package com.ssrcamerafixes.fabric.compat;
 
+import com.ssrcamerafixes.compat.CompatSwitches;
+
 import com.mojang.logging.LogUtils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
@@ -34,7 +36,7 @@ public final class WizardsHelper {
 
     public static boolean isLoaded() {
         if (spellEnginePresent == null) {
-            spellEnginePresent = FabricLoader.getInstance().isModLoaded("spell_engine");
+            spellEnginePresent = FabricLoader.getInstance().isModLoaded("spell_engine") && CompatSwitches.enabled("spell_engine");
         }
         return spellEnginePresent;
     }
@@ -43,13 +45,22 @@ public final class WizardsHelper {
         if (castMethodResolved) return;
         castMethodResolved = true;
         if (!isLoaded()) return;
+        Class<?> iface;
         try {
-            Class<?> iface = Class.forName("net.spell_engine.internals.casting.SpellCasterClient");
+            iface = Class.forName("net.spell_engine.internals.casting.SpellCasterClient");
             isCastingSpellMethod = iface.getMethod("isCastingSpell");
-            getSpellCastProgressMethod = iface.getMethod("getSpellCastProgress");
         } catch (Throwable t) {
-            LOGGER.debug("WizardsHelper: spell cast reflection unavailable: {}", t.toString());
+            // 1.10 folded SpellCasterClient into SpellCaster.Client and dropped isCastingSpell
+            try {
+                iface = Class.forName("net.spell_engine.internals.casting.SpellCaster$Client");
+            } catch (Throwable t2) {
+                LOGGER.debug("WizardsHelper: spell cast reflection unavailable: {}", t2.toString());
+                return;
+            }
         }
+        try {
+            getSpellCastProgressMethod = iface.getMethod("getSpellCastProgress");
+        } catch (Throwable ignored) {}
     }
 
     private static synchronized void resolveHotbar() {
@@ -87,12 +98,14 @@ public final class WizardsHelper {
     public static boolean isCastingLive() {
         if (!isLoaded()) return false;
         resolveCastMethod();
-        if (isCastingSpellMethod == null) return false;
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return false;
         try {
-            Object v = isCastingSpellMethod.invoke(player);
-            return v instanceof Boolean && (Boolean) v;
+            if (isCastingSpellMethod != null) {
+                Object v = isCastingSpellMethod.invoke(player);
+                return v instanceof Boolean && (Boolean) v;
+            }
+            return getSpellCastProgressMethod != null && getSpellCastProgressMethod.invoke(player) != null;
         } catch (Throwable ignored) {
             return false;
         }

@@ -2,23 +2,23 @@
 
 ![Showcase](assets/showcase.gif)
 
-Camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforge.com/minecraft/mc-mods/shoulder-surfing-reloaded). Works on its own. Detects Epic Fight, Better Combat, Better Lockon, Iron's Spells, Spell Engine, and TaCZ when those mods are installed.
+Camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforge.com/minecraft/mc-mods/shoulder-surfing-reloaded). Works on its own. Detects Epic Fight, Better Combat, Better Lockon, Iron's Spells, Spell Engine, and TaCZ when those mods are installed, and aims guns, wands and spell keys from other mods at the crosshair (see [Items and keys from other mods](#items-and-keys-from-other-mods)).
 
 ## Loaders
 
 | Loader | Minecraft | Mod version | Integrations |
 |---|---|---|---|
-| Forge | 1.20.1 | 2.1.1 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, TaCZ, Radial Aggro Indicator, Valkyrien Skies |
-| Forge | 1.19.2 | 1.1.1 | Epic Fight, Better Combat, Iron's Spells, TaCZ, Weapons of Miracle |
-| NeoForge | 1.21.1 | 2.1.1 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, TaCZ, Confluence: Otherworld, Radial Aggro Indicator, Create: Aeronautics (Sable) |
-| Fabric | 1.20.1 | 2.1.1 | Better Combat, Spell Engine |
-| Fabric | 1.21.1 | 2.1.1 | Better Combat, Spell Engine |
+| Forge | 1.20.1 | 2.2.0 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, TaCZ, Radial Aggro Indicator, Valkyrien Skies |
+| Forge | 1.19.2 | 1.2.0 | Epic Fight, Better Combat, Iron's Spells, TaCZ, Weapons of Miracle |
+| NeoForge | 1.21.1 | 2.2.0 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, TaCZ, Confluence: Otherworld, Radial Aggro Indicator, Create: Aeronautics (Sable) |
+| Fabric | 1.20.1 | 2.2.0 | Better Combat, Spell Engine |
+| Fabric | 1.21.1 | 2.2.0 | Better Combat, Spell Engine |
 
 ## Forge 1.20.1
 
 Overhead preset in SSR's cycle, similar to Leawind's Third Person. One keybind: right shoulder, left shoulder, overhead. SSR's presets are per-axis and can't do a centered high overhead on their own, so this adds one.
 
-On attack, your body and head turn with the camera so swings look forward and hits line up with the crosshair. Vanilla, modded, and Better Combat weapons.
+On attack, your body and head turn with the camera so swings look forward and hits line up with the crosshair. Vanilla, modded, and Better Combat weapons. By default this follows SSR's "turn player when attacking" setting, so with SSR's default (requires target) swinging at air doesn't turn you. Set `turnOnAttack = "ALWAYS"` to turn on every swing.
 
 - Stabilizes shoulder offset transitions, pitch, and SSR camera during and after lock-on
 - Lock-on camera follows Epic Fight's locked target
@@ -35,7 +35,7 @@ On attack, your body and head turn with the camera so swings look forward and hi
 
 ### Requires
 
-- Minecraft 1.20.1, Forge 47+, Shoulder Surfing Reloaded 4.22.0+
+- Minecraft 1.20.1, Forge 47+, Shoulder Surfing Reloaded 5.0+
 - Optional: Epic Fight 20.14.1+, Better Combat, Better Lockon, Iron's Spells, TaCZ, Weapons of Miracle
 
 ### Install
@@ -59,7 +59,7 @@ Same set of fixes as Forge 1.20.1, minus Better Lockon, Wizards, and Radial Aggr
 
 ## NeoForge 1.21.1
 
-Same as Forge on 1.21.1 / NeoForge 21, without Wizards. NeoForge 21.1+, SSR 4.22.10+. Optional: Antikythera-Studios Epic Fight 21.17.2+, Better Combat, Better Lockon, Iron's Spells, TaCZ (MUKSC's NeoForge 1.21.1 port), Confluence: Otherworld, Radial Aggro Indicator.
+Same as Forge on 1.21.1 / NeoForge 21, without Wizards. NeoForge 21.1+, SSR 5.0+. Optional: Antikythera-Studios Epic Fight 21.17.2+, Better Combat, Better Lockon, Iron's Spells, TaCZ (MUKSC's NeoForge 1.21.1 port), Confluence: Otherworld, Radial Aggro Indicator.
 
 TaCZ and Confluence guns and mana weapons hit the crosshair, holding a TaCZ gun keeps decoupled movement, and the Radial Aggro Indicator arrow points relative to the camera.
 
@@ -72,16 +72,28 @@ With Create: Aeronautics (and the Sable physics it runs on), sitting on a contra
 
 ## Fabric 1.20.1 and 1.21.1
 
-Overhead cycle, face-camera on Better Combat attacks, sprint-backward body lock, and Spell Engine spells aim at the crosshair (instant casts like Shadowstep included) while your character turns to face them. Fabric Loader 0.15+ (1.20.1) or 0.16+ (1.21.1), Fabric API, SSR (Fabric), Forge Config API Port (Fabric). Optional: Better Combat, Spell Engine (the RPG Series mods: Wizards, Rogues, Paladins, etc.).
+Overhead cycle, face-camera on Better Combat attacks, sprint-backward body lock, and Spell Engine spells aim at the crosshair (instant casts like Shadowstep included) while your character turns to face them. Fabric Loader 0.15+ (1.20.1) or 0.16+ (1.21.1), Fabric API, SSR (Fabric) 5.0+, Forge Config API Port (Fabric). Optional: Better Combat, Spell Engine (the RPG Series mods: Wizards, Rogues, Paladins, etc.).
 
 ### Install
 
 1. Fabric Loader, Fabric API, Forge Config API Port, SSR (Fabric).
 2. Matching Fabric jar from [releases](https://github.com/Seramicx/ssr-camera-fixes/releases) into `mods/`.
 
-## Bows and thrown items
+## Items and keys from other mods
 
-Crosshair aim for bows, crossbows, tridents, and use-items is in [Epic Fight x Better Lock On: Movement Fixes](https://github.com/Seramicx/epic-fight-better-lockon-movement-camera-fix). Install both mods if you want camera fixes and that aim behavior.
+SSR already turns you to the crosshair for vanilla right-click items. Many modded guns and wands fire from a keybind or send their own packet, so the shot leaves in the direction your body faced instead of where the crosshair is. This mod turns you to the crosshair right before those are sent, for any mod, without needing a specific integration:
+
+- Right-click items that aren't blocks or food (`aimAllItems`, on by default)
+- Items you list in `aimItems`, or items that shoot on left click in `aimOnAttackItems`
+- Keybinds you list in `aimKeys`, such as a spell or ability key. Use the name from `options.txt` without the `key_` prefix. A trailing `*` matches every key starting with that text.
+
+Entries can be an item id (`goety:soul_staff`), a whole mod (`goety:*`) or an item tag (`#forge:tools`). `ignoredItems` turns aiming off for an item or mod; TaCZ and Superb Warfare are in it by default because their integrations handle aiming.
+
+A data pack can do the same with the item tags `ssrcamerafixes:aim_at_crosshair`, `ssrcamerafixes:aim_at_crosshair_on_attack` and `ssrcamerafixes:never_aim`. Tags come from the server, so on a multiplayer server the data pack has to be installed there; the config lists work on any server.
+
+Aiming follows SSR's "turn player when using item" setting unless you change `turnOnUse`. It is skipped during free look and during Epic Fight lock-on, where Epic Fight turns you toward the locked target.
+
+Dash, roll and dodge keys from other mods launch you the way your body faces, which in shoulder surfing is often not where you are looking. Put those keys in `faceCameraKeys` and your character turns to the camera direction before the key fires.
 
 ## Config
 
@@ -89,12 +101,21 @@ Crosshair aim for bows, crossbows, tridents, and use-items is in [Epic Fight x B
 
 - `cameraOverheadOffsetY` - overhead height (default `1.2`). X locked to 0 in overhead; Z comes from SSR's `offset_z`.
 - `disableFollowPlayerRotations` - turns off SSR idle camera follow.
+- `decoupleHeldCrossbow` - keeps the camera decoupled while a loaded crossbow is held (default `false`, SSR's stock coupling).
+- `turnOnAttack`, `turnOnUse` - `FOLLOW_SSR` (default) uses SSR's "turn player when attacking" and "turn player when using item" settings. `ALWAYS` and `NEVER` override them for this mod's turning.
+- `aimAllItems`, `aimItems`, `aimOnAttackItems`, `ignoredItems`, `aimKeys`, `faceCameraKeys` - see [Items and keys from other mods](#items-and-keys-from-other-mods).
+- `attackBodySnap` - body and head follow the swing when you attack.
+- `aimingBodyFollow` - body follows the crosshair while drawing a bow, casting, eating or blocking.
+- `restoreShoulderSurfing` - switches back to shoulder surfing when another mod drops you into plain third person without you pressing a perspective key (default `false`). Leave it off if a mod uses plain third person on purpose for its own camera.
+- `[compat]` - one switch per supported mod (`epicfight`, `tacz`, `cgm`, ...). Setting one to `false` makes this mod leave that mod alone. Restart the game after changing these.
 
 Other offsets live in `config/shouldersurfing-client.toml`.
 
 ## Keybinds
 
 - Shoulder Cycle - default `O`. Right shoulder -> left shoulder -> overhead -> right.
+
+The side is not saved. It starts each session on whichever shoulder SSR's own `offset_x` points at, so you can edit `shouldersurfing-client.toml` while the game is running without this mod overwriting it.
 
 TaCZ defaults its "Interact With Gun" key to `O` too, and that key opens the gun smith table. Rebind one of them in Controls if you run both.
 

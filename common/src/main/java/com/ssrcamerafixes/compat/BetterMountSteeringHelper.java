@@ -20,6 +20,7 @@ public final class BetterMountSteeringHelper {
     private static void resolveState() {
         if (stateResolved) return;
         stateResolved = true;
+        if (!CompatSwitches.enabled("bettermountsteering")) return;
         try {
             Class<?> handler = Class.forName("com.bettermountsteering.handler.MountSteeringHandler");
             isMountRotateActive = handler.getMethod("isMountRotateActive");
@@ -49,18 +50,8 @@ public final class BetterMountSteeringHelper {
         }
     }
 
-    // BMS arms a 500ms latch at CGM fire(); raw shoot-key state misses semi-auto taps on mount
-    public static boolean isGunCombatActive() {
-        try {
-            Class<?> helper = Class.forName("com.bettermountsteering.compat.GunModHelper");
-            Object result = helper.getMethod("isGunFiring").invoke(null);
-            return result instanceof Boolean && (Boolean) result;
-        } catch (Throwable ignored) {
-            return false;
-        }
-    }
-
     public static void registerCameraSource() {
+        if (!CompatSwitches.enabled("bettermountsteering")) return;
         try {
             Class<?> sourceIface = Class.forName("com.bettermountsteering.api.MountCameraSource");
             Class<?> api = Class.forName("com.bettermountsteering.api.MountSteeringApi");

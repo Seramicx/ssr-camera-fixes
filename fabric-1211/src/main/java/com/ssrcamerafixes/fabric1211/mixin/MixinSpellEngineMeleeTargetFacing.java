@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Pseudo
-@Mixin(targets = "net.spell_engine.internals.melee.TargetFinder", remap = false)
+@Mixin(targets = {"net.spell_engine.internals.melee.TargetFinder", "net.spell_engine.internals.delivery.melee.TargetFinder"}, remap = false)
 public abstract class MixinSpellEngineMeleeTargetFacing {
 
     @Redirect(

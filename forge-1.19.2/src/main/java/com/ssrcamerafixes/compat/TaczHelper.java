@@ -8,6 +8,10 @@ import net.minecraftforge.fml.ModList;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Method;
+import com.ssrcamerafixes.handler.UniversalAimHandler;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.fml.LogicalSide;
 
 public final class TaczHelper {
 
@@ -26,7 +30,7 @@ public final class TaczHelper {
 
     public static boolean isLoaded() {
         if (!loadedResolved) {
-            loaded = ModList.get().isLoaded("tacz");
+            loaded = ModList.get().isLoaded("tacz") && CompatSwitches.enabled("tacz");
             loadedResolved = true;
         }
         return loaded;
@@ -46,6 +50,26 @@ public final class TaczHelper {
             shootCooldownMethod = op.getMethod("getClientShootCoolDown");
         } catch (Throwable t) {
             LOGGER.debug("TaCZ compat reflection unavailable: {}", t.toString());
+        }
+    }
+
+    // TaCZ 1.1.x sends the shot packet from its own scheduler thread, but posts GunShootEvent on the client thread first
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static void registerShootListener() {
+        try {
+            Class event = Class.forName("com.tacz.guns.api.event.common.GunShootEvent");
+            Method side = event.getMethod("getLogicalSide");
+            Method shooter = event.getMethod("getShooter");
+            MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, false, event, e -> {
+                try {
+                    if (side.invoke(e) != LogicalSide.CLIENT) return;
+                    if (shooter.invoke(e) != Minecraft.getInstance().player) return;
+                    UniversalAimHandler.INSTANCE.beforeModShot();
+                } catch (Throwable ignored) {
+                }
+            });
+        } catch (Throwable t) {
+            LOGGER.debug("TaCZ shoot event unavailable: {}", t.toString());
         }
     }
 

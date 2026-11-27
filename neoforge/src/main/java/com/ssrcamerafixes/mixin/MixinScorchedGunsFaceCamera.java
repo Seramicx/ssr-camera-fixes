@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import com.ssrcamerafixes.compat.AimRules;
 
 // Scorched Guns builds C2SMessageShoot from player.getYRot()/getXRot() at fire() and the server shoots from that
 // packet rotation, ignoring synced look. While decoupled the body yaw is the shoulder offset, so face the
@@ -27,6 +28,6 @@ public abstract class MixinScorchedGunsFaceCamera {
         if (!ShoulderSurfingHelper.isShoulderSurfingActive()) return;
         if (EpicFightHelper.isLockOnTargeting()) return;
 
-        ShoulderSurfingHelper.lookAtCrosshairTarget();
+        AimRules.lookAtCrosshairForUse();
     }
 }

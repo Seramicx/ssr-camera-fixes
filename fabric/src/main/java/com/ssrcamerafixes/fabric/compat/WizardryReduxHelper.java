@@ -1,5 +1,7 @@
 package com.ssrcamerafixes.fabric.compat;
 
+import com.ssrcamerafixes.compat.CompatSwitches;
+
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -18,7 +20,7 @@ public final class WizardryReduxHelper {
 
     public static boolean isLoaded() {
         if (present == null) {
-            present = FabricLoader.getInstance().isModLoaded("ebwizardry");
+            present = FabricLoader.getInstance().isModLoaded("ebwizardry") && CompatSwitches.enabled("ebwizardry");
         }
         return present;
     }
