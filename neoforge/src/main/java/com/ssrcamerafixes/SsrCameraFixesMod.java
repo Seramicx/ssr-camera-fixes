@@ -9,6 +9,7 @@ import com.ssrcamerafixes.handler.AttackFaceCameraHandler;
 import com.ssrcamerafixes.handler.FreeLookMovementHandler;
 import com.ssrcamerafixes.handler.LockOnCameraSyncHandler;
 import com.ssrcamerafixes.handler.ShoulderCycleHandler;
+import com.ssrcamerafixes.handler.SmallShipsBodyHandler;
 import com.ssrcamerafixes.handler.SprintRotateHandler;
 import com.ssrcamerafixes.handler.WalkStopFaceCameraHandler;
 import net.minecraft.client.KeyMapping;
@@ -20,8 +21,11 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
+import com.ssrcamerafixes.compat.TaczHelper;
+import com.ssrcamerafixes.handler.CinematicCameraHandler;
 import com.ssrcamerafixes.handler.PunchyCameraHandler;
 import com.ssrcamerafixes.handler.RestoreShoulderSurfingHandler;
+import com.ssrcamerafixes.handler.SableCameraHandler;
 import com.ssrcamerafixes.handler.SableRagdollCameraHandler;
 import com.ssrcamerafixes.handler.UniversalAimHandler;
 
@@ -49,9 +53,13 @@ public class SsrCameraFixesMod {
         NeoForge.EVENT_BUS.register(ChargedCrossbowDecoupleHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(com.ssrcamerafixes.handler.FocusLockOnPerspectiveHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(PunchyCameraHandler.INSTANCE);
+        NeoForge.EVENT_BUS.register(CinematicCameraHandler.INSTANCE);
+        NeoForge.EVENT_BUS.register(SmallShipsBodyHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(SableRagdollCameraHandler.INSTANCE);
+        NeoForge.EVENT_BUS.register(SableCameraHandler.INSTANCE);
         NeoForge.EVENT_BUS.register(EpicFightHelper.INSTANCE);
         NeoForge.EVENT_BUS.register(RestoreShoulderSurfingHandler.INSTANCE);
+        if (TaczHelper.isLoaded()) TaczHelper.registerShootListener();
 
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 

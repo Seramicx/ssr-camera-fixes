@@ -11,7 +11,7 @@ import java.util.Map;
 // Mixins are picked before the config system loads, so the [compat] section is read straight from the file
 public final class CompatSwitches {
 
-    private static final String[] FORGE_1201 = {"epicfight", "bettercombat", "focus", "irons_spellbooks", "tacz", "superbwarfare", "scguns", "cgm", "jeg", "musketmod", "create", "valkyrienskies", "wom", "radialaggroindicator", "punchymoves", "immersive_aircraft", "weaponmaster", "combatroll", "bettermountsteering", "ebwizardry"};
+    private static final String[] FORGE_1201 = {"epicfight", "bettercombat", "focus", "combat_focus", "irons_spellbooks", "irons_artifice", "tacz", "superbwarfare", "scguns", "cgm", "jeg", "musketmod", "create", "valkyrienskies", "wom", "radialaggroindicator", "punchymoves", "cinematic", "smallships", "immersive_aircraft", "weaponmaster", "combatroll", "bettermountsteering", "ebwizardry"};
     private static final String[] FORGE_1192 = {"epicfight", "bettercombat", "irons_spellbooks", "tacz", "scguns", "cgm", "musketmod", "create", "wom", "immersive_aircraft", "weaponmaster", "combatroll", "bettermountsteering"};
     private static final String[] FABRIC_1201 = {"bettercombat", "spell_engine", "ebwizardry", "musketmod", "create", "immersive_aircraft", "combatroll", "bettermountsteering"};
 
@@ -49,6 +49,7 @@ public final class CompatSwitches {
         if (n.contains("Musket")) keys.add("musketmod");
         if (n.contains("PotatoCannon")) keys.add("create");
         if (n.contains("Irons")) keys.add("irons_spellbooks");
+        if (n.contains("Artifice")) keys.add("irons_artifice");
         if (n.contains("Wizardry")) keys.add("ebwizardry");
         if (n.contains("Confluence")) keys.add("confluence");
         if (n.contains("SpellEngine")) keys.add("spell_engine");

@@ -8,9 +8,9 @@ Camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforg
 
 | Loader | Minecraft | Mod version | Integrations |
 |---|---|---|---|
-| Forge | 1.20.1 | 2.2.0 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, TaCZ, Radial Aggro Indicator, Valkyrien Skies |
+| Forge | 1.20.1 | 2.2.0 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, Iron's Arms 'n Artifice, TaCZ, Radial Aggro Indicator, Valkyrien Skies, Combat Focus, Cinematic Interactions, Small Ships |
 | Forge | 1.19.2 | 1.2.0 | Epic Fight, Better Combat, Iron's Spells, TaCZ, Weapons of Miracle |
-| NeoForge | 1.21.1 | 2.2.0 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, TaCZ, Confluence: Otherworld, Radial Aggro Indicator, Create: Aeronautics (Sable) |
+| NeoForge | 1.21.1 | 2.2.0 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, Iron's Arms 'n Artifice, TaCZ, Confluence: Otherworld, Radial Aggro Indicator, Create: Aeronautics (Sable), Cinematic Interactions, Small Ships |
 | Fabric | 1.20.1 | 2.2.0 | Better Combat, Spell Engine |
 | Fabric | 1.21.1 | 2.2.0 | Better Combat, Spell Engine |
 
@@ -29,7 +29,11 @@ On attack, your body and head turn with the camera so swings look forward and hi
 - Epic Fight mover skills (Phantom Ascent, Demolition Leap, dodge) launch toward the crosshair instead of straight ahead
 - Wall climb (WoM spider techniques): body doesn't twist with the camera or clip into the wall
 - Radial Aggro Indicator: the aggro arrow points relative to the camera, not your body
-- Valkyrien Skies: riding a mount on a ship keeps the shoulder offset and the camera follows your mouse, even when the ship is tilted (replaces the standalone ssr-vs-compat)
+- Valkyrien Skies: riding a mount on a ship keeps the shoulder offset and the camera follows your mouse, even when the ship is tilted (replaces the standalone ssr-vs-compat). Bows, tridents and thrown items fired from a seat go where you aim after the ship turns
+- Iron's Arms 'n Artifice: guns fire at the crosshair
+- Combat Focus: locking on in the overhead preset keeps the target under the crosshair, and its lock-on key no longer also cycles the shoulder when both are on O
+- Cinematic Interactions: after a crafting scene you're back in shoulder surfing
+- Small Ships: your body faces the bow while you sail, instead of turning with the camera
 - Toggle to stop SSR's idle camera follow when you're not moving the mouse
 - Shoulder cycle won't double-fire if it shares a key with SSR's swap-shoulder bind
 
@@ -61,9 +65,9 @@ Same set of fixes as Forge 1.20.1, minus Better Lockon, Wizards, and Radial Aggr
 
 Same as Forge on 1.21.1 / NeoForge 21, without Wizards. NeoForge 21.1+, SSR 5.0+. Optional: Antikythera-Studios Epic Fight 21.17.2+, Better Combat, Better Lockon, Iron's Spells, TaCZ (MUKSC's NeoForge 1.21.1 port), Confluence: Otherworld, Radial Aggro Indicator.
 
-TaCZ and Confluence guns and mana weapons hit the crosshair, holding a TaCZ gun keeps decoupled movement, and the Radial Aggro Indicator arrow points relative to the camera.
+TaCZ and Confluence guns and mana weapons hit the crosshair, holding a TaCZ gun keeps decoupled movement, and the Radial Aggro Indicator arrow points relative to the camera. Iron's Arms 'n Artifice, Cinematic Interactions and Small Ships work the same as on Forge.
 
-With Create: Aeronautics (and the Sable physics it runs on), sitting on a contraption no longer crashes or spams the log when you enter shoulder surfing, the contraption camera modes are still reachable on F5, and the camera stays steady on a tilted contraption instead of swinging around.
+With Create: Aeronautics (and the Sable physics it runs on), F5 while sitting on a contraption goes through Sable's two contraption views right after shoulder surfing, and getting off puts you back in shoulder surfing.
 
 ### Install
 

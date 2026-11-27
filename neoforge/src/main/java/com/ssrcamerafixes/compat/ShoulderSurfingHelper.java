@@ -3,6 +3,7 @@ package com.ssrcamerafixes.compat;
 import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfing;
 import com.github.exopandora.shouldersurfing.api.client.IShoulderSurfingCamera;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 
@@ -222,7 +223,8 @@ public final class ShoulderSurfingHelper {
     public static boolean isThirdPersonBackPerspective() {
         resolvePerspective();
         try {
-            return perspectiveCurrent != null && perspectiveCurrent.invoke(null) == perspectiveThirdPersonBack;
+            return perspectiveCurrent != null && Minecraft.getInstance().options.getCameraType() == CameraType.THIRD_PERSON_BACK
+                    && perspectiveCurrent.invoke(null) == perspectiveThirdPersonBack;
         } catch (Throwable t) {
             return false;
         }

@@ -11,7 +11,7 @@ import java.util.Map;
 // Mixins are picked before the config system loads, so the [compat] section is read straight from the file
 public final class CompatSwitches {
 
-    private static final String[] KEYS = {"epicfight", "bettercombat", "focus", "irons_spellbooks", "tacz", "superbwarfare", "scguns", "cgm", "jeg", "musketmod", "create", "radialaggroindicator", "punchymoves", "sableplayerragdoll", "immersive_aircraft", "combatroll", "bettermountsteering", "confluence"};
+    private static final String[] KEYS = {"epicfight", "bettercombat", "focus", "irons_spellbooks", "irons_artifice", "tacz", "superbwarfare", "scguns", "cgm", "jeg", "musketmod", "create", "radialaggroindicator", "punchymoves", "cinematic", "smallships", "sableplayerragdoll", "sable", "immersive_aircraft", "combatroll", "bettermountsteering", "confluence"};
 
     private static Map<String, Boolean> values;
 
@@ -44,12 +44,14 @@ public final class CompatSwitches {
         if (n.contains("Musket")) keys.add("musketmod");
         if (n.contains("PotatoCannon")) keys.add("create");
         if (n.contains("Irons")) keys.add("irons_spellbooks");
+        if (n.contains("Artifice")) keys.add("irons_artifice");
         if (n.contains("Wizardry")) keys.add("ebwizardry");
         if (n.contains("Confluence")) keys.add("confluence");
         if (n.contains("SpellEngine")) keys.add("spell_engine");
         if (n.contains("CombatRoll")) keys.add("combatroll");
         if (n.contains("IaCamera")) keys.add("immersive_aircraft");
         if (n.contains("SableRagdoll")) keys.add("sableplayerragdoll");
+        if (n.contains("SableCamera")) keys.add("sable");
         if (n.startsWith("MixinWm")) keys.add("weaponmaster");
         return keys;
     }

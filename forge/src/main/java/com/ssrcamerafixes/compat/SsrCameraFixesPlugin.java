@@ -7,6 +7,7 @@ import com.github.exopandora.shouldersurfing.api.client.event.handler.ComputePla
 import com.github.exopandora.shouldersurfing.api.client.event.handler.ComputePlayerAttackStateEventHandler;
 import com.github.exopandora.shouldersurfing.api.client.event.handler.ComputeTargetCameraOffsetEventHandler;
 import com.github.exopandora.shouldersurfing.api.client.event.handler.ForceVanillaPlayerInputEventHandler;
+import com.github.exopandora.shouldersurfing.api.client.event.handler.SetupCameraRotationEventHandler;
 import com.github.exopandora.shouldersurfing.api.event.IEventBus;
 import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingPlugin;
 
@@ -19,6 +20,10 @@ public class SsrCameraFixesPlugin implements IShoulderSurfingPlugin {
         // jitter the shoulder while turning. Lock-on stays after this so EF lock-on still sticks.
         eventBus.register(9000, (ComputeTargetCameraOffsetEventHandler) SsrCameraFixesPlugin::vsShipOffset);
         eventBus.register(9100, (ComputeTargetCameraOffsetEventHandler) LockOnOffsetHandler::apply);
+        try {
+            eventBus.register(1600, (SetupCameraRotationEventHandler) CombatFocusHelper::onSetupCameraRotation);
+        } catch (Throwable ignored) {
+        }
         eventBus.register((ForceVanillaPlayerInputEventHandler) event -> {
             if (!event.getResult() && CameraFixCore.forceVanillaInput()) {
                 event.setResult(true);

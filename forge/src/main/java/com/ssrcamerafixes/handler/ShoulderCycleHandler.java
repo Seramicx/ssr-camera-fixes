@@ -3,6 +3,7 @@ package com.ssrcamerafixes.handler;
 import com.github.exopandora.shouldersurfing.client.InputHandler;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ssrcamerafixes.SsrCameraFixesMod;
+import com.ssrcamerafixes.compat.CombatFocusHelper;
 import com.ssrcamerafixes.compat.ShoulderSurfingHelper;
 import com.ssrcamerafixes.mixin.AccessorKeyMapping;
 import net.minecraft.ChatFormatting;
@@ -44,6 +45,15 @@ public final class ShoulderCycleHandler {
         if (mc.player == null || mc.screen != null) return;
 
         syncFromConfigIfNeeded();
+
+        // Combat Focus also defaults its lock-on to O, and locking on shouldn't move the camera to another shoulder
+        KeyMapping used = sharesKeyWithSsrSwap() ? InputHandler.SWAP_SHOULDER : SsrCameraFixesMod.SHOULDER_CYCLE;
+        if (CombatFocusHelper.isLockKey(used)) {
+            //noinspection StatementWithEmptyBody
+            while (used.consumeClick()) {}
+            sharedKeyDownO = used.isDown();
+            return;
+        }
 
         if (sharesKeyWithSsrSwap()) {
             boolean down = InputHandler.SWAP_SHOULDER.isDown();

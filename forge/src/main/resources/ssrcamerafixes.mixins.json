@@ -5,6 +5,7 @@
   "refmap": "ssrcamerafixes.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "MixinArtificeGunFaceCamera",
     "AccessorKeyMapping",
     "AccessorKeyMappingClicks",
     "MixinUniversalAimInput",
@@ -50,7 +51,8 @@
     "MixinJegGunFaceCamera",
     "MixinJegGunHoldDecouple",
     "MixinJegRecoilCameraPush",
-    "MixinJegCrosshairInShoulder"
+    "MixinJegCrosshairInShoulder",
+    "MixinJustEnoughGunsSsr4Crash"
   ],
   "mixins": [
     "MixinCrossbowServerHeadYaw",
@@ -61,7 +63,8 @@
     "MixinMusketBulletShipDirection",
     "MixinScorchedFlareShipDirection",
     "MixinTaczBulletShipDirection",
-    "MixinJegProjectileShipDirection"
+    "MixinJegProjectileShipDirection",
+    "MixinVanillaProjectileShipDirection"
   ],
   "injectors": {
     "defaultRequire": 1

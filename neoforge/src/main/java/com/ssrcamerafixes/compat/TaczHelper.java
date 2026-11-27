@@ -4,7 +4,11 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
+import com.ssrcamerafixes.handler.UniversalAimHandler;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Method;
@@ -30,6 +34,26 @@ public final class TaczHelper {
             loadedResolved = true;
         }
         return loaded;
+    }
+
+    // the TaCZ 1.1 based NeoForge port sends the shot from its own scheduler thread, but posts GunShootEvent on the client thread first
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static void registerShootListener() {
+        try {
+            Class event = Class.forName("com.tacz.guns.api.event.common.GunShootEvent");
+            Method side = event.getMethod("getLogicalSide");
+            Method shooter = event.getMethod("getShooter");
+            NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, false, event, e -> {
+                try {
+                    if (side.invoke(e) != LogicalSide.CLIENT) return;
+                    if (shooter.invoke(e) != Minecraft.getInstance().player) return;
+                    UniversalAimHandler.INSTANCE.beforeModShot();
+                } catch (Throwable ignored) {
+                }
+            });
+        } catch (Throwable t) {
+            LOGGER.debug("TaCZ shoot event unavailable: {}", t.toString());
+        }
     }
 
     private static synchronized void resolve() {

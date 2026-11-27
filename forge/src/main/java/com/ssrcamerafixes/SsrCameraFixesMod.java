@@ -9,6 +9,7 @@ import com.ssrcamerafixes.handler.AttackFaceCameraHandler;
 import com.ssrcamerafixes.handler.LockOnCameraSyncHandler;
 import com.ssrcamerafixes.handler.FreeLookMovementHandler;
 import com.ssrcamerafixes.handler.ShoulderCycleHandler;
+import com.ssrcamerafixes.handler.SmallShipsBodyHandler;
 import com.ssrcamerafixes.handler.SprintRotateHandler;
 import com.ssrcamerafixes.handler.WalkStopFaceCameraHandler;
 import com.ssrcamerafixes.handler.WallClimbBodyLockHandler;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
+import com.ssrcamerafixes.handler.CinematicCameraHandler;
 import com.ssrcamerafixes.handler.PunchyCameraHandler;
 import com.ssrcamerafixes.handler.RestoreShoulderSurfingHandler;
 import com.ssrcamerafixes.handler.UniversalAimHandler;
@@ -53,6 +55,8 @@ public class SsrCameraFixesMod {
         MinecraftForge.EVENT_BUS.register(RestoreShoulderSurfingHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(com.ssrcamerafixes.handler.FocusLockOnPerspectiveHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(PunchyCameraHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(CinematicCameraHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(SmallShipsBodyHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(EpicFightHelper.INSTANCE);
 
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();

@@ -91,6 +91,12 @@ public class UniversalAimHandler {
         if (intent && AimRules.useTurnAllowed()) aim(player);
     }
 
+    public void beforeModShot() {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null || !canAim(player) || !AimRules.useTurnAllowed()) return;
+        aim(player);
+    }
+
     private void aim(LocalPlayer player) {
         ShoulderSurfingHelper.lookAtCrosshairTarget();
         sendRotation(player);
