@@ -52,7 +52,8 @@
     "MixinJegGunHoldDecouple",
     "MixinJegRecoilCameraPush",
     "MixinJegCrosshairInShoulder",
-    "MixinJustEnoughGunsSsr4Crash"
+    "MixinJustEnoughGunsSsr4Crash",
+    "MixinSsrIncompatibleModsWarning"
   ],
   "mixins": [
     "MixinCrossbowServerHeadYaw",

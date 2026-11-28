@@ -10,6 +10,8 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -35,6 +37,9 @@ public final class EpicFightHelper {
     private static Method inaction;
     private static Object updateLivingMotionState;
     private static Method isTargetLockedOn;
+    private static Method getTarget;
+    private static Method getLerpedLockOnX;
+    private static Method getLerpedLockOnY;
     private static Method isBattleMode;
     private static Method isChargingSkill;
     private static Field modelYRotField;
@@ -56,6 +61,9 @@ public final class EpicFightHelper {
 
             getEntityState = localPlayerPatchClass.getMethod("getEntityState");
             isTargetLockedOn = localPlayerPatchClass.getMethod("isTargetLockedOn");
+            getTarget = localPlayerPatchClass.getMethod("getTarget");
+            getLerpedLockOnX = localPlayerPatchClass.getMethod("getLerpedLockOnX", double.class);
+            getLerpedLockOnY = localPlayerPatchClass.getMethod("getLerpedLockOnY", double.class);
             isBattleMode = localPlayerPatchClass.getMethod("isBattleMode");
             isChargingSkill = localPlayerPatchClass.getMethod("isChargingSkill");
 
@@ -113,6 +121,20 @@ public final class EpicFightHelper {
             return (boolean) isTargetLockedOn.invoke(patch);
         } catch (Throwable t) {
             return false;
+        }
+    }
+
+    // EF only turns its camera while it has a target, see RenderEngine.correctCamera
+    @Nullable
+    public static float[] getLockOnRotation(float partialTick) {
+        if (!isLoaded) return null;
+        Object patch = localPatch(Minecraft.getInstance().player);
+        if (patch == null || getTarget == null || getLerpedLockOnX == null) return null;
+        try {
+            if (!(boolean) isTargetLockedOn.invoke(patch) || getTarget.invoke(patch) == null) return null;
+            return new float[] {(float) getLerpedLockOnX.invoke(patch, (double) partialTick), (float) getLerpedLockOnY.invoke(patch, (double) partialTick)};
+        } catch (Throwable t) {
+            return null;
         }
     }
 

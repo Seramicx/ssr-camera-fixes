@@ -5,7 +5,6 @@ import com.ssrcamerafixes.compat.EpicFightHelper;
 import com.ssrcamerafixes.handler.AimingFaceCameraHandler;
 import com.ssrcamerafixes.handler.ChargedCrossbowDecoupleHandler;
 import com.ssrcamerafixes.handler.AttackFaceCameraHandler;
-import com.ssrcamerafixes.handler.LockOnCameraSyncHandler;
 import com.ssrcamerafixes.handler.PhantomAscentFaceCameraHandler;
 import com.ssrcamerafixes.handler.ShoulderCycleHandler;
 import com.ssrcamerafixes.handler.SprintRotateHandler;
@@ -40,7 +39,6 @@ public class SsrCameraFixesMod {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(ShoulderCycleHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(WallClimbBodyLockHandler.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(LockOnCameraSyncHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(SprintRotateHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(WalkStopFaceCameraHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(AimingFaceCameraHandler.INSTANCE);

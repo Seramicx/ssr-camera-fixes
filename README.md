@@ -8,7 +8,7 @@ Camera fixes and additions for [Shoulder Surfing Reloaded](https://www.curseforg
 
 | Loader | Minecraft | Mod version | Integrations |
 |---|---|---|---|
-| Forge | 1.20.1 | 2.2.0 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, Iron's Arms 'n Artifice, TaCZ, Radial Aggro Indicator, Valkyrien Skies, Combat Focus, Cinematic Interactions, Small Ships |
+| Forge | 1.20.1 | 2.2.0 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, Iron's Arms 'n Artifice, TaCZ, Radial Aggro Indicator, Valkyrien Skies, Combat Focus, Cinematic Interactions, Small Ships, Better Third Person |
 | Forge | 1.19.2 | 1.2.0 | Epic Fight, Better Combat, Iron's Spells, TaCZ, Weapons of Miracle |
 | NeoForge | 1.21.1 | 2.2.0 | Epic Fight, Better Combat, Better Lockon, Iron's Spells, Iron's Arms 'n Artifice, TaCZ, Confluence: Otherworld, Radial Aggro Indicator, Create: Aeronautics (Sable), Cinematic Interactions, Small Ships |
 | Fabric | 1.20.1 | 2.2.0 | Better Combat, Spell Engine |
@@ -34,6 +34,7 @@ On attack, your body and head turn with the camera so swings look forward and hi
 - Combat Focus: locking on in the overhead preset keeps the target under the crosshair, and its lock-on key no longer also cycles the shoulder when both are on O
 - Cinematic Interactions: after a crafting scene you're back in shoulder surfing
 - Small Ships: your body faces the bow while you sail, instead of turning with the camera
+- Better Third Person: no startup warning from SSR, and F5 goes through both mods' cameras while SSR's `replace_default_perspective` is off (its default)
 - Toggle to stop SSR's idle camera follow when you're not moving the mouse
 - Shoulder cycle won't double-fire if it shares a key with SSR's swap-shoulder bind
 

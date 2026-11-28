@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinSyncLockOnCamera {
 
     @Shadow private float xRot;
+    @Shadow private float yRot;
 
     @Unique private static boolean wasLockedOn;
     @Unique private static float pitchO;
@@ -26,6 +27,12 @@ public class MixinSyncLockOnCamera {
         boolean lockedOn = EpicFightHelper.isLockOnTargeting();
 
         if (lockedOn) {
+            // SSR only applies EF's lock-on angles to a decoupled camera when its decoupled_camera_lock_on is on
+            float[] rot = EpicFightHelper.getLockOnRotation(partialTick);
+            if (rot != null) {
+                this.xRot = rot[0];
+                this.yRot = rot[1];
+            }
             pitchO = this.xRot;
             wasLockedOn = true;
             blendFrames = 0;
