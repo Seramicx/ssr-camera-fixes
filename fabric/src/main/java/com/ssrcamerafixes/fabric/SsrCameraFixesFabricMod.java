@@ -11,7 +11,10 @@ import com.ssrcamerafixes.fabric.handler.ShoulderCycleHandler;
 import com.ssrcamerafixes.fabric.handler.SprintRotateHandler;
 import com.ssrcamerafixes.fabric.handler.WalkStopFaceCameraHandler;
 import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
+import com.ssrcamerafixes.command.ConfigCommands;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
@@ -57,7 +60,10 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
             SprintRotateHandler.INSTANCE.onClientTickEnd(client);
             WalkStopFaceCameraHandler.INSTANCE.onClientTickEnd(client);
             WizardsHelper.INSTANCE.tickLatch();
+            ConfigCommands.INSTANCE.clientTick();
         });
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) ->
+                dispatcher.register(ConfigCommands.INSTANCE.<FabricClientCommandSource>build()));
 
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 

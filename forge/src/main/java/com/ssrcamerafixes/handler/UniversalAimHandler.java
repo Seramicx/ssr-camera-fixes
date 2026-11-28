@@ -99,6 +99,7 @@ public class UniversalAimHandler {
         player.yRotO = yaw;
         player.yBodyRot = yaw;
         player.yHeadRot = yaw;
+        ShoulderSurfingHelper.setLastMovedYRot(yaw);
         sendRotation(player);
     }
 

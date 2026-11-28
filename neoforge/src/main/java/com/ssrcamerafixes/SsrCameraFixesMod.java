@@ -19,6 +19,11 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import com.ssrcamerafixes.command.ConfigCommands;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import com.ssrcamerafixes.compat.TaczHelper;
@@ -39,6 +44,9 @@ public class SsrCameraFixesMod {
 
     public SsrCameraFixesMod(IEventBus modBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.CLIENT, SsrCameraFixesConfig.CLIENT_CONFIG, "ssrcamerafixes-client.toml");
+        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        NeoForge.EVENT_BUS.addListener((RegisterClientCommandsEvent e) -> e.getDispatcher().register(ConfigCommands.INSTANCE.build()));
+        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ConfigCommands.INSTANCE.clientTick());
 
         modBus.addListener(this::onRegisterKeyMappings);
 

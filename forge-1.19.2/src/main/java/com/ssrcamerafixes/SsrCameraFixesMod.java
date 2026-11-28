@@ -11,7 +11,11 @@ import com.ssrcamerafixes.handler.SprintRotateHandler;
 import com.ssrcamerafixes.handler.WalkStopFaceCameraHandler;
 import com.ssrcamerafixes.handler.WallClimbBodyLockHandler;
 import net.minecraft.client.KeyMapping;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import com.ssrcamerafixes.command.ConfigCommands;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -53,6 +57,16 @@ public class SsrCameraFixesMod {
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 
         LOGGER.info("Shoulder Surfing Reloaded: Camera Fixes & Additions (1.19.2) loaded.");
+    }
+
+    @SubscribeEvent
+    public void onRegisterClientCommands(RegisterClientCommandsEvent event) {
+        event.getDispatcher().register(ConfigCommands.INSTANCE.build());
+    }
+
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) ConfigCommands.INSTANCE.clientTick();
     }
 
     private void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {

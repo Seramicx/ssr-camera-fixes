@@ -8,6 +8,7 @@
     "MixinArtificeGunFaceCamera",
     "AccessorKeyMapping",
     "AccessorKeyMappingClicks",
+    "MixinKeyCaptureClick",
     "MixinUniversalAimInput",
     "MixinUniversalAimRelease",
     "MixinUniversalAimModPacket",
@@ -53,7 +54,8 @@
     "MixinJegRecoilCameraPush",
     "MixinJegCrosshairInShoulder",
     "MixinJustEnoughGunsSsr4Crash",
-    "MixinSsrIncompatibleModsWarning"
+    "MixinSsrIncompatibleModsWarning",
+    "MixinBtpStandDownForSsr"
   ],
   "mixins": [
     "MixinCrossbowServerHeadYaw",

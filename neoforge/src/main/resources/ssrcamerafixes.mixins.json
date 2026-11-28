@@ -8,6 +8,7 @@
     "AccessorOptionsCameraType",
     "AccessorKeyMapping",
     "AccessorKeyMappingClicks",
+    "MixinKeyCaptureClick",
     "MixinUniversalAimInput",
     "MixinUniversalAimRelease",
     "MixinUniversalAimModPacket",

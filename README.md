@@ -34,7 +34,7 @@ On attack, your body and head turn with the camera so swings look forward and hi
 - Combat Focus: locking on in the overhead preset keeps the target under the crosshair, and its lock-on key no longer also cycles the shoulder when both are on O
 - Cinematic Interactions: after a crafting scene you're back in shoulder surfing
 - Small Ships: your body faces the bow while you sail, instead of turning with the camera
-- Better Third Person: no startup warning from SSR, and F5 goes through both mods' cameras while SSR's `replace_default_perspective` is off (its default)
+- Better Third Person: no startup warning from SSR, and Better Third Person's camera stays out of SSR's shoulder view (it used to keep the view pointed one way while you moved the mouse). F5 goes through both mods' cameras while SSR's `replace_default_perspective` is off (its default)
 - Toggle to stop SSR's idle camera follow when you're not moving the mouse
 - Shoulder cycle won't double-fire if it shares a key with SSR's swap-shoulder bind
 
@@ -90,15 +90,25 @@ SSR already turns you to the crosshair for vanilla right-click items. Many modde
 
 - Right-click items that aren't blocks or food (`aimAllItems`, on by default)
 - Items you list in `aimItems`, or items that shoot on left click in `aimOnAttackItems`
-- Keybinds you list in `aimKeys`, such as a spell or ability key. Use the name from `options.txt` without the `key_` prefix. A trailing `*` matches every key starting with that text.
+- Keybinds you list in `aimKeys`, such as a spell or ability key
 
-Entries can be an item id (`goety:soul_staff`), a whole mod (`goety:*`) or an item tag (`#forge:tools`). `ignoredItems` turns aiming off for an item or mod; TaCZ and Superb Warfare are in it by default because their integrations handle aiming.
+If something from another mod still fires the wrong way, add it in game. Hold the item and type:
+
+- `/ssrfix aim` - turn to the crosshair when you use it
+- `/ssrfix aim attack` - same, for items that shoot on left click
+- `/ssrfix ignore` - never turn for this item
+
+Put `mod` on the end (`/ssrfix aim mod`) to cover every item from that mod. For a key, type `/ssrfix aimkey` (spells, abilities) or `/ssrfix dashkey` (dash, roll, dodge) and press it. You can also type the key after the command: Tab suggests keybinds and matches the names shown in Controls, which also works for keys that aren't bound yet. `/ssrfix list` shows what you've added (click an entry to remove it), and `/ssrfix remove` takes the held item off every list. Changes are saved to the config and work straight away.
+
+On NeoForge and Fabric 1.21.1 these settings are also in a config screen (the Mods button on NeoForge, Mod Menu on Fabric).
+
+In `config/ssrcamerafixes-client.toml`, keys use their name from `options.txt` without the `key_` prefix, and a trailing `*` matches every key starting with that text. Entries can be an item id (`goety:soul_staff`), a whole mod (`goety:*`) or an item tag (`#forge:tools`). `ignoredItems` turns aiming off for an item or mod; TaCZ and Superb Warfare are in it by default because their integrations handle aiming.
 
 A data pack can do the same with the item tags `ssrcamerafixes:aim_at_crosshair`, `ssrcamerafixes:aim_at_crosshair_on_attack` and `ssrcamerafixes:never_aim`. Tags come from the server, so on a multiplayer server the data pack has to be installed there; the config lists work on any server.
 
 Aiming follows SSR's "turn player when using item" setting unless you change `turnOnUse`. It is skipped during free look and during Epic Fight lock-on, where Epic Fight turns you toward the locked target.
 
-Dash, roll and dodge keys from other mods launch you the way your body faces, which in shoulder surfing is often not where you are looking. Put those keys in `faceCameraKeys` and your character turns to the camera direction before the key fires.
+Dash, roll and dodge keys from other mods launch you the way your body faces, which in shoulder surfing is often not where you are looking. Add those keys with `/ssrfix dashkey` (or put them in `faceCameraKeys`) and your character turns to the camera direction before the key fires.
 
 ## Config
 

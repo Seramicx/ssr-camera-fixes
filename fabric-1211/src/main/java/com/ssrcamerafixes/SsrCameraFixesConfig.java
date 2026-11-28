@@ -69,6 +69,7 @@ public class SsrCameraFixesConfig {
         builder.pop();
 
         builder.comment("Aim at the crosshair for items and keys from any mod.",
+                "In game, hold an item and type /ssrfix aim (or /ssrfix for every command) instead of editing these lists.",
                 "Entries: item ids (minecraft:bow), every item of a mod (somemod:*), or item tags (#c:tools/bows).",
                 "Data packs can also add items to the tags ssrcamerafixes:aim_at_crosshair, ssrcamerafixes:aim_at_crosshair_on_attack and ssrcamerafixes:never_aim.").push("aim");
 

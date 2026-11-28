@@ -11,7 +11,12 @@ import com.ssrcamerafixes.fabric1211.handler.ShoulderCycleHandler;
 import com.ssrcamerafixes.fabric1211.handler.SprintRotateHandler;
 import com.ssrcamerafixes.fabric1211.handler.WalkStopFaceCameraHandler;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
+import com.ssrcamerafixes.command.ConfigCommands;
+import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.client.ConfigScreenFactoryRegistry;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
@@ -33,6 +38,7 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
                 MODID, ModConfig.Type.CLIENT,
                 SsrCameraFixesConfig.CLIENT_CONFIG,
                 "ssrcamerafixes-client.toml");
+        ConfigScreenFactoryRegistry.INSTANCE.register(MODID, ConfigurationScreen::new);
 
         KeyMapping cycle = new KeyMapping(
                 Keybinds.SHOULDER_CYCLE_NAME,
@@ -57,7 +63,10 @@ public class SsrCameraFixesFabricMod implements ClientModInitializer {
             SprintRotateHandler.INSTANCE.onClientTickEnd(client);
             WalkStopFaceCameraHandler.INSTANCE.onClientTickEnd(client);
             WizardsHelper.INSTANCE.tickLatch();
+            ConfigCommands.INSTANCE.clientTick();
         });
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) ->
+                dispatcher.register(ConfigCommands.INSTANCE.<FabricClientCommandSource>build()));
 
         com.ssrcamerafixes.compat.BetterMountSteeringHelper.registerCameraSource();
 
